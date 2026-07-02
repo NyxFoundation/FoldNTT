@@ -118,6 +118,19 @@ transcription), all green locally and in CI:
 See [`yosys/README.md`](yosys/README.md) for the full 8-item coverage table
 and the BMC-completeness argument.
 
+## Proposed improvement (`proposed/`) — CFNTT-KRED
+
+A formally verified redesign found by iterating view → implement → verify
+over the reference: q = 3·2¹²+1 is a Proth prime, so the Barrett multiplier's
+two constant multipliers can be replaced by shift-add K-RED folds — **3 → 1
+hardware multipliers per butterfly**, −21% cells on the multiplier, −10% on
+the butterfly, **with the issue-#7 INTT halving fix fused in** (the INTT
+twiddle is derived from the same 9⁻¹-scaled ROM word by one `modular_half`).
+Same ports, delay fabric and latencies as the reference.  Proofs: z3
+full-domain reduction proof, SymbiYosys RTL pipeline + butterfly proofs,
+bit-exact end-to-end polynomial multiplication, mutation probes.  See
+[`proposed/README.md`](proposed/README.md).
+
 ## Scope
 
 - Control-FSM sequencing, the temporal half of memory-hazard freedom, and
@@ -134,6 +147,7 @@ verify_radix2.py      the z3 verification (exact gate models + basis checks)
 bug_intt_halving.py   the INTT halving finding: reproduction + fix validation
 mutation_test.py      non-vacuity harness (4 injected bugs, all must be killed)
 yosys/                RTL-level suite: SymbiYosys harnesses, LEC, audits
+proposed/             CFNTT-KRED: verified 1-multiplier, bug-fixed butterfly
 cfntt_ref/            git submodule -> xiang-rc/cfntt_ref @ 8373a66 (ground truth)
 ```
 

@@ -45,7 +45,7 @@ shared ROM for NTT and INTT) — only its *contents* are scaled by 9⁻¹.
 |---|---|---|
 | `kred_math.py` | bit-exact model; `INTT(NTT(x)) == x` and `INTT(PWM(NTT a, NTT b)) == negacyclic(a,b)` on the real (9⁻¹-scaled) `tf_ROM.v` contents; kred9 vs `9c mod q` on edges + 500k samples | PASS |
 | `verify_kred.py` | z3, FULL 28-bit domain, divider-free: width bounds (`0<d<2¹⁷`, `0<e<2q`), the two linear congruence identities `3c+6q = d+c₁q`, `3d+q = e+d₁q`, and the reduced output — together `r == 9c mod q` for every c | VERIFIED |
-| `fv_kred.sby` | SymbiYosys, the *RTL* pipeline: `P_out == (9·A·B) mod q` at latency 4 (BMC+prove), output reduced, reset clears | PASS |
+| `fv_kred.sby` | SymbiYosys, the *RTL* pipeline == the K-RED fold spec at latency 4 (BMC + k-induction), output reduced, reset clears — combined with `verify_kred.py` (fold == 9c mod q, full domain) this gives `P_out == (9·A·B) mod q` without re-bit-blasting a divider | PASS |
 | `fv_bf_v2_{ntt,intt}.sby` | SymbiYosys, compositional (leaf units abstracted; justified by `fv_kred.sby` + `../yosys/fv_units.sby`): the butterfly computes exactly `(u+9vW, u−9vW)` / `(op21(u+v), 9(v−u)·op21(W))` at latency 6 through the real delay fabric | PASS |
 | mutation probes | removing the add-path halving, skipping the op21-on-ROM fusion, or nudging a fold constant each makes the corresponding proof FAIL with a counterexample | non-vacuous |
 
