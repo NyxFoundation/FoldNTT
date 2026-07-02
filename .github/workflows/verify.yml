@@ -18,6 +18,10 @@ jobs:
         run: uv run mutation_test.py
       - name: deep full-basis N=1024 round-trip
         run: DEEP_VERIFY=1 uv run verify_radix2.py
+      - name: proposed CFNTT-KRED — bit-exact math + e2e polymult
+        run: uv run proposed/kred_math.py
+      - name: proposed CFNTT-KRED — z3 full-domain reduction proof
+        run: uv run proposed/verify_kred.py
   yosys-formal:
     runs-on: ubuntu-latest
     steps:
@@ -27,3 +31,10 @@ jobs:
       - uses: YosysHQ/setup-oss-cad-suite@v3
       - name: SymbiYosys + LEC + audits (BMC tasks; see yosys/README.md)
         run: MODE=bmc yosys/run_all.sh
+      - name: proposed CFNTT-KRED — RTL proofs (SymbiYosys)
+        run: |
+          cd proposed
+          sby -f fv_kred.sby bmc
+          sby -f fv_kred.sby rst
+          sby -f fv_bf_v2_ntt.sby bmc
+          sby -f fv_bf_v2_intt.sby bmc

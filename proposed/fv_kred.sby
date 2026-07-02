@@ -1,0 +1,26 @@
+[tasks]
+bmc
+prove
+rst
+
+[options]
+bmc: mode bmc
+bmc: depth 12
+prove: mode prove
+prove: depth 12
+rst: mode bmc
+rst: depth 6
+
+[engines]
+smtbmc yices
+
+[script]
+read -formal -sv fv_kred.sv
+read -formal modular_mul_kred.v
+bmc: prep -top fv_kred
+prove: prep -top fv_kred
+rst: prep -top fv_kred_rst
+
+[files]
+fv_kred.sv
+modular_mul_kred.v

@@ -1,0 +1,25 @@
+[tasks]
+bmc
+
+[options]
+# BMC only — complete for time-local assertions from unconstrained initial
+# state (see ../yosys/README.md).
+bmc: mode bmc
+bmc: depth 14
+
+[engines]
+smtbmc yices
+
+[script]
+read -formal -sv fv_bf_v2.sv
+read -formal compact_bf_v2.v
+read -formal abstract_units_v2.v
+read -formal common_lib.v
+prep -top fv_bf_v2_ntt
+
+[files]
+fv_bf_v2.sv
+golden_v2.vh
+compact_bf_v2.v
+abstract_units_v2.v
+../cfntt_ref/hardware_code_radix-2/common_lib.v
