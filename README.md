@@ -1,7 +1,9 @@
 # ntt-fpga-z3
 
-Formal (z3/SMT) verification of the **CFNTT** radix-2 NTT accelerator
-reference implementation —
+[![verify](https://github.com/NyxFoundation/ntt-fpga-z3/actions/workflows/verify.yml/badge.svg)](https://github.com/NyxFoundation/ntt-fpga-z3/actions/workflows/verify.yml)
+
+Formal verification (z3/SMT + Yosys/SymbiYosys) of the **CFNTT** radix-2 NTT
+accelerator reference implementation —
 [xiang-rc/cfntt_ref](https://github.com/xiang-rc/cfntt_ref), the artifact of
 *"CFNTT: Scalable Radix-2/4 NTT Multiplication Architecture with an Efficient
 Conflict-free Memory Mapping Scheme"* (Chen et al., IACR TCHES 2022(1):94–126,
@@ -22,9 +24,12 @@ inline metadata, so `uv run` provisions Python + z3 automatically:
 git clone --recurse-submodules https://github.com/NyxFoundation/ntt-fpga-z3.git
 cd ntt-fpga-z3
 
-uv run verify_radix2.py       # the full verification  -> "VERIFIED"
+uv run verify_radix2.py       # the z3 verification    -> "VERIFIED"
 uv run bug_intt_halving.py    # the finding            -> "BUG REPRODUCED + FIX VALIDATED"
 uv run mutation_test.py       # non-vacuity harness    -> "ALL MUTATIONS DETECTED"
+
+# RTL-level suite (SymbiYosys + LEC + structural audits):
+nix shell nixpkgs#yosys nixpkgs#sby nixpkgs#yices --command yosys/run_all.sh
 ```
 
 `DEEP_VERIFY=1 uv run verify_radix2.py` additionally runs the full-basis
@@ -88,16 +93,30 @@ Reported upstream:
 ## Yosys / SymbiYosys suite (`yosys/`)
 
 The z3 suite proves the datapath on hand-built models; [`yosys/`](yosys/)
-closes the remaining hardware-FV categories **directly on the RTL** (no
-transcription): pipeline timing through the real DFF/shift chains (SymbiYosys
-BMC + k-induction), reset & power-up-X robustness, RTL-vs-netlist LEC
-(`equiv_opt`), parameterisation, single-clock/CDC audit, and structural
-constant-time (data-independent addressing). See
-[`yosys/README.md`](yosys/README.md) for the 8-item coverage table.
+covers the remaining hardware-FV categories **directly on the RTL** (no
+transcription), all green locally and in CI:
 
-```sh
-nix shell nixpkgs#yosys nixpkgs#sby nixpkgs#yices --command yosys/run_all.sh
-```
+- **Pipeline timing** through the real `DFF`/`shift_4` chains: `modular_mul`
+  == (a·b) mod q at latency 4 (BMC + k-induction), `compact_bf` == the
+  DIT/DIF butterfly at latency 6 in both modes — verified COMPOSITIONALLY
+  (leaf units proven equivalent to behavioural models in `fv_units` /
+  `fv_modular_mul`, then abstracted, assume-guarantee style, so the
+  butterfly obligations close in seconds).
+- **Reset & power-up X**: outputs clear under reset from any state; per
+  operating mode the butterfly is a feed-forward pipeline (register graph
+  acyclic, input→output register path == 6, proven over the JSON netlist)
+  so power-up X cannot persist.
+- **LEC**: `equiv_opt -assert synth` per module (RTL vs gate netlist).
+- **AGU / bank map re-proven on the RTL** (closing the z3 transcription
+  gap), **CDC** (single clock domain, vacuously N/A), **parameterisation**
+  (width sound; q/N hardcoded — documented), **constant-time addressing**
+  (the AGU modules carry no data inputs).
+- Control-FSM items are **blocked by the release** (`fsm.v` is empty) — the
+  audit records the fact and will FAIL (demanding harness extension) if
+  fsm.v ever appears upstream.
+
+See [`yosys/README.md`](yosys/README.md) for the full 8-item coverage table
+and the BMC-completeness argument.
 
 ## Scope
 
@@ -111,9 +130,10 @@ nix shell nixpkgs#yosys nixpkgs#sby nixpkgs#yices --command yosys/run_all.sh
 ## Layout
 
 ```
-verify_radix2.py      the formal verification (z3 + exhaustive/basis checks)
+verify_radix2.py      the z3 verification (exact gate models + basis checks)
 bug_intt_halving.py   the INTT halving finding: reproduction + fix validation
 mutation_test.py      non-vacuity harness (4 injected bugs, all must be killed)
+yosys/                RTL-level suite: SymbiYosys harnesses, LEC, audits
 cfntt_ref/            git submodule -> xiang-rc/cfntt_ref @ 8373a66 (ground truth)
 ```
 

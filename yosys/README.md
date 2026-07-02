@@ -18,7 +18,7 @@ MODE=bmc ./run_all.sh    # BMC only (skip the k-induction 'prove' tasks)
 
 | # | Item | Harness | Status |
 |---|------|---------|--------|
-| 1 | Pipeline timing / sequential correctness | `fv_modular_mul.sby`, `fv_compact_bf_{ntt,intt}.sby` — inputs stream every cycle through the REAL `DFF`/`shift_4` chains; assert `out(t) == golden(in(t−latency))` (latency 4 for `modular_mul`, 6 for `compact_bf`, both modes). The butterfly harness is **compositional**: `modular_mul` is replaced by a behavioural latency-4 model (`abstract_modular_mul.v`) whose equivalence to the RTL is exactly what `fv_modular_mul.sby` proves — assume-guarantee, so the SMT tasks stay seconds-fast. The latency-6 bound is independently confirmed structurally (see item 4) | **proved** |
+| 1 | Pipeline timing / sequential correctness | `fv_modular_mul.sby`, `fv_compact_bf_{ntt,intt}.sby` — inputs stream every cycle through the REAL `DFF`/`shift_4` chains; assert `out(t) == golden(in(t−latency))` (latency 4 for `modular_mul`, 6 for `compact_bf`, both modes). The butterfly harness is **compositional**: `modular_mul` is replaced by behavioural models (`abstract_units.v`: mul latency-4, add/sub combinational) whose equivalence to the RTL is exactly what `fv_modular_mul.sby` and `fv_units.sby` prove — assume-guarantee, so the SMT tasks stay seconds-fast. The latency-6 bound is independently confirmed structurally (see item 4) | **proved** |
 | 2 | Control FSM / sequencing | — | **blocked by the release**: `fsm.v` is empty (`audit.py` records the byte count; upstream issue #4). Nothing to verify, not skipped silently |
 | 3 | Memory hazards under pipelining | static part (each stage touches every pair exactly once, banks always differ) proved on the RTL in `fv_agu.sby`; the *temporal* schedule needs the FSM | **partial — rest blocked (see 2)** |
 | 4 | Reset & power-up X | (a) `fv_reset.sby` — async reset forces both outputs to 0 from ANY state; (b) `audit.py` item4b — per operating mode the flattened butterfly is a FEED-FORWARD pipeline (register graph acyclic, longest input→output register path == 6), so every register is overwritten from primary inputs within 6 cycles and power-up X cannot persist. (Across BOTH modes the netlist has an apparent mult→sub→mult cycle, but the paths are sel-mux-exclusive; no single mode activates it — hence the per-mode analysis) | **proved** |
@@ -43,7 +43,7 @@ and is omitted — the BMC argument above is already the complete proof.
 
 - Engine: `smtbmc yices`. The golden multiply uses `%` by the constant q.
   Bit-blasting the DUT's Barrett datapath against it is the one expensive
-  obligation — it is paid ONCE, in `fv_modular_mul.sby` (~5 min); the
+  obligation — it is paid ONCE, in `fv_modular_mul.sby` (~8 min); the
   butterfly tasks reuse that result compositionally and close in seconds.
 - LEC excludes `modular_mul`: a monolithic SAT miter over a hard multiplier
   is intractable for `equiv_simple` (industry uses dedicated datapath-SEC
