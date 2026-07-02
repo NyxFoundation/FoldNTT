@@ -1,0 +1,27 @@
+[tasks]
+bmc
+prove
+
+[options]
+bmc: mode bmc
+bmc: depth 8
+prove: mode prove
+prove: depth 8
+
+[engines]
+smtbmc yices
+
+[script]
+read -formal -sv fv_agu.sv
+read -formal address_generator.v
+read -formal conflict_free_memory_map.v
+read -formal tf_address_generator.v
+read -formal common_lib.v
+prep -top fv_agu
+
+[files]
+fv_agu.sv
+../cfntt_ref/hardware_code_radix-2/address_generator.v
+../cfntt_ref/hardware_code_radix-2/conflict_free_memory_map.v
+../cfntt_ref/hardware_code_radix-2/tf_address_generator.v
+../cfntt_ref/hardware_code_radix-2/common_lib.v

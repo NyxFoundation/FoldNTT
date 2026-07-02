@@ -1,0 +1,29 @@
+[tasks]
+bmc
+prove
+
+[options]
+bmc: mode bmc
+bmc: depth 6
+prove: mode prove
+prove: depth 6
+
+[engines]
+smtbmc yices
+
+[script]
+read -formal -sv fv_reset.sv
+read -formal compact_bf.v
+read -formal modular_mul.v
+read -formal modular_add.v
+read -formal modular_substraction.v
+read -formal common_lib.v
+prep -top fv_reset
+
+[files]
+fv_reset.sv
+../cfntt_ref/hardware_code_radix-2/compact_bf.v
+../cfntt_ref/hardware_code_radix-2/modular_mul.v
+../cfntt_ref/hardware_code_radix-2/modular_add.v
+../cfntt_ref/hardware_code_radix-2/modular_substraction.v
+../cfntt_ref/hardware_code_radix-2/common_lib.v

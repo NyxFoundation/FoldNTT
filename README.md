@@ -85,11 +85,27 @@ butterfly, `INTT(NTT(x)) == x`.
 Reported upstream:
 [xiang-rc/cfntt_ref#7](https://github.com/xiang-rc/cfntt_ref/issues/7).
 
+## Yosys / SymbiYosys suite (`yosys/`)
+
+The z3 suite proves the datapath on hand-built models; [`yosys/`](yosys/)
+closes the remaining hardware-FV categories **directly on the RTL** (no
+transcription): pipeline timing through the real DFF/shift chains (SymbiYosys
+BMC + k-induction), reset & power-up-X robustness, RTL-vs-netlist LEC
+(`equiv_opt`), parameterisation, single-clock/CDC audit, and structural
+constant-time (data-independent addressing). See
+[`yosys/README.md`](yosys/README.md) for the 8-item coverage table.
+
+```sh
+nix shell nixpkgs#yosys nixpkgs#sby nixpkgs#yices --command yosys/run_all.sh
+```
+
 ## Scope
 
-- Combinational dataflow only — pipeline timing and FSM sequencing are not
-  modeled (`hardware_code_radix-2/fsm.v` is empty in the release, see
-  [cfntt_ref#4](https://github.com/xiang-rc/cfntt_ref/issues/4)).
+- Control-FSM sequencing, the temporal half of memory-hazard freedom, and
+  protocol compliance are **blocked by the release itself**:
+  `hardware_code_radix-2/fsm.v` is empty (see
+  [cfntt_ref#4](https://github.com/xiang-rc/cfntt_ref/issues/4)); the audit
+  records this instead of skipping silently.
 - The radix-4 tree is not covered (only its `modular_half` usage is cited).
 
 ## Layout

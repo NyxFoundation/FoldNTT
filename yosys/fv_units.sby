@@ -1,0 +1,23 @@
+[tasks]
+bmc
+
+[options]
+bmc: mode bmc
+bmc: depth 4
+
+[engines]
+smtbmc yices
+
+[script]
+read -formal -sv fv_units.sv
+read -formal modular_add.v
+read -formal modular_substraction.v
+read -formal modular_half.v
+prep -top fv_units
+
+[files]
+fv_units.sv
+golden.vh
+../cfntt_ref/hardware_code_radix-2/modular_add.v
+../cfntt_ref/hardware_code_radix-2/modular_substraction.v
+../cfntt_ref/hardware_code_radix-2/modular_half.v

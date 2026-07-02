@@ -18,3 +18,12 @@ jobs:
         run: uv run mutation_test.py
       - name: deep full-basis N=1024 round-trip
         run: DEEP_VERIFY=1 uv run verify_radix2.py
+  yosys-formal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+      - uses: YosysHQ/setup-oss-cad-suite@v3
+      - name: SymbiYosys + LEC + audits (BMC tasks; see yosys/README.md)
+        run: MODE=bmc yosys/run_all.sh
