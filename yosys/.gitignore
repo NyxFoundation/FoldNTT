@@ -1,4 +1,4 @@
-fv_*_bmc/
-fv_*_prove/
+fv_*/
 run_all.log
 audit_out.json
+audit_bf_const.v
