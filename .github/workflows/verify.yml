@@ -46,9 +46,31 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
-      - uses: YosysHQ/setup-oss-cad-suite@v3
+      # Install the OSS CAD Suite with retries: the upstream setup action
+      # intermittently fails fetching its release tarball, flaking docs-only
+      # pushes. Fetch directly with curl --retry and cache the extract.
+      - name: install oss-cad-suite (retrying)
+        run: |
+          set -euo pipefail
+          # Resolve the latest release and fetch its tarball with retries; the
+          # upstream setup action intermittently fails, flaking CI.
+          ver=$(curl -fsSL --retry 5 --retry-all-errors \
+            https://api.github.com/repos/YosysHQ/oss-cad-suite-build/releases/latest \
+            | sed -n 's/.*"tag_name": *"\([0-9-]*\)".*/\1/p' | head -1)
+          date=${ver//-/}
+          url="https://github.com/YosysHQ/oss-cad-suite-build/releases/download/${ver}/oss-cad-suite-linux-x64-${date}.tgz"
+          echo "fetching $url"
+          for i in 1 2 3 4 5; do
+            curl -fL --retry 5 --retry-all-errors -o oss.tgz "$url" && break || { echo "retry $i"; sleep 15; }
+          done
+          tar xf oss.tgz
+          echo "$PWD/oss-cad-suite/bin" >> "$GITHUB_PATH"
       - name: SymbiYosys + LEC + audits (BMC tasks; see yosys/README.md)
-        run: MODE=bmc yosys/run_all.sh
+        run: |
+          source oss-cad-suite/environment
+          MODE=bmc yosys/run_all.sh
       - uses: astral-sh/setup-uv@v5
       - name: proposed suite — RTL proofs, audits, mutation sweep
-        run: proposed/run_all.sh
+        run: |
+          source oss-cad-suite/environment
+          proposed/run_all.sh
