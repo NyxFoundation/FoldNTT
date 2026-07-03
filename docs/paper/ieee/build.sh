@@ -11,7 +11,7 @@
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 
-pandoc --from gfm --to latex -s \
+pandoc --from gfm+raw_attribute --to latex -s \
   -V documentclass=IEEEtran -V classoption=conference \
   -H "$here/preamble.tex" \
   "$here/../paper.md" -o "$here/paper_ieee.tex"

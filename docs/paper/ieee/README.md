@@ -18,20 +18,24 @@ letters and most inline symbols, and **all four data tables** (auto-converted
 from pandoc `longtable` to both-column-spanning `table*` by `fix_longtables.py`
 — longtable fails in two-column mode). Page 1 is submission-quality.
 
-## Two documented tasks before it is submission-clean
+**Fig.1 is now a TikZ vector figure** (embedded in `../paper.md` as a
+`{=latex}` raw block via `gfm+raw_attribute`, a both-column-spanning
+`figure*` with `\resizebox`, so it renders in *both* the single-column and
+two-column builds). The datapath, the shaded changed blocks, and both
+adder/subtractor inputs all render cleanly in two columns.
 
-1. **Fig.1 needs a vector redraw.** It is currently an ASCII/box-drawing
-   diagram (~78 columns wide); that fits the single-column `../paper.pdf` but
-   **cannot fit a 3.5in IEEE column** (it overflows ~600pt even at
-   `\scriptsize`). Redraw it in TikZ (or as an included PDF) for the
-   two-column format. The single-column `make -C .. paper.pdf` build renders
-   it fine in the meantime.
-2. **Equation-dense prose spacing.** A few paragraphs with clustered
-   Unicode super/subscripts and `−`/`½`/`2⁻¹` (mapped to math via
-   `newunicodechar` in `preamble.tex`) lose inter-word spacing. The clean fix
-   is to convert those inline Unicode expressions to proper LaTeX math in the
-   source (`$2^{-1}$`, `$N^{-1}$`) — or add a pandoc Lua filter — rather than
-   rely on character remapping. This does not affect the single-column build.
+## Remaining polish before submission-clean
+
+1. **Verbatim/code width.** A few `verbatim` blocks (the K-RED equations and
+   the fold7 pseudocode) still overflow the 3.5in column even at
+   `\scriptsize` (they are long single lines). Either wrap/shorten them, set
+   the widest ones as full-column-spanning listings, or move a couple of
+   long derivations to prose. Cosmetic; content is legible.
+2. **Equation-dense prose spacing.** A few paragraphs with clustered Unicode
+   super/subscripts (mapped to math via `newunicodechar` in `preamble.tex`)
+   lose some inter-word spacing. The clean fix is converting those inline
+   Unicode expressions to proper LaTeX math in the source (`$2^{-1}$`,
+   `$N^{-1}$`), which improves both builds.
 
 Neither is on the critical path for the results (all measured/verified numbers
 are in the CI-reproducible scripts and the single-column PDF); both are

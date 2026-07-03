@@ -203,18 +203,70 @@ The two inventions are drop-in: same ports, same delay fabric, same
 latencies as the reference. Figure 1 (below) is the proposed radix-2
 butterfly; only the shaded blocks change.
 
-```
-Fig. 1  Proposed compact_bf_v2 (changes vs the reference in [brackets]):
-
-  u ─►[DFF]─────────────────────────────────┐
-                                            ▼
-  v ─►[DFF]─►(mux sel)─►┌─────────────────┐  ├─►(modular_add)─►[op21 if INTT]─►bf_lower
-                        │ modular_mul_KRED │  │        ▲                 (INTT add-path ½)
-  w ─►[DFF]─►[DFF]─►    │  1 DSP, not 3    │──┘        │
-        └─►(modular_half on ROM word)─────►│           └── u
-            = INTT twiddle op21(W)         └──►(mult_out)─►(modular_sub)─►bf_upper
-                                                              ▲   (INTT: op21 fused via ROM ½)
-  sel = 0 (NTT):  (u+v·w,  u−v·w)        sel = 1 (INTT): (½(u+v),  ½(v−u)·w)
+```{=latex}
+\begin{figure*}[t]
+\centering
+\resizebox{0.92\textwidth}{!}{%
+\begin{tikzpicture}[
+  >={Stealth[length=2.2mm]}, font=\small, line width=0.4pt,
+  block/.style={draw, rounded corners=1pt, minimum height=8mm, inner sep=4pt, align=center},
+  hi/.style   ={draw, rounded corners=1pt, minimum height=8mm, inner sep=4pt, align=center, fill=black!12},
+  reg/.style  ={draw, minimum height=6.5mm, minimum width=8mm, inner sep=2pt},
+  dot/.style  ={circle, fill, inner sep=1pt}]
+  % ---- inputs (left), stacked u / v / w ----
+  \node (u)  at (0,2.4)  {$u$};
+  \node (v)  at (0,1.2)  {$v$};
+  \node (w)  at (0,0)    {$w$};
+  \node[reg, right=5mm of u] (du) {DFF};
+  \node[reg, right=5mm of v] (dv) {DFF};
+  \node[reg, right=5mm of w] (dw) {DFF};
+  \node[reg, right=4mm of dw] (dw2){DFF};
+  \node[block, right=6mm of dv] (mux) {mux\\[-1pt]\scriptsize(sel)};
+  % ---- changed core: K-RED mult + fused half ----
+  \node[hi, right=13mm of mux] (mul) {\texttt{modular\_mul}\\[-1pt]\textbf{K-RED} — \scriptsize 1 DSP (not 3)};
+  \node[hi] (half) at ($(mul)+(0,-1.6)$) {\texttt{modular\_half}\\[-1pt]\scriptsize op21($W$) on ROM word};
+  % ---- add / sub / op21 ----
+  \node[block] (add) at ($(mul)+(5.4,0.7)$)  {\texttt{modular\_add}};
+  \node[block] (sub) at ($(mul)+(5.4,-0.95)$) {\texttt{modular\_sub}};
+  \node[hi, right=8mm of add] (op) {op21\\[-1pt]\scriptsize INTT $\tfrac12$};
+  \node[right=8mm of op]  (bl) {\texttt{bf\_lower}};
+  \node[right=13mm of sub] (bu) {\texttt{bf\_upper}};
+  % ---- wires ----
+  \draw[->] (u)-- (du);  \draw[->] (v)-- (dv);  \draw[->] (w)-- (dw);
+  \draw[->] (dw)-- (dw2);
+  \draw[->] (dv)-- (mux);
+  \draw[->] (mux)-- (mul);
+  \draw[->] (dw2) |- (half);
+  \draw[->] (half)-- (mul);
+  % product of the multiply feeds add and sub from the left
+  \coordinate (pt) at ($(mul.east)+(0.5,0)$);
+  \draw (mul.east) -- (pt);
+  \draw[->] (pt) |- (add.west);
+  \draw[->] (pt) |- (sub.west);
+  \draw[->] (add)-- (op);
+  \draw[->] (op)-- (bl);
+  \draw[->] (sub)-- (bu);
+  % u bypass: tap after its DFF, run along the TOP (clear of every block) to
+  % just left of add, then drop down a rail into add and sub upper-left — u is
+  % the pass-through operand of both add (u+vw) and sub (u-vw).
+  \node[dot] (ud) at ($(du.east)+(0.5,0)$) {};
+  \draw (du.east) -- (ud);
+  \coordinate (uc)  at ($(add.west)+(-0.4,0)$);
+  \coordinate (uc2) at ($(sub.west)+(-0.4,0)$);
+  \draw (ud) -- (uc |- ud) -- (uc);
+  \draw[->] (uc) -- (add.170);
+  \draw (uc) -- (uc2);
+  \draw[->] (uc2) -- (sub.170);
+\end{tikzpicture}}
+\caption{Proposed \texttt{compact\_bf\_v2}; shaded blocks are the changes vs the
+reference. One \textbf{K-RED} multiplier replaces the reference's three; the two
+\texttt{op21} ($\times\tfrac12$) gates --- one fused into the ROM word
+(\texttt{modular\_half}), one on the INTT add path --- are the \S3 bug fix.
+\texttt{sel}=0 (NTT) yields $(u{+}vw,\;u{-}vw)$; \texttt{sel}=1 (INTT) yields
+$(\tfrac12(u{+}v),\;\tfrac12(v{-}u)\,w)$. Same ports, delays and latency as the
+reference \texttt{compact\_bf}.}
+\label{fig:datapath}
+\end{figure*}
 ```
 
 The multiplier is the single hardware multiply; the two `op21` (modular_half)

@@ -71,9 +71,10 @@ repo's CI or scripts.
 - IEEE two-column build skeleton (docs/paper/ieee/): pandoc->IEEEtran with
   a longtable->table* post-process; compiles as a 2-col conference PDF
   (DATE/ICCAD/DAC/ASP-DAC format), page 1 submission-quality.  Two documented
-  camera-ready tasks remain (Fig.1 vector redraw for the 3.5in column; a few
-  equation-dense prose paragraphs need inline Unicode->LaTeX math).  Both
-  venue-gated; single-column paper.pdf remains the clean reference build.
+  Fig.1 is now a TikZ VECTOR figure (both-column-spanning figure* via
+  gfm+raw_attribute), rendering cleanly in BOTH single- and two-column
+  builds -- a major look upgrade over the old ASCII art.  Remaining polish:
+  a couple of wide verbatim code blocks + equation-dense prose spacing.
 - KEY INFRA FINDING: Vivado is NOT required for routed Fmax — openXC7
   toolchain-nix (pin tag 0.8.2) gives it fully in nix.
 - Dockerfile + CITATION.cff + docs/artifact.md: DONE; Zenodo DOI = at release.
