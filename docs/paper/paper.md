@@ -230,6 +230,22 @@ NTT+INTT under iverilog, give `NTT(x)` = reference and `INTT(NTT(x)) = x`
 exactly — the fix and the folded ROM compose correctly. (The reference core,
 same harness, reproduces the 2¹⁰-scaled bug.)
 
+Table 1 summarizes what is proven and how (all reproduced by CI on every
+push).
+
+**Table 1. Verification obligations and methods.**
+
+| property | method | scope |
+|---|---|---|
+| K-RED unit == k^F·a·b mod q | z3, divider-free congruence | full 28-bit domain |
+| fold7 == 7·x mod q | z3, congruence | full domain (x<q) |
+| `tf_rom_fold` ≡ shipped `tf_ROM` | SymbiYosys miter | every address, any REN |
+| butterfly (NTT/INTT) == spec | SymbiYosys, compositional | all inputs, latency-exact |
+| reset / power-up-X / single-clock | SymbiYosys + netlist audit | structural |
+| non-vacuity | 5 RTL mutations | each kills its proof |
+| full transform INTT(NTT(x))=x | iverilog simulation | random vectors, N=1024 |
+| generalization (Kyber q=3329) | exhaustive + iverilog | all z<q², generated RTL |
+
 # 6. Generalization
 
 All of §4 is parameterized by the Proth prime. A generator computes, per q:

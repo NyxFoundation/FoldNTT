@@ -26,6 +26,10 @@ repo's CI or scripts.
   parallel-reduction pseudocode in Sec 4.2, and a positioning table vs
   CFNTT / Compact-FALCON in Sec 7 (both Barrett + full ROM; neither of our
   optimizations present).
+- Paper builds: DONE — docs/paper/Makefile (pandoc -> PDF via xelatex, clean,
+  no missing glyphs) + build README; CI generates the LaTeX skeleton on every
+  push.  Citekeys are readable markers -> \cite{} at venue conversion.
+- Sec 5 verification-summary table (Table 1) added.
 - §2 Background prose (NTT/CFNTT paragraph): DONE.
 - Bibliography: DONE (docs/paper/references.bib; paper References section
   uses citekeys). A few paywalled page-numbers marked [verify at camera-ready].
