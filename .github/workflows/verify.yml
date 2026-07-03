@@ -28,6 +28,10 @@ jobs:
         run: uv run proposed/rom-fold/verify_rom_fold.py
       - name: proposed psi-fold ROM — generated RTL in sync
         run: uv run proposed/rom-fold/gen_rom_fold.py && git diff --exit-code proposed/rom-fold/tf_rom_fold.v
+      - name: install iverilog for full-core sim
+        run: sudo apt-get update && sudo apt-get install -y iverilog
+      - name: proposed full-transform RTL simulation (iverilog)
+        run: uv run proposed/fullcore/run_stream.py
   yosys-formal:
     runs-on: ubuntu-latest
     steps:
