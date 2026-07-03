@@ -12,6 +12,7 @@ claim traces to a CI-reproducible script.
 | `evaluation.md` | system-sim results + synthesis cost table (PnR TODO) |
 | `generalization.md` | Proth-prime generator; Falcon + Kyber instances |
 | `paper/paper.md` | full manuscript draft (section TODOs + refs inline) |
+| `venue-assessment.md` | honest where-to-submit / what-level analysis |
 
 Status: draft complete; open items in `paper-plan.md` → "Remaining before
 submission" (background prose, bibliography, one prior-work diff, whole-core

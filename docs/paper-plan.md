@@ -49,4 +49,7 @@ repo's CI or scripts.
   Depth analysis DROVE an fold7 redesign (3 chained subs -> parallel compare +
   1 sub; LTP 31->26, area down, DSP-free), fully re-verified.
 - Bibliography + Compact-FALCON diff: DONE (docs/paper/references.bib).
-- Decide venue split (TCHES full paper vs FMCAD methodology case study).
+- Venue: see docs/venue-assessment.md. Honest current level = workshop/
+  preprint; best-fit submittable-now target = FMCAD Applications / DATE
+  verification (lead with the verify->bug->redesign story). TCHES needs the
+  Vivado-PnR upgrade + SOTA comparison first.
