@@ -113,19 +113,22 @@ system, address generators and conflict-free mapping untouched, changing only
 the butterfly's arithmetic (§4.1) and the ROM's internals (§4.2).
 
 **Modular reduction.** Barrett and Montgomery are the general-purpose
-choices. For Proth primes q = k·2^m+1, K-RED [Longa–Naehrig 2016] reduces
-with shifts and adds; it is established in *software* NTTs and, more
-recently, in Kyber *hardware* [cite the K-RED-Shift / Proth-l line]. Our use
-is a *verified retrofit into a conflict-free accelerator*, with the factor
-folded into the ROM and reused to fix the inverse transform.
+choices. For Proth primes q = k·2^m+1, K-RED `[longa2016kred]` reduces with shifts
+and adds; established in *software* NTTs and, more recently, in Kyber
+*hardware* (K-RED-Shift / Proth-ℓ, `[kredshift2024]`). Our use is a
+*verified retrofit into a conflict-free accelerator*, with the factor folded
+into the ROM and reused to fix the inverse transform.
 
 **Twiddle storage.** Prior work reduces the ROM by on-the-fly generation
-(a modular multiplier per butterfly) or by a *half-memory* generator using
-the negation symmetry `W^{N/2} = −1` [cite]. We show a different symmetry,
-specific to the bit-reversed negacyclic layout, that is multiplier-free.
+(a modular multiplier per butterfly) `[ntttool2025]` or by a *half-memory*
+generator using the negation symmetry `W^{N/2} = −1` `[tfg2024halfmem]`.
+Notably, the most recent Falcon NTT accelerator `[compactfalcon2025]`
+stores its twiddles in full and reduces with Barrett — neither of our
+contributions is present in it. We show a different symmetry, specific to
+the bit-reversed negacyclic layout, that is multiplier-free.
 
 **Verified PQC hardware.** The 2026 wave targets masking composition and
-side-channel leakage [cite the masked-NTT / PINI line]. Functional
+side-channel leakage (`[maskedntt2026a, maskedntt2026b]`). Functional
 correctness of the arithmetic against a spec — our axis — is comparatively
 underserved, and is what exposes logic bugs like the one in §3.
 

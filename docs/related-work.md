@@ -42,18 +42,20 @@ result, positioned against CFNTT itself rather than against the Kyber SOTA.
   [eprint 2025/1407](https://eprint.iacr.org/2025/1407) — a design tool
   with generic on-the-fly generation).
 - "Compact FALCON FFT/NTT Accelerator" (IEEE 2025,
-  [Xplore 11043460](https://ieeexplore.ieee.org/document/11043460)) — a
-  22 nm ASIC **complex FFT/IFFT** processor for Falcon's Gaussian sampling
-  that also runs the NTT on reused resources, and lists "twiddle factor
-  compression" among its optimizations. **Diff:** its compression targets
-  the *complex FFT* twiddle set in a floating-point processor; ours is an
-  *integer NTT bit-reversed negacyclic ROM* reduced by a ψ shift-sub
-  derivation and proven equivalent to the shipped ROM. Different data type,
-  different table structure, different (verified) mechanism. The paper is
-  paywalled and does not publish the exact compression relation; if it turns
-  out to store-half-and-derive by a root multiply, our distinction remains
-  the *multiplier-free* ψ-shift-sub and the machine-checked equivalence.
-  [verify the precise mechanism if access is obtained.]
+  [Xplore 11043460](https://ieeexplore.ieee.org/document/11043460);
+  full text read). **On close reading there is NO twiddle-compression
+  mechanism** — the earlier "twiddle factor compression" attribution was a
+  search-summary error. The paper *precomputes and stores the twiddles in
+  full* in two ROMs (real/imag, FP64 for the complex FFT; the shared NTT
+  path reuses them); its only twiddle *reduction* is skipping the FFT/IFFT
+  first/last stage because those factors are trivial (ζ=1) — a
+  stage-skip, not a stored-table reduction. Its NTT modular reduction is
+  **Barrett** (K-RED is cited only in background). It targets xc7a100t at
+  134 MHz (Vivado 2022.2). **Diff:** so even the most recent (2025) Falcon
+  NTT accelerator uses full twiddle ROMs + Barrett — our ψ-fold
+  (store-half, multiplier-free ψ-derive, verified equal to the shipped ROM)
+  and our K-RED retrofit are both *unmatched* by it. This is the closest
+  Falcon-NTT prior work and it does not overlap either contribution.
 
 **Why the ψ-fold is not the Half-Memory TFG**: CFNTT-class in-place
 accelerators store the *negacyclic* table in *bit-reversed* order,
