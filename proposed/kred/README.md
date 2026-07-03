@@ -77,8 +77,16 @@ halves the ROM itself.)
 | `verify_kred.py` | z3, FULL 28-bit domain, divider-free: width bounds + the linear congruence identities `3c+6q = d+c₁q`, `3d+q = e+d₁q` + reduced output |
 | `fv_kred.sv/.sby` | SymbiYosys: RTL pipeline == the fold spec at latency 4 (BMC + k-induction) + reset; with the z3 proof this gives `P_out == 9AB mod q` |
 | `fv_bf_v2.sv`, `fv_bf_v2_{ntt,intt}.sby` | compositional butterfly proofs (leaf units abstracted per `abstract_units_v2.v`, justified by `fv_kred` + `../../yosys/fv_units`) |
+| `fv_reset_v2.sv/.sby` | async reset forces both outputs to 0 from ANY state, real leaf units (BMC + k-induction) |
 | `golden_v2.vh`, `abstract_units_v2.v` | golden operators / behavioural abstractions |
 | `cost_report.ys/.txt` | yosys generic-synth cost comparison |
+
+Structural coverage (`../audit_v2.py`): yosys `check -assert` lint; per
+operating mode the flattened v2 tree is FEED-FORWARD with input→output
+register path **exactly 6** — independently confirming the latency the
+harnesses assert; single clock domain. Non-vacuity (`../mutation_rtl.sh`):
+a nudged fold constant, a dropped halving gate and a skipped op21-on-ROM
+mux each make the corresponding proof FAIL with a counterexample.
 
 ## Results
 

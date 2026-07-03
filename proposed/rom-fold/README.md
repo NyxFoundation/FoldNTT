@@ -78,7 +78,23 @@ validated end-to-end in `rom_fold_math.py`.
 | `tf_rom_fold.v` | the folded ROM RTL (generated; drop-in for `tf_ROM.v`) |
 | `rom_fold_math.py` | fold relations at levels 1–3 against the REAL table; `fold7` exhaustive over the full domain; 9⁻¹ composition; e2e round-trips with 512- and 256-word ROMs |
 | `verify_rom_fold.py` | z3, full domain, divider-free: `t0 == 7x` fits 17 bits; congruence `7x == t3 + q·(4s₁+2s₂+s₃)`; `t3 < q` |
-| `fv_rom_fold.sv/.sby` | SymbiYosys miter: `tf_rom_fold` ≡ the SHIPPED `tf_ROM.v` at **every address** (via `9·Q_new ≡ Q_ref mod q`), 1-cycle latency preserved |
+| `fv_rom_fold.sv/.sby` | SymbiYosys miter with REN free: a load cycle gives `9·Q_new ≡ Q_ref (mod q)` at **every legal address**, an idle cycle (REN=0) holds BOTH outputs — together full equivalence for every REN sequence, 1-cycle latency preserved |
+
+**Corner cases.** `A = 1023` is the one input where the two ROMs differ
+(the shipped ROM's case statement holds its previous word; the fold ROM
+wraps its internal index) — it is excluded by assumption, and that
+assumption is itself PROVEN elsewhere: `../../yosys/fv_agu.sby` shows
+`tf_address_generator` keeps its address inside `[0, 1023)` in both modes.
+`REN = 0` (idle) behaviour is proven identical, so equivalence survives
+arbitrary stall patterns.
+
+**Composition with the butterfly.** No extra harness is needed to verify
+the ROM feeding `compact_bf_v2`: `fv_bf_v2_{ntt,intt}` prove the butterfly
+correct for **every** w-input stream, which subsumes the streams this ROM
+can produce; `fv_rom_fold` pins what those streams are. The audits in
+`../audit_v2.py` add lint, per-mode feed-forward/latency and single-clock
+checks; `../mutation_rtl.sh` shows a corrupted stored word or a wrong fold
+shift is caught with a counterexample.
 
 ## Results
 

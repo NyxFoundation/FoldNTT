@@ -1,3 +1,5 @@
 fv_*/
 *_run.log
+run_all.log
 audit_out.json
+audit_bf2_const.v

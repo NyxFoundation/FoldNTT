@@ -37,12 +37,6 @@ jobs:
       - uses: YosysHQ/setup-oss-cad-suite@v3
       - name: SymbiYosys + LEC + audits (BMC tasks; see yosys/README.md)
         run: MODE=bmc yosys/run_all.sh
-      - name: proposed CFNTT-KRED — RTL proofs (SymbiYosys)
-        run: |
-          cd proposed/kred
-          sby -f fv_kred.sby bmc
-          sby -f fv_kred.sby rst
-          sby -f fv_bf_v2_ntt.sby bmc
-          sby -f fv_bf_v2_intt.sby bmc
-          cd ../rom-fold
-          sby -f fv_rom_fold.sby bmc
+      - uses: astral-sh/setup-uv@v5
+      - name: proposed suite — RTL proofs, audits, mutation sweep
+        run: proposed/run_all.sh

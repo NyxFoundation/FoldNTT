@@ -15,6 +15,15 @@ harnesses, and measured costs. The two compose: `compact_bf_v2` +
 `tf_ROM` drop-in (same ports and latencies); the memory system, address
 generators and conflict-free mapping are untouched.
 
+Run the complete verification suite (math models, z3 full-domain proofs,
+SymbiYosys harnesses, generated-RTL sync check, structural audits and the
+RTL mutation sweep) with:
+
+```sh
+nix shell nixpkgs#yosys nixpkgs#sby nixpkgs#yices --command proposed/run_all.sh
+# MODE=quick proposed/run_all.sh   skips the one long SMT task + mutations
+```
+
 Both inventions and their whole derivation history are visible step by step
 on the gallery page of the `ntt-fpga` scene (visually-3d), including the
 verification runs and the score trajectory.

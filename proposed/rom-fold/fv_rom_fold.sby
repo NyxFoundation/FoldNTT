@@ -2,8 +2,12 @@
 bmc
 
 [options]
-# 10-bit address space, 1-cycle ROMs, assertions time-local with
-# unconstrained initial state: depth 6 BMC covers every case.
+# BMC only: every assertion reads at most one cycle back and the initial
+# state is unconstrained, so depth-6 BMC covers every window of every
+# execution — a complete unbounded proof by itself.  Plain k-induction
+# does not converge here (frozen REN=0 windows admit spurious states)
+# and adds nothing — same situation as the butterfly harnesses, see
+# ../../yosys/README.md.
 bmc: mode bmc
 bmc: depth 6
 
