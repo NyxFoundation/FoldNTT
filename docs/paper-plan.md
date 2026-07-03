@@ -30,6 +30,11 @@ repo's CI or scripts.
   no missing glyphs) + build README; CI generates the LaTeX skeleton on every
   push.  Citekeys are readable markers -> \cite{} at venue conversion.
 - Sec 5 verification-summary table (Table 1) added.
+- FSM reconstruction: partial progress — traced the datapath, fixed the
+  write latency (8->10, pipe[9]) to remove X-corruption; result now
+  well-defined but not yet cycle-accurate (twiddle/network alignment).
+  Whole-core AREA unaffected (elaborates); streaming sim still passes.
+  Full cycle-accuracy remains future work (needed only for timed run/Fmax).
 - Dedicated Related Work section (Sec 8) added to the paper body,
   consolidating docs/related-work.md: NTT accelerators / conflict-free
   memory, modular reduction, twiddle storage, verified PQC hardware — with

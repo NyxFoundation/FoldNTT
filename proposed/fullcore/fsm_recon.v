@@ -42,7 +42,7 @@ module fsm (
     reg [1:0] state;
     reg dir;                       // 0: p descending (NTT), 1: ascending (INTT)
     reg issue;
-    reg [8:0] pipe;                // issue delay line for ren/wen shaping
+    reg [15:0] pipe;               // issue delay line for ren/wen shaping
     reg [4:0] drain;
 
     wire [8:0] i_max = (9'd1 << p) - 9'd1;            // i < 2^p
@@ -51,7 +51,7 @@ module fsm (
 
     assign en  = 1'b1;
     assign ren = issue | pipe[0];
-    assign wen = pipe[7];
+    assign wen = pipe[9];          // write latency 10 (read 4 + butterfly 6)
 
     always @(posedge clk or posedge rst) begin
       if (rst) begin
@@ -60,7 +60,7 @@ module fsm (
         issue <= 1'b0; pipe <= 0; drain <= 0;
         done_flag <= 4'd0;
       end else begin
-        pipe <= {pipe[7:0], issue};
+        pipe <= {pipe[14:0], issue};
 
         case (state)
           ST_IDLE: begin

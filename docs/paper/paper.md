@@ -348,8 +348,8 @@ proposed, on 7-series primitives:
 
 | core | LUT | FF | **DSP48** | RAMB18 |
 |---|---|---|---|---|
-| reference `top_poly_mul` | 784 | 580 | **3** | 2 |
-| proposed `top_poly_mul_v2` | 824 | 500 | **1** | 2 |
+| reference `top_poly_mul` | 784 | 582 | **3** | 2 |
+| proposed `top_poly_mul_v2` | 824 | 502 | **1** | 2 |
 
 DSP **3→1** at the core level (scaling ×d with parallel butterflies), FF
 −14%, LUT +5% (the K-RED DSP→LUT trade slightly exceeds the ROM's LUT

@@ -37,14 +37,27 @@ controller with the exact port list `top_poly_mul` instantiates, and
 banked datapath* (two conflict-free banks, address generators,
 `network_bf_in/out`), which additionally exercises the memory system.
 
-Status: **the reconstructed schedule does not yet match the shipped
-datapath's exact pipeline timing** — some bank cells are written before the
-pipeline fills, leaving X's after the transform. A faithful cycle-accurate
-reconstruction of an unreleased FSM is a research task in its own right and
-is left as future work; it is **not** on the critical path for the
-inventions' correctness, which the streaming harness above establishes at
-the transform level and the SymbiYosys proofs establish per module. The
-files are kept so the reconstruction can be finished later.
+Status: **partially reconstructed.** Progress this far, from cycle-accurate
+tracing (`tb_debug` in git history):
+
+- The datapath write latency is **10 cycles** (read path 4 + butterfly 6),
+  not 8. With `wen` fixed to `pipe[9]` the earlier **X-corruption is gone**
+  (writes no longer fire before the pipeline fills); `fsm_recon.v` carries
+  this fix.
+- The result is now well-defined but still **numerically wrong**
+  (`INTT(NTT(x))` does not return `2¹⁰·x`), so the schedule is not yet
+  cycle-accurate: the remaining gap is the precise alignment of the twiddle
+  address/ROM read and the two operand/output networks (`network_bf_in`,
+  `network_bf_out`, whose `sel` is `shift_7`-delayed) relative to the bank
+  read/write, across the per-`k`-group twiddle changes.
+
+A faithful cycle-accurate reconstruction of the *unreleased* FSM is a
+research task in its own right and remains future work. It is **not** on the
+critical path for the inventions' correctness — the streaming harness above
+establishes the full transform at the RTL level, the SymbiYosys proofs
+establish each module, and the whole-core **area** synthesizes from this
+elaborating (not-yet-timed) core (`../fpga_cost_core.sh`). What the finished
+FSM would add is a *timed* whole-core run and, with Vivado, routed Fmax.
 
 ## Files
 

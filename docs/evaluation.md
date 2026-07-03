@@ -82,8 +82,8 @@ twiddle ROM + address generators + the reconstructed FSM), reference
 
 | core | LUT | FF | **DSP48** | RAMB18 | CARRY4 |
 |---|---|---|---|---|---|
-| reference | 784 | 580 | **3** | 2 | 106 |
-| proposed | 824 | 500 | **1** | 2 | 138 |
+| reference | 784 | 582 | **3** | 2 | 106 |
+| proposed | 824 | 502 | **1** | 2 | 138 |
 
 (The released `fsm.v` is empty, so the core is linked against
 `fullcore/fsm_recon.v` to elaborate — synthesis/area only, not the
@@ -95,8 +95,8 @@ Whole-core reading:
 - **DSP48 3 → 1** — the per-butterfly saving *is* the whole-core saving
   (one butterfly), and with `d` parallel butterflies it scales ×d. This is
   the headline, now confirmed at the core level.
-- **FF −14%** (580 → 500) — the K-RED multiplier has fewer pipeline
-  registers than Barrett.
+- **FF −14%** (582 → 502) — the K-RED multiplier has fewer pipeline
+  registers than Barrett (580→502 with the reconstructed FSM's pipe register).
 - **LUT +5%** (784 → 824) — the K-RED DSP→LUT trade (butterfly +73 LUT)
   slightly outweighs the folded ROM's LUT saving (−49) at the core level;
   diluted by the unchanged banks/AGU/FSM. Consistent with the per-module
