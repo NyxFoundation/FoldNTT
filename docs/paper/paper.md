@@ -145,6 +145,27 @@ Our redesign (§4.1) fixes it *for free* as part of the multiplier change.
 
 # 4. Design
 
+The two inventions are drop-in: same ports, same delay fabric, same
+latencies as the reference. Figure 1 (below) is the proposed radix-2
+butterfly; only the shaded blocks change.
+
+```
+Fig. 1  Proposed compact_bf_v2 (changes vs the reference in [brackets]):
+
+  u ─►[DFF]─────────────────────────────────┐
+                                            ▼
+  v ─►[DFF]─►(mux sel)─►┌─────────────────┐  ├─►(modular_add)─►[op21 if INTT]─►bf_lower
+                        │ modular_mul_KRED │  │        ▲                 (INTT add-path ½)
+  w ─►[DFF]─►[DFF]─►    │  1 DSP, not 3    │──┘        │
+        └─►(modular_half on ROM word)─────►│           └── u
+            = INTT twiddle op21(W)         └──►(mult_out)─►(modular_sub)─►bf_upper
+                                                              ▲   (INTT: op21 fused via ROM ½)
+  sel = 0 (NTT):  (u+v·w,  u−v·w)        sel = 1 (INTT): (½(u+v),  ½(v−u)·w)
+```
+
+The multiplier is the single hardware multiply; the two `op21` (modular_half)
+gates — one on the ROM word, one on the add path — are the §3 bug fix.
+
 ## 4.1 K-RED butterfly (invention 1)
 
 **Reduction.** With z = z₁·2^m + z₀ and k·2^m ≡ −1 (mod q),
@@ -168,9 +189,17 @@ unit with the stored constant 81⁻¹.
 ## 4.2 ψ-fold twiddle ROM (invention 2)
 
 For the bit-reversed layout, `w[N/2+j] = ψ·w[j]` (Lemma 3), and ψ=7 gives
-`7x = (x<<3)−x`. So we store the 512 lower (9⁻¹-scaled) words and derive the
-upper half with a `fold7` gate: shift-sub then three conditional
-subtractions, no multiplier, same interface and latency as `tf_ROM.v`. The
+`7x = (x<<3)−x`. So we store only the 512 lower (9⁻¹-scaled) words and derive
+the upper half with a `fold7` gate — no multiplier, same interface and
+latency as `tf_ROM.v`:
+
+    t  = (base<<3) − base                       // 7·base ∈ [0, 7q)
+    mq = (t ≥ 6q) ? 6q : (t ≥ 5q) ? 5q : … : (t ≥ q) ? q : 0   // 6 parallel cmps
+    Q  = upper ? (t − mq)[13:0] : base          // one subtraction, < q
+
+Six *parallel* constant comparators pick the multiple `mq` and a single
+subtraction reduces — chosen over three chained conditional subtractions
+after a logic-depth analysis (§7: LTP 31→26, area down, still DSP-free). The
 relation recurses (`w[N/4+j]=49·w[j]=fold7²`), giving a −75% variant. The
 factor-9 scaling and the fold commute (Lemma 4).
 
@@ -220,11 +249,11 @@ on. Fmax and BRAM inference need Vivado and are future work (§8).
 
 **FPGA primitives (Artix-7 target).**
 
-| block | LUT | FF | **DSP48** | 
-|---|---|---|---|
-| `modular_mul` (Barrett) → `modular_mul_kred` | 29 → 83 | 101 → **74** | **3 → 1** |
-| `compact_bf` (ref) → `compact_bf_v2` | 158 → 231 | 297 → 270 | **3 → 1** |
-| `tf_ROM` → `tf_rom_fold` | 241 → **214** | 14 → 15 | 0 |
+| block | LUT | FF | **DSP48** | logic depth (LTP) |
+|---|---|---|---|---|
+| `modular_mul` (Barrett) → `modular_mul_kred` | 29 → 83 | 101 → **74** | **3 → 1** | 17 → 21 |
+| `compact_bf` (ref) → `compact_bf_v2` | 158 → 231 | 297 → 270 | **3 → 1** | — |
+| `tf_ROM` → `tf_rom_fold` | 241 → **192** | 14 → 15 | 0 → 0 | 7 → 26 |
 
 Reading the numbers honestly:
 
@@ -248,9 +277,25 @@ Reading the numbers honestly:
 delay). The ψ-fold's real cost is **depth on the derived-half ROM read**
 (LTP 26 vs 7 for a plain lookup): a logic-depth analysis drove a redesign of
 `fold7` from three chained conditional subtractions to six parallel
-comparators + one subtraction (LTP 31 → 26, area down, still DSP-free,
+comparators + one subtraction (LTP 31 → 26, LUT 214→192, still DSP-free,
 re-verified). Fmax needs PnR (§8); a pipelined fold7 removes the ROM-read
 depth at +1 latency.
+
+**Positioning vs Falcon-NTT accelerators.** The two closest designs both
+target q = 12289 and *both use Barrett with full twiddle ROMs* — neither of
+our contributions appears in them:
+
+| design | reduction | twiddle ROM | mult/butterfly | verified? |
+|---|---|---|---|---|
+| CFNTT `[cfntt]` (the retrofitted base) | Barrett | full, 1023 words | 3 | no (bug in §3) |
+| Compact-FALCON `[compactfalcon2025]` (2025) | Barrett | full FP64, 2 ROMs | Barrett-based | no |
+| **this work** | **K-RED, 1 mult** | **ψ-fold, ½ words** | **1** | **yes (SMT+SbY+sim)** |
+
+We do not claim a head-to-head Fmax/throughput win — that needs the whole-core
+PnR (§8). The claim is *fewer multipliers and half the twiddle storage, at
+equal function, on a verified and bug-fixed drop-in* — a Pareto move on the
+resource axes NTT accelerators are actually bound by (DSP, twiddle memory),
+against designs that had neither optimization.
 
 # 8. Limitations and future work
 

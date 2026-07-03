@@ -22,6 +22,10 @@ repo's CI or scripts.
 
 
 ## Remaining before submission (post-draft)
+- Paper polish: DONE this pass — Fig.1 butterfly datapath (ASCII), fold7
+  parallel-reduction pseudocode in Sec 4.2, and a positioning table vs
+  CFNTT / Compact-FALCON in Sec 7 (both Barrett + full ROM; neither of our
+  optimizations present).
 - §2 Background prose (NTT/CFNTT paragraph): DONE.
 - Bibliography: DONE (docs/paper/references.bib; paper References section
   uses citekeys). A few paywalled page-numbers marked [verify at camera-ready].
