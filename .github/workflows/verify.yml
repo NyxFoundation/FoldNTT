@@ -66,11 +66,7 @@ jobs:
           tar xf oss.tgz
           echo "$PWD/oss-cad-suite/bin" >> "$GITHUB_PATH"
       - name: SymbiYosys + LEC + audits (BMC tasks; see yosys/README.md)
-        run: |
-          source oss-cad-suite/environment
-          MODE=bmc yosys/run_all.sh
+        run: MODE=bmc yosys/run_all.sh
       - uses: astral-sh/setup-uv@v5
       - name: proposed suite — RTL proofs, audits, mutation sweep
-        run: |
-          source oss-cad-suite/environment
-          proposed/run_all.sh
+        run: proposed/run_all.sh
