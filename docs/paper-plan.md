@@ -12,8 +12,8 @@ case study). Every phase lands in docs/ as it completes.
 | 3 | FSM reconstruction + full-core RTL simulation (verilator) vs golden polymult | `proposed/fullcore/` + `docs/evaluation.md` §sim | DONE (stream sim PASS; banked-FSM recon = future work) |
 | 4 | Synthesis numbers (yosys synth_xilinx open flow; PnR if toolchain available) | `docs/evaluation.md` §synth | DONE generic; PnR = TODO |
 | 5 | Generalization: parameterized generator (Proth-prime q → KRED constants + folded ROM + auto-proofs; Kyber q=3329 as second instance) | `proposed/generator/` + `docs/generalization.md` | DONE (Falcon+Kyber, Kyber exhaustive + RTL) |
-| 6 | Formal lemma write-ups (psi-fold lemma, K-RED bounds) | `docs/lemmas.md` | IN PROGRESS |
-| 7 | Manuscript draft (abstract → intro → background → design → verification → evaluation → related → conclusion) | `docs/paper/paper.md` | pending |
+| 6 | Formal lemma write-ups (psi-fold lemma, K-RED bounds) | `docs/lemmas.md` | DONE (4 lemmas, numerically re-checked) |
+| 7 | Manuscript draft (abstract → intro → background → design → verification → evaluation → related → conclusion) | `docs/paper/paper.md` | IN PROGRESS |
 
 Ground rules: honest novelty framing (K-RED is Longa–Naehrig 2016 known art;
 the verified hardware fusion + psi-fold + bug-find + methodology are the
