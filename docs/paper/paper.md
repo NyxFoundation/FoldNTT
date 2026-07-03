@@ -358,7 +358,49 @@ equal function, on a verified and bug-fixed drop-in* — a Pareto move on the
 resource axes NTT accelerators are actually bound by (DSP, twiddle memory),
 against designs that had neither optimization.
 
-# 8. Limitations and future work
+# 8. Related work
+
+**NTT accelerators and conflict-free memory.** In-place NTT hardware must
+resolve the read/write bank conflicts of the butterfly access pattern; CFNTT
+`[cfntt]` contributes a parity-based conflict-free mapping for radix-2/4,
+which we retrofit. Other Falcon/Kyber accelerators
+(`[compactfalcon2025, ntttool2025]`, and the mixed-radix EMINEM line) target
+throughput or flexibility; the two closest Falcon-NTT designs both use
+**Barrett reduction with full twiddle ROMs** (§7), so neither the K-RED
+retrofit nor the ψ-fold appears in them.
+
+**Modular reduction.** Montgomery and Barrett are the general-purpose
+choices. K-RED `[longa2016kred]` exploits Proth primes `q = k·2^m+1` for a
+shift-add reduction and is established in software NTTs; recent work brings
+K-RED-style shift-add reduction to Kyber *hardware* (K-RED-Shift / Proth-ℓ,
+`[kredshift2024]`). Our contribution is not the reduction but a **verified,
+drop-in retrofit** of it into a published accelerator, with the residual
+factor folded into the twiddle ROM and reused to repair the inverse
+transform — i.e. reduction, scaling, and a bug fix unified in one change.
+
+**Twiddle storage.** Prior art shrinks the twiddle ROM by *on-the-fly
+generation* (a modular multiplier per butterfly) `[ntttool2025]` or by a
+*half-memory* generator using the negation symmetry `W^{N/2} = −1`
+`[tfg2024halfmem]`. The negation symmetry is **structurally unavailable in a
+bit-reversed negacyclic table** (the stored exponents span `[0, N)` with no
+two differing by `N`). The ψ-fold uses a different, address-halving relation
+`w[N/2+j] = ψ·w[j]` specific to that layout, which for a shift-friendly ψ is
+*multiplier-free*, recurses to a quarter, and is proven equal to the shipped
+ROM at every address — properties the on-the-fly and negation-based schemes
+do not jointly have.
+
+**Verified PQC hardware.** The recent wave of machine-checked PQC-hardware
+verification targets **masking and side-channel composition**
+(`[maskedntt2026a, maskedntt2026b]`) — leakage properties, not functional
+correctness of the arithmetic against a mathematical specification.
+End-to-end *functional* verification of a whole published accelerator (down
+to its ROM contents), of the kind that surfaced the §3 bug, is the
+comparatively under-served axis this paper works on. Our SMT/BMC/mutation
+toolkit uses standard techniques; the contribution is their *composition
+into a reproducible, whole-artifact functional proof* and its use as a
+design driver.
+
+# 9. Limitations and future work
 
 Cycle-accurate reconstruction of the reference's (unreleased) banked-memory
 FSM is incomplete, so whole-core place-and-route numbers — the reviewer-grade
@@ -368,7 +410,7 @@ emission and per-prime SymbiYosys generation are templated but not yet
 automatic. The visual-discovery provenance is reported, not evaluated (no
 ablation of the agent loop).
 
-# 9. Conclusion
+# 10. Conclusion
 
 Starting from a released accelerator and *verifying* it, we found a real
 inverse-transform bug, replaced its Barrett multipliers with a verified

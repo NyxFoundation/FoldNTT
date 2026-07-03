@@ -30,6 +30,10 @@ repo's CI or scripts.
   no missing glyphs) + build README; CI generates the LaTeX skeleton on every
   push.  Citekeys are readable markers -> \cite{} at venue conversion.
 - Sec 5 verification-summary table (Table 1) added.
+- Dedicated Related Work section (Sec 8) added to the paper body,
+  consolidating docs/related-work.md: NTT accelerators / conflict-free
+  memory, modular reduction, twiddle storage, verified PQC hardware — with
+  the honest positioning of each contribution.
 - §2 Background prose (NTT/CFNTT paragraph): DONE.
 - Bibliography: DONE (docs/paper/references.bib; paper References section
   uses citekeys). A few paywalled page-numbers marked [verify at camera-ready].
