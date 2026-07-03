@@ -74,6 +74,39 @@ Honest reading (this is why per-FPGA numbers matter):
    at Falcon's N=1024 as distributed ROM the LUT win is modest. We correct
    the paper accordingly.
 
+### Whole-core area (open flow, `proposed/fpga_cost_core.sh`)
+
+Synthesizing the *whole core* (one butterfly + two conflict-free banks + the
+twiddle ROM + address generators + the reconstructed FSM), reference
+`top_poly_mul` vs proposed `top_poly_mul_v2`, on 7-series primitives:
+
+| core | LUT | FF | **DSP48** | RAMB18 | CARRY4 |
+|---|---|---|---|---|---|
+| reference | 784 | 580 | **3** | 2 | 106 |
+| proposed | 824 | 500 | **1** | 2 | 138 |
+
+(The released `fsm.v` is empty, so the core is linked against
+`fullcore/fsm_recon.v` to elaborate — synthesis/area only, not the
+cycle-accurate schedule; datapath leaf modules carry `keep` so DCE doesn't
+strip the un-observed banks/mult/ROM, matching the RTL's `DONT_TOUCH`.)
+
+Whole-core reading:
+
+- **DSP48 3 → 1** — the per-butterfly saving *is* the whole-core saving
+  (one butterfly), and with `d` parallel butterflies it scales ×d. This is
+  the headline, now confirmed at the core level.
+- **FF −14%** (580 → 500) — the K-RED multiplier has fewer pipeline
+  registers than Barrett.
+- **LUT +5%** (784 → 824) — the K-RED DSP→LUT trade (butterfly +73 LUT)
+  slightly outweighs the folded ROM's LUT saving (−49) at the core level;
+  diluted by the unchanged banks/AGU/FSM. Consistent with the per-module
+  numbers.
+- **RAMB18 unchanged (2 = 2)** — the two RAMB18 are the two data banks; the
+  twiddle ROM maps to distributed LUT-ROM in both, so the ψ-fold's −50%
+  stored bits does **not** cut BRAM count at N=1024 (it would only at a
+  larger table or a forced block-RAM mapping). This confirms the honest ROM
+  caveat above with a whole-core measurement.
+
 ### Timing proxy: logic depth (open flow, no PnR needed)
 
 Fmax needs PnR, but yosys' longest-topological-path (`ltp`) gives a
@@ -125,5 +158,6 @@ the FSM reconstruction (§sim caveat).
 Every number above regenerates from the public repo:
 - `proposed/run_all.sh` — all module proofs + audits + mutation sweep
 - `proposed/fullcore/run_stream.py` — the system-level simulation
-- `proposed/kred/cost_report.ys` — the synthesis cost report
+- `proposed/fpga_cost.sh` / `proposed/fpga_cost_core.sh` — per-module &
+  whole-core FPGA-primitive costs (yosys synth_xilinx)
 CI (`.github/workflows/verify.yml`) runs the proof/audit/sim suite on every push.

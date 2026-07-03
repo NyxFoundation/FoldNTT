@@ -42,8 +42,9 @@ repo's CI or scripts.
   twiddle ROMs + Barrett NTT reduction, xc7a100t @134MHz.  Neither of our
   contributions overlaps it; strengthens novelty (latest Falcon-NTT still
   full-ROM + Barrett).
-- Whole-core PnR (needs the FSM reconstruction finished) for reviewer-grade
-  LUT/FF/DSP/BRAM/Fmax; per-module PnR can go in now.
+- Whole-core AREA (LUT/FF/DSP/BRAM): DONE via open flow
+  (proposed/fpga_cost_core.sh): DSP 3->1, FF -14%, LUT +5%, BRAM unchanged.
+  Only Fmax remains (needs Vivado PnR + cycle-accurate FSM).
 - Dockerfile + CITATION.cff + docs/artifact.md: DONE; Zenodo DOI = at release.
 - FPGA-primitive cost table (open flow, proposed/fpga_cost.sh): DONE; corrected
   the ROM claim (−79% was generic gates; FPGA distributed-ROM is −11% LUT /

@@ -67,6 +67,8 @@ jobs:
           echo "$PWD/oss-cad-suite/bin" >> "$GITHUB_PATH"
       - name: SymbiYosys + LEC + audits (BMC tasks; see yosys/README.md)
         run: MODE=bmc yosys/run_all.sh
+      - name: FPGA-primitive cost (per-module + whole-core, synth_xilinx)
+        run: proposed/fpga_cost.sh && proposed/fpga_cost_core.sh
       - uses: astral-sh/setup-uv@v5
       - name: proposed suite — RTL proofs, audits, mutation sweep
         run: proposed/run_all.sh

@@ -342,6 +342,23 @@ comparators + one subtraction (LTP 31 → 26, LUT 214→192, still DSP-free,
 re-verified). Fmax needs PnR (§8); a pipelined fold7 removes the ROM-read
 depth at +1 latency.
 
+**Whole-core area.** Synthesizing the entire core (one butterfly + two
+conflict-free banks + twiddle ROM + address generators + FSM), reference vs
+proposed, on 7-series primitives:
+
+| core | LUT | FF | **DSP48** | RAMB18 |
+|---|---|---|---|---|
+| reference `top_poly_mul` | 784 | 580 | **3** | 2 |
+| proposed `top_poly_mul_v2` | 824 | 500 | **1** | 2 |
+
+DSP **3→1** at the core level (scaling ×d with parallel butterflies), FF
+−14%, LUT +5% (the K-RED DSP→LUT trade slightly exceeds the ROM's LUT
+saving), and **RAMB18 unchanged** — the two BRAMs are the data banks; both
+twiddle ROMs map to distributed LUT-ROM, so the ψ-fold's −50% stored bits
+does not cut BRAM count at N=1024 (it would at larger N or a forced
+block-RAM ROM). This uses the reconstructed FSM to elaborate for synthesis
+(area only; Fmax needs PnR, §9).
+
 **Positioning vs Falcon-NTT accelerators.** The two closest designs both
 target q = 12289 and *both use Barrett with full twiddle ROMs* — neither of
 our contributions appears in them:
@@ -402,13 +419,14 @@ design driver.
 
 # 9. Limitations and future work
 
-Cycle-accurate reconstruction of the reference's (unreleased) banked-memory
-FSM is incomplete, so whole-core place-and-route numbers — the reviewer-grade
-LUT/FF/DSP/BRAM/Fmax on Artix-7, v1 vs v2 — are the main open item; per-module
-PnR and the streaming full-transform simulation are done. Generic ψ-fold RTL
-emission and per-prime SymbiYosys generation are templated but not yet
-automatic. The visual-discovery provenance is reported, not evaluated (no
-ablation of the agent loop).
+Whole-core **area** (LUT/FF/DSP/BRAM) is now measured via the open flow
+(§7); the remaining hardware gap is **Fmax**, which needs Vivado PnR on the
+CFNTT Artix-7 part (v1 vs v2) — the reconstructed FSM elaborates for
+synthesis but is not yet cycle-accurate, so a *timed* whole-core run (and
+thus routed Fmax) is still open. Generic ψ-fold RTL emission and per-prime
+SymbiYosys generation are templated but not yet automatic. The
+visual-discovery provenance is reported, not evaluated (no ablation of the
+agent loop).
 
 # 10. Conclusion
 
