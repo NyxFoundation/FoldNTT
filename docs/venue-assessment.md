@@ -40,10 +40,22 @@ What IS genuinely strong and defensible today:
 
 | framing | best venues | current odds | what it needs |
 |---|---|---|---|
-| **Formal-methods case study** — verify a published PQC accelerator, find a bug, use verification to guide a multiplier-lean redesign | **FMCAD** (Applications track), DATE (verification), possibly a CAV tool/case-study | **Submittable ~now** (best fit) | tighten the writeup; the story already holds without heavy PnR |
-| **Hardware design paper** — 1-mult K-RED butterfly + ψ-fold ROM, drop-in retrofit | DATE, ICCAD, ASP-DAC | **B→A tier WITH PnR** | real Vivado Fmax + SOTA comparison on the CFNTT part |
-| same, top-tier | **TCHES / CHES** | **likely reject as-is** | PnR + beat/match SOTA throughput + sharper novelty than "known primitives, integrated" |
-| **Agentic discovery** — an LLM inventing a verified HW optimization via visual 3D review in an RSI loop | MLCAD, LLM-for-EDA / LLM4HW workshops, arXiv | **workshop-viable** as its own paper | an ablation (visual vs code-only), and framing as a methods contribution |
+| **Formal-methods case study** — verify a published PQC accelerator, find a bug, use verification to guide a multiplier-lean redesign | **FMCAD** (Applications track), DATE (verification), possibly a CAV tool/case-study | **Submittable now** (still the safest fit) | tighten the writeup |
+| **Hardware design paper** — 1-mult K-RED butterfly + ψ-fold ROM, drop-in retrofit | DATE, ICCAD, ASP-DAC | **now viable** (was "needs PnR") — we have open-flow area **and** Fmax | a SOTA comparison table; Vivado confirmation strengthens but the open-flow numbers are defensible |
+| same, top-tier | **TCHES / CHES** | still a stretch | vendor Fmax/throughput vs SOTA + a sharper novelty framing than "known primitives, integrated + verified" |
+| **Agentic discovery** — an LLM inventing a verified HW optimization via visual 3D review in an RSI loop | MLCAD, LLM-for-EDA / LLM4HW workshops, arXiv | **workshop-viable** as its own paper | an ablation (visual vs code-only) |
+
+**Update (open-flow PnR obtained).** The "Hardware design paper" row moved
+from *needs PnR* to *viable*: we now have real 7-series area (per-module +
+whole-core) and post-route Fmax (openXC7 `nextpnr-xilinx`, xc7a100t). The
+headline is honest and strong — the shipped core gets **3→1 DSP, the INTT bug
+fixed, and −50% twiddle bits at ≈1% whole-core Fmax cost** (the isolated
+butterfly's −26% dilutes to ~1% because the memory system dominates). This is
+no longer a "no hardware numbers" paper; it is a verified, measured retrofit.
+Caveat for a *top* HW venue: the numbers are open-flow (nextpnr), not
+vendor-official Vivado, and lack a head-to-head throughput comparison vs the
+Kyber/Falcon SOTA — those two additions are what separate a solid DATE/ICCAD
+submission from a TCHES-competitive one.
 
 ## Recommendation
 
@@ -81,7 +93,15 @@ What IS genuinely strong and defensible today:
 
 ## Bottom line
 
-Right now: **arXiv preprint + FMCAD/DATE case-study submission** is the
-honest, achievable move. TCHES-level requires the PnR upgrade and a sharper
-novelty story. The verification-and-bug-find framing is the paper's real
-edge; lead with it.
+Right now, two honest routes are open:
+- **Safest: FMCAD/DATE formal-methods case study** — lead with
+  verify→bug→verification-guided-redesign; the measured hardware numbers are
+  now a strong *supporting* result rather than a gap.
+- **Now-viable: DATE/ICCAD hardware paper** — lead with the measured retrofit
+  (3→1 DSP, bug fix, −50% twiddle bits at ≈1% whole-core Fmax), with the
+  verification as the reason to trust the drop-in. Add a SOTA throughput
+  comparison table before submitting; Vivado confirmation optional.
+
+TCHES/CHES still needs vendor numbers + a sharper novelty story. Either way,
+the verification-and-bug-find edge plus the now-complete measured evaluation
+make this submittable; pick the framing by target venue.
