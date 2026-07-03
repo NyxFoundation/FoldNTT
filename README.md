@@ -118,6 +118,15 @@ transcription), all green locally and in CI:
 See [`yosys/README.md`](yosys/README.md) for the full 8-item coverage table
 and the BMC-completeness argument.
 
+## Paper write-up (`docs/`)
+
+A submission-track write-up of the two verified inventions is under
+[`docs/`](docs/): [related work & novelty](docs/related-work.md),
+[lemmas with proofs](docs/lemmas.md), [evaluation](docs/evaluation.md),
+[generalization to any Proth prime](docs/generalization.md), and the
+[manuscript draft](docs/paper/paper.md). Every claim traces to a
+CI-reproducible script.
+
 ## Proposed improvement (`proposed/`) — CFNTT-KRED
 
 A formally verified redesign found by iterating view → implement → verify

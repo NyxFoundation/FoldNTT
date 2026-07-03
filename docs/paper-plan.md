@@ -13,9 +13,22 @@ case study). Every phase lands in docs/ as it completes.
 | 4 | Synthesis numbers (yosys synth_xilinx open flow; PnR if toolchain available) | `docs/evaluation.md` §synth | DONE generic; PnR = TODO |
 | 5 | Generalization: parameterized generator (Proth-prime q → KRED constants + folded ROM + auto-proofs; Kyber q=3329 as second instance) | `proposed/generator/` + `docs/generalization.md` | DONE (Falcon+Kyber, Kyber exhaustive + RTL) |
 | 6 | Formal lemma write-ups (psi-fold lemma, K-RED bounds) | `docs/lemmas.md` | DONE (4 lemmas, numerically re-checked) |
-| 7 | Manuscript draft (abstract → intro → background → design → verification → evaluation → related → conclusion) | `docs/paper/paper.md` | IN PROGRESS |
+| 7 | Manuscript draft (abstract → intro → background → design → verification → evaluation → related → conclusion) | `docs/paper/paper.md` | DONE (full draft; section TODOs + refs inline) |
 
 Ground rules: honest novelty framing (K-RED is Longa–Naehrig 2016 known art;
 the verified hardware fusion + psi-fold + bug-find + methodology are the
 claims to defend); every number in the paper must be reproducible from this
 repo's CI or scripts.
+
+
+## Remaining before submission (post-draft)
+- §2 Background prose (NTT/CFNTT paragraph), inline [TODO]s in the draft.
+- Bibliography: pull exact citekeys (CFNTT, Longa-Naehrig, K-RED-Shift,
+  half-memory TFG, masked-NTT line, Falcon/Kyber specs) — sources listed in
+  related-work.md.
+- Deep-read the Compact-FALCON "twiddle factor compression" paper and diff
+  vs the psi-fold (the one must-diff prior work).
+- Whole-core PnR (needs the FSM reconstruction finished) for reviewer-grade
+  LUT/FF/DSP/BRAM/Fmax; per-module PnR can go in now.
+- Zenodo DOI + Dockerfile for artifact evaluation.
+- Decide venue split (TCHES full paper vs FMCAD methodology case study).
