@@ -128,7 +128,12 @@ the butterfly, **with the issue-#7 INTT halving fix fused in** (the INTT
 twiddle is derived from the same 9⁻¹-scaled ROM word by one `modular_half`).
 Same ports, delay fabric and latencies as the reference.  Proofs: z3
 full-domain reduction proof, SymbiYosys RTL pipeline + butterfly proofs,
-bit-exact end-to-end polynomial multiplication, mutation probes.  See
+bit-exact end-to-end polynomial multiplication, mutation probes.
+
+A second, **visually-discovered** invention lives there too: the psi-fold
+twiddle ROM (`w_rom[512+j] = 7·w_rom[j]` from the bit-reversed layout; ×7
+is shift-sub) stores half the words and is proven equivalent to the shipped
+`tf_ROM.v` for every address — **−79% cells** measured.  See
 [`proposed/README.md`](proposed/README.md).
 
 ## Scope

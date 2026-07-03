@@ -22,6 +22,12 @@ jobs:
         run: uv run proposed/kred_math.py
       - name: proposed CFNTT-KRED — z3 full-domain reduction proof
         run: uv run proposed/verify_kred.py
+      - name: proposed psi-fold ROM — math + e2e
+        run: uv run proposed/rom_fold_math.py
+      - name: proposed psi-fold ROM — z3 fold proof
+        run: uv run proposed/verify_rom_fold.py
+      - name: proposed psi-fold ROM — generated RTL in sync
+        run: uv run proposed/gen_rom_fold.py && git diff --exit-code proposed/tf_rom_fold.v
   yosys-formal:
     runs-on: ubuntu-latest
     steps:
@@ -38,3 +44,4 @@ jobs:
           sby -f fv_kred.sby rst
           sby -f fv_bf_v2_ntt.sby bmc
           sby -f fv_bf_v2_intt.sby bmc
+          sby -f fv_rom_fold.sby bmc

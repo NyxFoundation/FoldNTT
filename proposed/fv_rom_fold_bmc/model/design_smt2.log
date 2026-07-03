@@ -1,0 +1,151 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.62 (git sha1 v0.62, g++ 15.2.0 -fPIC -O3)
+
+-- Executing script file `design_smt2.ys' --
+
+1. Executing RTLIL frontend.
+Input filename: design_prep.il
+
+2. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `fv_rom_fold'. Setting top module to fv_rom_fold.
+
+2.1. Analyzing design hierarchy..
+Top module:  \fv_rom_fold
+Used module:     \tf_rom_fold
+Used module:     \tf_ROM
+
+2.2. Analyzing design hierarchy..
+Top module:  \fv_rom_fold
+Used module:     \tf_rom_fold
+Used module:     \tf_ROM
+Removed 0 unused modules.
+Module fv_rom_fold directly or indirectly contains formal properties -> setting "keep" attribute.
+
+3. Executing FORMALFF pass.
+
+4. Executing DFFUNMAP pass (unmap clock enable and synchronous reset from FFs).
+
+5. Printing statistics.
+
+=== fv_rom_fold ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       19 wires
+       91 wire bits
+        5 public wires
+       41 public wire bits
+        2 ports
+       11 port bits
+       19 cells
+        1   $add
+        2   $assert
+        2   $assume
+        1   $eq
+        4   $ff
+        1   $ge
+        3   $lt
+        1   $mod
+        1   $mul
+        2   $mux
+        1   $not
+        2 submodules
+        1   tf_ROM
+        1   tf_rom_fold
+
+=== tf_ROM ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1030 wires
+     1078 wire bits
+        4 public wires
+       26 public wire bits
+        4 ports
+       26 port bits
+     1028 cells
+        1   $anyinit
+        1   $assume
+     1022   $eq
+        1   $logic_not
+        1   $mux
+        1   $not
+        1   $pmux
+
+=== tf_rom_fold ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       21 wires
+      200 wire bits
+       11 public wires
+      116 public wire bits
+        4 ports
+       26 port bits
+       19 cells
+        1   $add
+        2   $anyinit
+        1   $assume
+        3   $ge
+        1   $mem_v2
+        6   $mux
+        1   $not
+        4   $sub
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     1066 fv_rom_fold
+     1028 tf_ROM
+       19 tf_rom_fold
+
+        +----------Count including submodules.
+        | 
+     1070 wires
+     1369 wire bits
+       20 public wires
+      183 public wire bits
+       10 ports
+       63 port bits
+        - memories
+        - memory bits
+        - processes
+     1066 cells
+        2   $add
+        3   $anyinit
+        2   $assert
+        4   $assume
+     1023   $eq
+        4   $ff
+        4   $ge
+        1   $logic_not
+        3   $lt
+        1   $mem_v2
+        1   $mod
+        1   $mul
+        9   $mux
+        3   $not
+        1   $pmux
+        4   $sub
+        2 submodules
+        1   tf_ROM
+        1   tf_rom_fold
+
+6. Executing SMT2 backend.
+
+6.1. Executing BMUXMAP pass.
+
+6.2. Executing DEMUXMAP pass.
+Creating SMT-LIBv2 representation of module tf_rom_fold.
+Creating SMT-LIBv2 representation of module tf_ROM.
+Creating SMT-LIBv2 representation of module fv_rom_fold.
+
+End of script. Logfile hash: e3acffb6a6, CPU: user 0.02s system 0.01s, MEM: 30.24 MB peak
+Yosys 0.62 (git sha1 v0.62, g++ 15.2.0 -fPIC -O3)
+Time spent: 68% 2x write_smt2 (0 sec), 25% 2x read_rtlil (0 sec), ...

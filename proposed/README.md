@@ -61,6 +61,39 @@ shared ROM for NTT and INTT) — only its *contents* are scaled by 9⁻¹.
 On FPGA the three multipliers map to DSP blocks, so the per-butterfly DSP
 count drops 3 → 1; with `d` parallel butterflies the saving scales by `d`.
 
+## The psi-fold twiddle ROM (second invention — found by VISUAL review)
+
+Reviewing the 3D architecture model of the KRED butterfly showed the
+1023-word twiddle ROM as the largest block left on the logic floorplan
+(compute shrank, storage didn't), right next to two visual precedents: the
+K-RED fold stages (shift-add constant multiplies are ~free) and the op21
+gate on the ROM output (deriving a twiddle variant from the same stored
+word already pays once).  Combining them:
+
+**The bit-reversed negacyclic layout satisfies `w_rom[512+j] = 7·w_rom[j]
+(mod q)` for ALL j (psi = kesai = 7), and ×7 = `(x<<3) − x` is shift-sub.**
+So `tf_rom_fold.v` stores HALF the words (512, 9⁻¹-scaled) and derives the
+upper half with `fold7` — three conditional subtractions, zero multipliers,
+same interface and 1-cycle latency as `tf_ROM.v`.  The relation recurses
+(`w[256+j] = 49·w[j] = fold7²`, `w[128+j] = 7⁴·w[j] = fold7⁴`, …): a
+256-word ROM costs at most 3 chained fold7 gates (validated end-to-end).
+
+| Artifact | What it proves | Status |
+|---|---|---|
+| `rom_fold_math.py` | fold relations (levels 1–3) against the REAL `tf_ROM.v` contents; `fold7` exhaustive over the full domain; 9⁻¹ composition; e2e round-trips with 512- and 256-word ROMs | PASS |
+| `verify_rom_fold.py` | z3, full domain, divider-free: `t0 == 7x` fits 17 bits, congruence `7x == t3 + q·(4s₁+2s₂+s₃)`, `t3 < q` | VERIFIED |
+| `fv_rom_fold.sby` | SymbiYosys miter: `tf_rom_fold` == the SHIPPED `tf_ROM.v` for every address (via `9·Q_new ≡ Q_ref mod q`), 1-cycle latency preserved | PASS |
+| `gen_rom_fold.py` | the RTL table is generated mechanically from `tf_ROM.v` — never hand-transcribed; CI regenerates and diffs | in sync |
+
+Measured (yosys generic synth, flattened): `tf_ROM` 7828 cells →
+`tf_rom_fold` **1611 cells (−79%)**; stored bits 14322 → 7168 (−50%),
+or 3584 (−75%) with the two-level variant.
+
+(Prior art note: on-the-fly / compressed twiddle generation is a known
+family of techniques; the specific bit-reversed HALF-FOLD via psi with a
+Proth-prime shift-sub multiplier, composed with the 9⁻¹ K-RED scaling and
+verified equivalent to the shipped ROM, is the contribution here.)
+
 ## Honesty notes
 
 - K-RED itself is known art (Longa & Naehrig, *Speeding up the Number

@@ -1,0 +1,965 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.62 (git sha1 v0.62, g++ 15.2.0 -fPIC -O3)
+
+-- Executing script file `../model/design.ys' --
+
+1. Executing Verilog-2005 frontend: fv_rom_fold.sv
+Parsing formal SystemVerilog input from `fv_rom_fold.sv' to AST representation.
+Storing AST representation for module `$abstract\fv_rom_fold'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: tf_rom_fold.v
+Parsing formal SystemVerilog input from `tf_rom_fold.v' to AST representation.
+Storing AST representation for module `$abstract\tf_rom_fold'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: tf_ROM.v
+Parsing formal SystemVerilog input from `tf_ROM.v' to AST representation.
+Storing AST representation for module `$abstract\tf_ROM'.
+Successfully finished Verilog frontend.
+
+4. Executing PREP pass.
+
+4.1. Executing HIERARCHY pass (managing design hierarchy).
+
+4.2. Executing AST frontend in derive mode using pre-parsed AST for module `\fv_rom_fold'.
+Generating RTLIL representation for module `\fv_rom_fold'.
+
+4.2.1. Analyzing design hierarchy..
+Top module:  \fv_rom_fold
+
+4.2.2. Executing AST frontend in derive mode using pre-parsed AST for module `\tf_ROM'.
+Generating RTLIL representation for module `\tf_ROM'.
+
+4.2.3. Executing AST frontend in derive mode using pre-parsed AST for module `\tf_rom_fold'.
+Generating RTLIL representation for module `\tf_rom_fold'.
+
+4.2.4. Analyzing design hierarchy..
+Top module:  \fv_rom_fold
+Used module:     \tf_ROM
+Used module:     \tf_rom_fold
+
+4.2.5. Analyzing design hierarchy..
+Top module:  \fv_rom_fold
+Used module:     \tf_ROM
+Used module:     \tf_rom_fold
+Removing unused module `$abstract\tf_ROM'.
+Removing unused module `$abstract\tf_rom_fold'.
+Removing unused module `$abstract\fv_rom_fold'.
+Removed 3 unused modules.
+Module fv_rom_fold directly or indirectly contains formal properties -> setting "keep" attribute.
+
+4.3. Executing PROC pass (convert processes to netlists).
+
+4.3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+4.3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$tf_rom_fold.v:28$19 in module tf_rom_fold.
+Marked 1 switch rules as full_case in process $proc$fv_rom_fold.sv:22$7 in module fv_rom_fold.
+Removed a total of 0 dead cases.
+
+4.3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 1 redundant assignment.
+Promoted 3 assignments to connections.
+
+4.3.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `\fv_rom_fold.$proc$fv_rom_fold.sv:18$15'.
+  Set init value: \cnt = 2'00
+
+4.3.5. Executing PROC_ARST pass (detect async resets in processes).
+
+4.3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 1 switch.
+<suppressed ~5 debug messages>
+
+4.3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\tf_rom_fold.$proc$tf_rom_fold.v:28$19'.
+     1/2: $0\upper[0:0]
+     2/2: $0\base[13:0]
+Creating decoders for process `\tf_ROM.$proc$tf_ROM.v:12$16'.
+     1/1: $0\Q[13:0]
+Creating decoders for process `\fv_rom_fold.$proc$fv_rom_fold.sv:18$15'.
+Creating decoders for process `\fv_rom_fold.$proc$fv_rom_fold.sv:22$7'.
+     1/3: $1\nine_new[17:0]
+     2/3: $assert$fv_rom_fold.sv:26$13_EN
+     3/3: $assert$fv_rom_fold.sv:25$10_EN
+Creating decoders for process `\fv_rom_fold.$proc$fv_rom_fold.sv:19$4'.
+     1/1: $0\cnt[1:0]
+Creating decoders for process `\fv_rom_fold.$proc$fv_rom_fold.sv:16$1'.
+
+4.3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+4.3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\tf_rom_fold.\base' using process `\tf_rom_fold.$proc$tf_rom_fold.v:28$19'.
+  created $dff cell `$procdff$1078' with positive edge clock.
+Creating register for signal `\tf_rom_fold.\upper' using process `\tf_rom_fold.$proc$tf_rom_fold.v:28$19'.
+  created $dff cell `$procdff$1079' with positive edge clock.
+Creating register for signal `\tf_ROM.\Q' using process `\tf_ROM.$proc$tf_ROM.v:12$16'.
+  created $dff cell `$procdff$1080' with positive edge clock.
+Creating register for signal `\fv_rom_fold.\nine_new' using process `\fv_rom_fold.$proc$fv_rom_fold.sv:22$7'.
+  created $dff cell `$procdff$1081' with positive edge clock.
+Creating register for signal `\fv_rom_fold.\cnt' using process `\fv_rom_fold.$proc$fv_rom_fold.sv:19$4'.
+  created $dff cell `$procdff$1082' with positive edge clock.
+
+4.3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+4.3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 2 empty switches in `\tf_rom_fold.$proc$tf_rom_fold.v:28$19'.
+Removing empty process `tf_rom_fold.$proc$tf_rom_fold.v:28$19'.
+Found and cleaned up 2 empty switches in `\tf_ROM.$proc$tf_ROM.v:12$16'.
+Removing empty process `tf_ROM.$proc$tf_ROM.v:12$16'.
+Removing empty process `fv_rom_fold.$proc$fv_rom_fold.sv:18$15'.
+Found and cleaned up 1 empty switch in `\fv_rom_fold.$proc$fv_rom_fold.sv:22$7'.
+Removing empty process `fv_rom_fold.$proc$fv_rom_fold.sv:22$7'.
+Found and cleaned up 1 empty switch in `\fv_rom_fold.$proc$fv_rom_fold.sv:19$4'.
+Removing empty process `fv_rom_fold.$proc$fv_rom_fold.sv:19$4'.
+Removing empty process `fv_rom_fold.$proc$fv_rom_fold.sv:16$1'.
+Cleaned up 6 empty switches.
+
+4.3.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module tf_rom_fold.
+<suppressed ~1 debug messages>
+Optimizing module tf_ROM.
+<suppressed ~2 debug messages>
+Optimizing module fv_rom_fold.
+
+4.4. Executing FUTURE pass.
+
+4.5. Executing OPT_EXPR pass (perform const folding).
+Optimizing module tf_rom_fold.
+Optimizing module tf_ROM.
+Optimizing module fv_rom_fold.
+
+4.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \tf_rom_fold..
+Finding unused cells or wires in module \tf_ROM..
+Finding unused cells or wires in module \fv_rom_fold..
+Removed 2 unused cells and 27 unused wires.
+<suppressed ~6 debug messages>
+
+4.7. Executing CHECK pass (checking for obvious problems).
+Checking module fv_rom_fold...
+Checking module tf_ROM...
+Checking module tf_rom_fold...
+Found and reported 0 problems.
+
+4.8. Executing OPT pass (performing simple optimizations).
+
+4.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module fv_rom_fold.
+Optimizing module tf_ROM.
+Optimizing module tf_rom_fold.
+
+4.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\fv_rom_fold'.
+Computing hashes of 17 cells of `\fv_rom_fold'.
+Finding duplicate cells in `\fv_rom_fold'.
+Finding identical cells in module `\tf_ROM'.
+Computing hashes of 1026 cells of `\tf_ROM'.
+Finding duplicate cells in `\tf_ROM'.
+Finding identical cells in module `\tf_rom_fold'.
+Computing hashes of 18 cells of `\tf_rom_fold'.
+Finding duplicate cells in `\tf_rom_fold'.
+Removed a total of 0 cells.
+
+4.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \fv_rom_fold..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \tf_ROM..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \tf_rom_fold..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~20 debug messages>
+
+4.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \fv_rom_fold.
+  Optimizing cells in module \tf_ROM.
+  Optimizing cells in module \tf_rom_fold.
+Performed a total of 0 changes.
+
+4.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\fv_rom_fold'.
+Computing hashes of 17 cells of `\fv_rom_fold'.
+Finding duplicate cells in `\fv_rom_fold'.
+Computing hashes of 16 cells of `\fv_rom_fold'.
+Finding duplicate cells in `\fv_rom_fold'.
+<suppressed ~3 debug messages>
+Finding identical cells in module `\tf_ROM'.
+Computing hashes of 1026 cells of `\tf_ROM'.
+Finding duplicate cells in `\tf_ROM'.
+Finding identical cells in module `\tf_rom_fold'.
+Computing hashes of 18 cells of `\tf_rom_fold'.
+Finding duplicate cells in `\tf_rom_fold'.
+Removed a total of 1 cells.
+
+4.8.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \fv_rom_fold..
+Finding unused cells or wires in module \tf_ROM..
+Finding unused cells or wires in module \tf_rom_fold..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+4.8.7. Executing OPT_EXPR pass (perform const folding).
+Optimizing module fv_rom_fold.
+Optimizing module tf_ROM.
+Optimizing module tf_rom_fold.
+
+4.8.8. Rerunning OPT passes. (Maybe there is more to do..)
+
+4.8.9. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \fv_rom_fold..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \tf_ROM..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Running muxtree optimizer on module \tf_rom_fold..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~18 debug messages>
+
+4.8.10. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \fv_rom_fold.
+  Optimizing cells in module \tf_ROM.
+  Optimizing cells in module \tf_rom_fold.
+Performed a total of 0 changes.
+
+4.8.11. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\fv_rom_fold'.
+Computing hashes of 16 cells of `\fv_rom_fold'.
+Finding duplicate cells in `\fv_rom_fold'.
+Finding identical cells in module `\tf_ROM'.
+Computing hashes of 1026 cells of `\tf_ROM'.
+Finding duplicate cells in `\tf_ROM'.
+Finding identical cells in module `\tf_rom_fold'.
+Computing hashes of 18 cells of `\tf_rom_fold'.
+Finding duplicate cells in `\tf_rom_fold'.
+Removed a total of 0 cells.
+
+4.8.12. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \fv_rom_fold..
+Finding unused cells or wires in module \tf_ROM..
+Finding unused cells or wires in module \tf_rom_fold..
+
+4.8.13. Executing OPT_EXPR pass (perform const folding).
+Optimizing module fv_rom_fold.
+Optimizing module tf_ROM.
+Optimizing module tf_rom_fold.
+
+4.8.14. Finished fast OPT passes. (There is nothing left to do.)
+
+4.9. Executing WREDUCE pass (reducing word size of cells).
+Removed top 4 bits (of 18) from port B of cell fv_rom_fold.$mod$fv_rom_fold.sv:25$11 ($mod).
+Removed top 30 bits (of 32) from port B of cell fv_rom_fold.$lt$fv_rom_fold.sv:19$5 ($lt).
+Removed top 31 bits (of 32) from port B of cell fv_rom_fold.$add$fv_rom_fold.sv:19$6 ($add).
+Removed top 30 bits (of 32) from port Y of cell fv_rom_fold.$add$fv_rom_fold.sv:19$6 ($add).
+Removed top 30 bits (of 32) from port B of cell fv_rom_fold.$ge$fv_rom_fold.sv:23$8 ($ge).
+Removed top 4 bits (of 18) from port A of cell fv_rom_fold.$mul$fv_rom_fold.sv:24$9 ($mul).
+Removed top 14 bits (of 18) from port B of cell fv_rom_fold.$mul$fv_rom_fold.sv:24$9 ($mul).
+Removed top 4 bits (of 18) from port B of cell fv_rom_fold.$eq$fv_rom_fold.sv:25$12 ($eq).
+Removed top 30 bits (of 32) from wire fv_rom_fold.$add$fv_rom_fold.sv:19$6_Y.
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$553_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$554_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$555_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$556_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$557_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$558_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$559_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$560_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$561_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$562_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$563_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$564_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$565_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$566_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$567_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$568_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$569_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$570_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$571_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$572_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$573_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$574_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$575_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$576_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$577_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$578_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$579_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$580_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$581_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$582_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$583_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$584_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$585_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$586_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$587_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$588_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$589_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$590_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$591_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$592_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$593_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$594_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$595_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$596_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$597_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$598_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$599_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$600_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$601_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$602_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$603_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$604_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$605_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$606_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$607_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$608_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$609_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$610_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$611_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$612_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$613_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$614_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$615_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$616_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$617_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$618_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$619_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$620_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$621_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$622_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$623_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$624_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$625_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$626_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$627_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$628_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$629_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$630_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$631_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$632_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$633_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$634_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$635_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$636_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$637_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$638_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$639_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$640_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$641_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$642_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$643_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$644_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$645_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$646_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$647_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$648_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$649_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$650_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$651_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$652_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$653_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$654_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$655_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$656_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$657_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$658_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$659_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$660_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$661_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$662_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$663_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$664_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$665_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$666_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$667_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$668_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$669_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$670_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$671_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$672_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$673_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$674_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$675_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$676_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$677_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$678_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$679_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$680_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$681_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$682_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$683_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$684_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$685_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$686_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$687_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$688_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$689_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$690_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$691_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$692_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$693_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$694_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$695_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$696_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$697_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$698_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$699_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$700_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$701_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$702_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$703_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$704_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$705_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$706_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$707_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$708_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$709_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$710_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$711_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$712_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$713_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$714_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$715_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$716_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$717_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$718_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$719_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$720_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$721_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$722_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$723_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$724_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$725_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$726_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$727_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$728_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$729_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$730_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$731_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$732_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$733_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$734_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$735_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$736_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$737_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$738_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$739_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$740_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$741_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$742_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$743_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$744_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$745_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$746_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$747_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$748_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$749_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$750_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$751_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$752_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$753_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$754_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$755_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$756_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$757_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$758_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$759_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$760_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$761_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$762_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$763_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$764_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$765_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$766_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$767_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$768_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$769_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$770_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$771_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$772_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$773_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$774_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$775_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$776_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$777_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$778_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$779_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$780_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$781_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$782_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$783_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$784_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$785_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$786_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$787_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$788_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$789_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$790_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$791_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$792_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$793_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$794_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$795_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$796_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$797_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$798_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$799_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$800_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$801_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$802_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$803_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$804_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$805_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$806_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$807_CMP0 ($eq).
+Removed top 1 bits (of 10) from port B of cell tf_ROM.$procmux$808_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$809_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$810_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$811_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$812_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$813_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$814_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$815_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$816_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$817_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$818_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$819_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$820_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$821_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$822_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$823_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$824_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$825_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$826_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$827_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$828_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$829_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$830_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$831_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$832_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$833_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$834_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$835_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$836_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$837_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$838_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$839_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$840_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$841_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$842_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$843_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$844_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$845_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$846_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$847_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$848_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$849_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$850_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$851_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$852_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$853_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$854_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$855_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$856_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$857_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$858_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$859_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$860_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$861_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$862_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$863_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$864_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$865_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$866_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$867_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$868_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$869_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$870_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$871_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$872_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$873_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$874_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$875_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$876_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$877_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$878_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$879_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$880_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$881_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$882_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$883_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$884_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$885_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$886_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$887_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$888_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$889_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$890_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$891_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$892_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$893_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$894_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$895_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$896_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$897_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$898_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$899_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$900_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$901_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$902_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$903_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$904_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$905_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$906_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$907_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$908_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$909_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$910_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$911_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$912_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$913_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$914_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$915_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$916_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$917_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$918_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$919_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$920_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$921_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$922_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$923_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$924_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$925_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$926_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$927_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$928_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$929_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$930_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$931_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$932_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$933_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$934_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$935_CMP0 ($eq).
+Removed top 2 bits (of 10) from port B of cell tf_ROM.$procmux$936_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$937_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$938_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$939_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$940_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$941_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$942_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$943_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$944_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$945_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$946_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$947_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$948_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$949_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$950_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$951_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$952_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$953_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$954_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$955_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$956_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$957_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$958_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$959_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$960_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$961_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$962_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$963_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$964_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$965_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$966_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$967_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$968_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$969_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$970_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$971_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$972_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$973_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$974_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$975_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$976_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$977_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$978_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$979_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$980_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$981_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$982_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$983_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$984_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$985_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$986_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$987_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$988_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$989_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$990_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$991_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$992_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$993_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$994_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$995_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$996_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$997_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$998_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$999_CMP0 ($eq).
+Removed top 3 bits (of 10) from port B of cell tf_ROM.$procmux$1000_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1001_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1002_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1003_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1004_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1005_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1006_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1007_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1008_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1009_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1010_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1011_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1012_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1013_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1014_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1015_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1016_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1017_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1018_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1019_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1020_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1021_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1022_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1023_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1024_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1025_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1026_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1027_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1028_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1029_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1030_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1031_CMP0 ($eq).
+Removed top 4 bits (of 10) from port B of cell tf_ROM.$procmux$1032_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1033_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1034_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1035_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1036_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1037_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1038_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1039_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1040_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1041_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1042_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1043_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1044_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1045_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1046_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1047_CMP0 ($eq).
+Removed top 5 bits (of 10) from port B of cell tf_ROM.$procmux$1048_CMP0 ($eq).
+Removed top 6 bits (of 10) from port B of cell tf_ROM.$procmux$1049_CMP0 ($eq).
+Removed top 6 bits (of 10) from port B of cell tf_ROM.$procmux$1050_CMP0 ($eq).
+Removed top 6 bits (of 10) from port B of cell tf_ROM.$procmux$1051_CMP0 ($eq).
+Removed top 6 bits (of 10) from port B of cell tf_ROM.$procmux$1052_CMP0 ($eq).
+Removed top 6 bits (of 10) from port B of cell tf_ROM.$procmux$1053_CMP0 ($eq).
+Removed top 6 bits (of 10) from port B of cell tf_ROM.$procmux$1054_CMP0 ($eq).
+Removed top 6 bits (of 10) from port B of cell tf_ROM.$procmux$1055_CMP0 ($eq).
+Removed top 6 bits (of 10) from port B of cell tf_ROM.$procmux$1056_CMP0 ($eq).
+Removed top 7 bits (of 10) from port B of cell tf_ROM.$procmux$1057_CMP0 ($eq).
+Removed top 7 bits (of 10) from port B of cell tf_ROM.$procmux$1058_CMP0 ($eq).
+Removed top 7 bits (of 10) from port B of cell tf_ROM.$procmux$1059_CMP0 ($eq).
+Removed top 7 bits (of 10) from port B of cell tf_ROM.$procmux$1060_CMP0 ($eq).
+Removed top 8 bits (of 10) from port B of cell tf_ROM.$procmux$1061_CMP0 ($eq).
+Removed top 8 bits (of 10) from port B of cell tf_ROM.$procmux$1062_CMP0 ($eq).
+Removed top 9 bits (of 10) from port B of cell tf_ROM.$procmux$1063_CMP0 ($eq).
+Removed top 23 address bits (of 32) from memory init port tf_rom_fold.$auto$mem.cc:351:emit$35 ($auto$proc_rom.cc:155:do_switch$33).
+Removed top 9 bits (of 10) from port B of cell tf_rom_fold.$add$tf_rom_fold.v:24$18 ($add).
+Removed top 3 bits (of 17) from port B of cell tf_rom_fold.$sub$tf_rom_fold.v:549$21 ($sub).
+Removed top 1 bits (of 17) from port B of cell tf_rom_fold.$ge$tf_rom_fold.v:550$22 ($ge).
+Removed top 1 bits (of 17) from port B of cell tf_rom_fold.$sub$tf_rom_fold.v:550$23 ($sub).
+Removed top 2 bits (of 17) from port B of cell tf_rom_fold.$ge$tf_rom_fold.v:551$25 ($ge).
+Removed top 2 bits (of 17) from port B of cell tf_rom_fold.$sub$tf_rom_fold.v:551$26 ($sub).
+Removed top 3 bits (of 17) from port B of cell tf_rom_fold.$ge$tf_rom_fold.v:552$28 ($ge).
+Removed top 3 bits (of 17) from port B of cell tf_rom_fold.$sub$tf_rom_fold.v:552$29 ($sub).
+Removed top 3 bits (of 17) from mux cell tf_rom_fold.$ternary$tf_rom_fold.v:552$30 ($mux).
+Removed top 3 bits (of 17) from port Y of cell tf_rom_fold.$sub$tf_rom_fold.v:552$29 ($sub).
+Removed top 3 bits (of 17) from port A of cell tf_rom_fold.$sub$tf_rom_fold.v:552$29 ($sub).
+Removed top 3 bits (of 17) from wire tf_rom_fold.$sub$tf_rom_fold.v:552$29_Y.
+Removed top 3 bits (of 17) from wire tf_rom_fold.t3.
+
+4.10. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \fv_rom_fold..
+Finding unused cells or wires in module \tf_ROM..
+Finding unused cells or wires in module \tf_rom_fold..
+Removed 0 unused cells and 3 unused wires.
+<suppressed ~2 debug messages>
+
+4.11. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+4.12. Executing OPT pass (performing simple optimizations).
+
+4.12.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module fv_rom_fold.
+Optimizing module tf_ROM.
+Optimizing module tf_rom_fold.
+
+4.12.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\fv_rom_fold'.
+Computing hashes of 16 cells of `\fv_rom_fold'.
+Finding duplicate cells in `\fv_rom_fold'.
+Finding identical cells in module `\tf_ROM'.
+Computing hashes of 1026 cells of `\tf_ROM'.
+Finding duplicate cells in `\tf_ROM'.
+Finding identical cells in module `\tf_rom_fold'.
+Computing hashes of 17 cells of `\tf_rom_fold'.
+Finding duplicate cells in `\tf_rom_fold'.
+Removed a total of 0 cells.
+
+4.12.3. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \fv_rom_fold..
+Finding unused cells or wires in module \tf_ROM..
+Finding unused cells or wires in module \tf_rom_fold..
+
+4.12.4. Finished fast OPT passes.
+
+4.13. Printing statistics.
+
+=== fv_rom_fold ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       15 wires
+       87 wire bits
+        5 public wires
+       41 public wire bits
+        2 ports
+       11 port bits
+       14 cells
+        1   $add
+        3   $check
+        1   $dff
+        1   $eq
+        1   $ge
+        3   $lt
+        1   $mod
+        1   $mul
+        2   $mux
+        2 submodules
+        1   tf_ROM
+        1   tf_rom_fold
+
+=== tf_ROM ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     1029 wires
+     1077 wire bits
+        4 public wires
+       26 public wire bits
+        4 ports
+       26 port bits
+     1026 cells
+        1   $dff
+     1022   $eq
+        1   $logic_not
+        1   $mux
+        1   $pmux
+
+=== tf_rom_fold ===
+
+        +----------Local Count, excluding submodules.
+        | 
+       20 wires
+      199 wire bits
+       11 public wires
+      116 public wire bits
+        4 ports
+       26 port bits
+       17 cells
+        1   $add
+        2   $dff
+        3   $ge
+        1   $mem_v2
+        6   $mux
+        4   $sub
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+     1057 fv_rom_fold
+     1026 tf_ROM
+       17 tf_rom_fold
+
+        +----------Count including submodules.
+        | 
+     1064 wires
+     1363 wire bits
+       20 public wires
+      183 public wire bits
+       10 ports
+       63 port bits
+        - memories
+        - memory bits
+        - processes
+     1057 cells
+        2   $add
+        3   $check
+        4   $dff
+     1023   $eq
+        4   $ge
+        1   $logic_not
+        3   $lt
+        1   $mem_v2
+        1   $mod
+        1   $mul
+        9   $mux
+        1   $pmux
+        4   $sub
+        2 submodules
+        1   tf_ROM
+        1   tf_rom_fold
+
+4.14. Executing CHECK pass (checking for obvious problems).
+Checking module fv_rom_fold...
+Checking module tf_ROM...
+Checking module tf_rom_fold...
+Found and reported 0 problems.
+
+5. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `fv_rom_fold'. Setting top module to fv_rom_fold.
+
+5.1. Analyzing design hierarchy..
+Top module:  \fv_rom_fold
+Used module:     \tf_rom_fold
+Used module:     \tf_ROM
+
+5.2. Analyzing design hierarchy..
+Top module:  \fv_rom_fold
+Used module:     \tf_rom_fold
+Used module:     \tf_ROM
+Removed 0 unused modules.
+Module fv_rom_fold directly or indirectly contains formal properties -> setting "keep" attribute.
+
+6. Executing jny backend.
+
+7. Executing RTLIL backend.
+Output filename: ../model/design.il
+
+End of script. Logfile hash: 707dbaf9cd, CPU: user 10.96s system 0.01s, MEM: 38.86 MB peak
+Yosys 0.62 (git sha1 v0.62, g++ 15.2.0 -fPIC -O3)
+Time spent: 98% 2x opt_reduce (10 sec), 0% 2x opt_muxtree (0 sec), ...
