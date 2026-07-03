@@ -23,11 +23,10 @@ repo's CI or scripts.
 
 ## Remaining before submission (post-draft)
 - §2 Background prose (NTT/CFNTT paragraph): DONE.
-- Bibliography: pull exact citekeys (CFNTT, Longa-Naehrig, K-RED-Shift,
-  half-memory TFG, masked-NTT line, Falcon/Kyber specs) — sources listed in
-  related-work.md.
-- Deep-read the Compact-FALCON "twiddle factor compression" paper and diff
-  vs the psi-fold (the one must-diff prior work).
+- Bibliography: DONE (docs/paper/references.bib; paper References section
+  uses citekeys). A few paywalled page-numbers marked [verify at camera-ready].
+- Compact-FALCON diff: DONE at abstract level (complex-FFT compression vs
+  our integer bit-reversed psi-fold); exact mechanism [verify] if PDF obtained.
 - Whole-core PnR (needs the FSM reconstruction finished) for reviewer-grade
   LUT/FF/DSP/BRAM/Fmax; per-module PnR can go in now.
 - Dockerfile + CITATION.cff + docs/artifact.md: DONE; Zenodo DOI = at release.

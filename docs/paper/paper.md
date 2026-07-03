@@ -269,7 +269,21 @@ evaluation.]
 
 # References
 
-[TODO: CFNTT TCHES 2022; Longa–Naehrig 2016; K-RED-Shift / Proth-l (eprint
-2024/1890); half-memory TFG (Electronics 2024); on-the-fly / FALCON TFG;
-masked-NTT verification line (arXiv 2604.*); Falcon/FN-DSA spec; Kyber/ML-KEM
-spec. Full citekeys in docs/related-work.md.]
+Machine-readable entries in `references.bib`. Principal citations:
+
+- **CFNTT** (the retrofitted accelerator): Chen, Yang, Yin, Wei, Liu,
+  *CFNTT: Scalable Radix-2/4 NTT…*, TCHES **2022**(1):94–126,
+  doi:10.46586/tches.v2022.i1.94-126. `[cfntt]`
+- **K-RED** (reduction origin): Longa & Naehrig, *Speeding up the NTT…*,
+  CANS 2016, LNCS 10052:124–139, ePrint 2016/504. `[longa2016kred]`
+- **K-RED-Shift / Proth-ℓ** (K-RED in hardware): ePrint 2024/1890.
+  `[kredshift2024]`
+- **Half-memory / on-the-fly TFGs**: *Efficient Twiddle Factor Generators
+  for NTT*, Electronics 13(16):3128, 2024 `[tfg2024halfmem]`; design tool
+  ePrint 2025/1407 `[ntttool2025]`; *Compact FALCON FFT/NTT Accelerator*,
+  IEEE 2025 `[compactfalcon2025]`.
+- **Verified PQC hardware (masking line)**: arXiv:2604.15249, 2604.20793.
+  `[maskedntt2026a, maskedntt2026b]`
+- **Standards**: ML-KEM FIPS 203 `[fips203]`; Falcon / FN-DSA `[falcon]`.
+- **Tools**: Yosys/SymbiYosys `[yosys]`, Icarus Verilog `[iverilog]`,
+  Z3 `[z3]`.

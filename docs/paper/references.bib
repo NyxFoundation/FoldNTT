@@ -1,0 +1,109 @@
+% Bibliography for the CFNTT-KRED / psi-fold paper.
+% Fields confirmed via dblp / DOI / eprint where noted; a few page numbers
+% for paywalled venues are marked % [verify at camera-ready].
+
+@article{cfntt,
+  author  = {Xiangren Chen and Bohan Yang and Shouyi Yin and Shaojun Wei and Leibo Liu},
+  title   = {{CFNTT}: Scalable Radix-2/4 {NTT} Multiplication Architecture with an Efficient Conflict-free Memory Mapping Scheme},
+  journal = {IACR Transactions on Cryptographic Hardware and Embedded Systems},
+  volume  = {2022},
+  number  = {1},
+  pages   = {94--126},
+  year    = {2022},
+  doi     = {10.46586/tches.v2022.i1.94-126},
+  note    = {Reference artifact (RTL) at \url{https://github.com/xiang-rc/cfntt_ref}}
+}
+
+@inproceedings{longa2016kred,
+  author    = {Patrick Longa and Michael Naehrig},
+  title     = {Speeding up the Number Theoretic Transform for Faster Ideal Lattice-Based Cryptography},
+  booktitle = {Cryptology and Network Security (CANS 2016)},
+  series    = {LNCS},
+  volume    = {10052},
+  pages     = {124--139},
+  year      = {2016},
+  doi       = {10.1007/978-3-319-48965-0_8},
+  note      = {Cryptology ePrint Archive 2016/504; origin of the K-RED reduction}
+}
+
+@misc{kredshift2024,
+  author = {{Authors, see eprint}},
+  title  = {Optimized {FPGA} Architecture for Modular Reduction in {NTT} (K-RED-Shift, Proth-$\ell$ primes)},
+  year   = {2024},
+  note   = {Cryptology ePrint Archive 2024/1890, \url{https://eprint.iacr.org/2024/1890}}
+  % [verify author list + final venue at camera-ready]
+}
+
+@article{tfg2024halfmem,
+  title   = {Efficient Twiddle Factor Generators for {NTT}},
+  journal = {Electronics},
+  volume  = {13},
+  number  = {16},
+  pages   = {3128},
+  year    = {2024},
+  doi     = {10.3390/electronics13163128},
+  note    = {Half-Memory TFG uses the negation symmetry $W^{N/2}=-1$}
+}
+
+@inproceedings{compactfalcon2025,
+  title     = {Compact {FALCON} {FFT}/{NTT} Accelerator for Post-Quantum Cryptography},
+  booktitle = {IEEE (conference; see IEEE Xplore doc 11043460)},
+  year      = {2025},
+  note      = {22\,nm ASIC FFT/IFFT processor with ``twiddle factor compression'' for the complex FFT; \url{https://ieeexplore.ieee.org/document/11043460}}
+  % [verify authors, exact venue, and the compression mechanism at camera-ready]
+}
+
+@misc{ntttool2025,
+  title  = {A Flexible Hardware Design Tool for Fast Fourier and Number-Theoretic Transformation Architectures},
+  year   = {2025},
+  note   = {Cryptology ePrint Archive 2025/1407, \url{https://eprint.iacr.org/2025/1407}}
+}
+
+@misc{maskedntt2026a,
+  title  = {Structural Dependency Analysis for Masked {NTT} Hardware: Scalable Pre-Silicon Verification of Post-Quantum Cryptographic Accelerators},
+  year   = {2026},
+  note   = {arXiv:2604.15249}
+}
+
+@misc{maskedntt2026b,
+  title  = {Fresh Masking Makes {NTT} Pipelines Composable: Machine-Checked Proofs for Arithmetic Masking in {PQC} Hardware},
+  year   = {2026},
+  note   = {arXiv:2604.20793}
+}
+
+@misc{fips203,
+  author       = {{National Institute of Standards and Technology}},
+  title        = {{Module-Lattice-Based Key-Encapsulation Mechanism Standard (ML-KEM)}},
+  howpublished = {FIPS 203},
+  year         = {2024},
+  doi          = {10.6028/NIST.FIPS.203}
+}
+
+@misc{falcon,
+  author       = {Thomas Prest and Pierre-Alain Fouque and Jeffrey Hoffstein and others},
+  title        = {{Falcon}: Fast-Fourier Lattice-based Compact Signatures over {NTRU}},
+  howpublished = {NIST PQC standardization (selected; standardized as FN-DSA, draft FIPS 206)},
+  year         = {2020},
+  note         = {\url{https://falcon-sign.info/}}
+}
+
+@misc{yosys,
+  author       = {Claire Wolf},
+  title        = {{Yosys} Open SYnthesis Suite},
+  howpublished = {\url{https://github.com/YosysHQ/yosys}},
+  note         = {SymbiYosys (sby) for formal flows}
+}
+
+@misc{iverilog,
+  author       = {Stephen Williams},
+  title        = {{Icarus Verilog}},
+  howpublished = {\url{https://github.com/steveicarus/iverilog}}
+}
+
+@misc{z3,
+  author    = {Leonardo de Moura and Nikolaj Bj{\o}rner},
+  title     = {{Z3}: An Efficient {SMT} Solver},
+  booktitle = {TACAS 2008},
+  year      = {2008},
+  doi       = {10.1007/978-3-540-78800-6_24}
+}

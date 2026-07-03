@@ -41,10 +41,19 @@ result, positioned against CFNTT itself rather than against the Kyber SOTA.
   BRAM for base constants; and
   [eprint 2025/1407](https://eprint.iacr.org/2025/1407) — a design tool
   with generic on-the-fly generation).
-- "Compact FALCON FFT/NTT Accelerator"
-  ([ResearchGate](https://www.researchgate.net/publication/393120423))
-  mentions "twiddle factor compression" — **TODO: obtain and diff** (the
-  one potentially-close prior work).
+- "Compact FALCON FFT/NTT Accelerator" (IEEE 2025,
+  [Xplore 11043460](https://ieeexplore.ieee.org/document/11043460)) — a
+  22 nm ASIC **complex FFT/IFFT** processor for Falcon's Gaussian sampling
+  that also runs the NTT on reused resources, and lists "twiddle factor
+  compression" among its optimizations. **Diff:** its compression targets
+  the *complex FFT* twiddle set in a floating-point processor; ours is an
+  *integer NTT bit-reversed negacyclic ROM* reduced by a ψ shift-sub
+  derivation and proven equivalent to the shipped ROM. Different data type,
+  different table structure, different (verified) mechanism. The paper is
+  paywalled and does not publish the exact compression relation; if it turns
+  out to store-half-and-derive by a root multiply, our distinction remains
+  the *multiplier-free* ψ-shift-sub and the machine-checked equivalence.
+  [verify the precise mechanism if access is obtained.]
 
 **Why the ψ-fold is not the Half-Memory TFG**: CFNTT-class in-place
 accelerators store the *negacyclic* table in *bit-reversed* order,
@@ -103,7 +112,9 @@ found", with the full derivation history public on the gallery timeline.
 | C2 ψ-fold for bit-reversed negacyclic ROMs | low (mechanism distinct from negation/OTF-multiplier art) | **must** diff the Compact-FALCON compression (TODO) |
 | C3 FV methodology + real bug | low (masking-dominated field) | emphasize reproducibility + upstream issues |
 
-Remaining TODOs before submission: obtain Compact FALCON FFT/NTT paper;
-skim EMINEM for its Barrett variant details; cite Longa–Naehrig 2016 and
-CFNTT (TCHES 2022) precisely; check hacspec/Jasmin verified *software* NTT
-line of work for the related-work section.
+Resolved: CFNTT and Longa–Naehrig cited precisely (`references.bib`);
+Compact-FALCON diffed at the level the abstract permits (complex-FFT
+compression vs our integer bit-reversed ψ-fold). Remaining TODOs: skim
+EMINEM for its Barrett variant; add the hacspec/Jasmin verified *software*
+NTT line; confirm the Compact-FALCON mechanism if the PDF becomes
+accessible.
