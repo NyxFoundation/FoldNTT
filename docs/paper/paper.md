@@ -68,6 +68,14 @@ We show all three are instances of a construction that generalizes to any
 Proth NTT prime, with a generator that emits and checks per-prime RTL
 (§6), validated on Kyber (q = 3329) exhaustively. §7 reports costs.
 
+**Framing.** The through-line is *verify, don't just test*: a single
+end-to-end functional check against the mathematical transform — which the
+released design lacked — both **caught the bug** the shipped testbench
+missed (§3) and **licensed the aggressive redesign**, since every change is
+proven equivalent before it ships. The paper's primary contribution is this
+verification-guided-design loop applied to a real, published accelerator;
+the multiplier and ROM savings are its concrete payoff.
+
 **Provenance (one honest paragraph).** The ψ-fold ROM was discovered by an
 LLM coding agent while *visually reviewing a 3D floor-plan model* of the
 architecture inside an automated view→implement→verify loop: with the
@@ -134,14 +142,51 @@ underserved, and is what exposes logic bugs like the one in §3.
 
 # 3. A bug in the released inverse transform
 
-The DIF-RN inverse butterfly must apply a ½ scaling per stage (paper Alg. 3;
-the reference Python model applies `op21`). The released radix-2 RTL ships
-`modular_half.v` but **instantiates it nowhere** in `compact_bf.v`; the
-radix-4 PEs do instantiate it. Consequently the released radix-2 inverse
-output is scaled by 2^n = 2¹⁰, and no self-checking testbench catches it (the
-shipped testbench has none). We reproduce this bit-exactly at the full-core
-RTL level and reported it upstream (issue #7; the empty control FSM is #4).
-Our redesign (§4.1) fixes it *for free* as part of the multiplier change.
+Because our methodology (§5) checks the RTL against the *mathematical*
+transform rather than against a testbench, it surfaced a functional bug in
+the released accelerator. We describe it in full: it is both a concrete
+finding worth reporting and the clearest evidence for the "verify, don't
+just test" thesis.
+
+**The defect.** The DIF-RN inverse butterfly must apply a ½ scaling *per
+stage* — the `N⁻¹` of the inverse transform, distributed as one factor of
+2⁻¹ each of the `log₂N` stages (paper Alg. 3; the reference's own Python
+model applies this as `op21`, `x·2⁻¹ mod q = x·(q+1)/2`). The released
+radix-2 RTL **ships `modular_half.v` but instantiates it nowhere** in
+`compact_bf.v`: in inverse mode (`sel=1`) the butterfly computes
+`(u+v, (v−u)·w)` with no halving. The radix-4 PEs (`PE0–PE3.v`) *do*
+instantiate `modular_half`, so the omission is specific to the radix-2 tree.
+
+**Consequence.** Each inverse stage is a factor of 2 too large, so after
+`log₂N = 10` stages the radix-2 inverse output is scaled by **2¹⁰ mod q**:
+`INTT(NTT(x)) = 2¹⁰·x`, not `x`. The forward transform is unaffected. There
+is no partial cancellation — the map is linear, so the error is exactly a
+global constant, which is why it is easy to miss by eyeballing a single
+value and impossible to miss once checked against the spec.
+
+**Why testing didn't catch it.** The shipped testbench (`tb_top.v`) has no
+self-check: it drives stimulus and `$readmemb`s external files, with no
+assertion on the result. There is also no reference vector committed. So the
+design "runs" and produces output; nothing compares that output to
+`INTT(NTT(x)) = x`. A single end-to-end functional assertion — the exact
+thing our verification encodes — is all it would have taken.
+
+**How we found and confirmed it.** The round-trip property
+`INTT(NTT(x)) = x` failed in our SMT/simulation checks; the counterexample
+was a clean global 2¹⁰ factor, which points directly at a missing per-stage
+2⁻¹. We confirmed it bit-exactly at the **full-core RTL level** (`run_stream`
+drives the shipped `compact_bf` through a complete N=1024 inverse and
+reproduces `2¹⁰·x`), localized it to the un-instantiated `modular_half`, and
+reported it upstream (issue #7; the empty control FSM `fsm.v` is the related
+issue #4).
+
+**The fix, and why it is free here.** Reinstating the halving normally costs
+two `modular_half` gates per butterfly. In our K-RED redesign (§4.1) one of
+them is absorbed at *zero* extra cost: the inverse twiddle is already derived
+from the ROM word by an `op21` (to cancel the K-RED factor), and that same
+`op21` supplies the multiply-path ½; only the add-path ½ needs an explicit
+gate. So the multiplier-lean redesign and the bug fix are the same change
+(Lemma 2). Our verified core round-trips exactly (§5, §7).
 
 # 4. Design
 
