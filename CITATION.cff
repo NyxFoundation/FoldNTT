@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: >-
+  ntt-fpga-z3: Verified, multiplier-lean NTT hardware for Proth primes
+message: >-
+  If you use this artifact, please cite it using these metadata.
+type: software
+authors:
+  - name: NyxFoundation
+repository-code: 'https://github.com/NyxFoundation/ntt-fpga-z3'
+abstract: >-
+  Formally verified (z3 + SymbiYosys) retrofit of the released CFNTT radix-2
+  NTT accelerator (TCHES 2022, q = 12289): a 1-multiplier K-RED butterfly
+  that also fixes an inverse-transform bug found in the released RTL, a
+  psi-fold twiddle ROM storing half the words, and a parameterized generator
+  that instantiates and checks the construction for any Proth NTT prime
+  (validated on Kyber q = 3329). Includes the machine-checked proofs, the
+  full-transform RTL simulation, and the upstream bug report.
+keywords:
+  - number-theoretic-transform
+  - post-quantum-cryptography
+  - formal-verification
+  - FPGA
+  - Falcon
+  - Kyber
+  - K-RED
+  - SymbiYosys
+license: MIT

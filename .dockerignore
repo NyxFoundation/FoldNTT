@@ -1,0 +1,7 @@
+proposed/**/sim_*
+proposed/**/fv_*/
+proposed/fullcore/run_ref/
+proposed/fullcore/run_v2/
+proposed/fullcore/run_stream/
+proposed/generator/ky_*.hex
+.git

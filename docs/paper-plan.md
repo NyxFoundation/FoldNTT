@@ -22,7 +22,7 @@ repo's CI or scripts.
 
 
 ## Remaining before submission (post-draft)
-- §2 Background prose (NTT/CFNTT paragraph), inline [TODO]s in the draft.
+- §2 Background prose (NTT/CFNTT paragraph): DONE.
 - Bibliography: pull exact citekeys (CFNTT, Longa-Naehrig, K-RED-Shift,
   half-memory TFG, masked-NTT line, Falcon/Kyber specs) — sources listed in
   related-work.md.
@@ -30,5 +30,9 @@ repo's CI or scripts.
   vs the psi-fold (the one must-diff prior work).
 - Whole-core PnR (needs the FSM reconstruction finished) for reviewer-grade
   LUT/FF/DSP/BRAM/Fmax; per-module PnR can go in now.
-- Zenodo DOI + Dockerfile for artifact evaluation.
+- Dockerfile + CITATION.cff + docs/artifact.md: DONE; Zenodo DOI = at release.
+- FPGA-primitive cost table (open flow, proposed/fpga_cost.sh): DONE; corrected
+  the ROM claim (−79% was generic gates; FPGA distributed-ROM is −11% LUT /
+  −50% bits) and the DSP-for-LUT tradeoff, honestly, in evaluation.md + paper §7.
+- Vivado-on-NixOS setup guide (docs/vivado-nixos.md): DONE; PnR run still TODO.
 - Decide venue split (TCHES full paper vs FMCAD methodology case study).

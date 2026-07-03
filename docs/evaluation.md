@@ -34,20 +34,55 @@ counts are technology-independent gate counts, not LUTs.
 | butterfly | `compact_bf.v` 2820 cells, 297 FF, 3 mults | `compact_bf_v2.v` 2549 cells, 270 FF, 1 mult | −10% cells (**and INTT-correct**) |
 | twiddle ROM | `tf_ROM.v` 7828 cells, 14322 stored bits | `tf_rom_fold.v` 1611 cells, 7168 stored bits | −79% cells, −50% bits |
 
-On FPGA the three multipliers map to DSP48 blocks, so the per-butterfly DSP
-count is 3 → 1; with `d` parallel butterflies the DSP saving is ×d. The ROM
-maps to BRAM/distributed-RAM — halving the stored bits is a direct BRAM/LUT
-saving, recursively −75% with the two-level fold.
+These are technology-independent gate counts and are directionally useful,
+but they *overstate the FPGA benefit for the ROM* (which maps to distributed
+LUT-RAM, not gates). The FPGA-primitive numbers below are the ones the paper
+relies on; read them, not the generic counts, for the ROM.
 
-### PnR (TODO before submission)
+### FPGA primitives (open flow: `yosys synth_xilinx`, xc7 target)
 
-The generic cell counts are directionally strong but a reviewer will want
-**Vivado LUT/FF/DSP/BRAM + Fmax** on the same part CFNTT used (Artix-7),
-v1 vs v2, to confirm (a) fold7 closes timing on the ROM output path, (b) the
-K-RED adder chains don't lengthen the critical path vs the Barrett stages
-they replace. Open-flow alternative: `yosys synth_xilinx` + `nextpnr-xilinx`
-(openXC7) for a first Fmax estimate. Blocked on a synthesizable full core
-(the FSM reconstruction) for whole-core numbers; per-module PnR is doable now.
+The generic gate counts overstate the FPGA story in two honest ways —
+resolved by mapping to real 7-series primitives. Per module, flattened
+(reproduce: `nix shell nixpkgs#yosys --command proposed/fpga_cost.sh`):
+
+| module | LUT | FF | **DSP48** | CARRY4 |
+|---|---|---|---|---|
+| `modular_mul` (Barrett) | 29 | 101 | **3** | 8 |
+| `modular_mul_kred` | 83 | 74 | **1** | 14 |
+| `compact_bf` (ref) | 158 | 297 | **3** | 24 |
+| `compact_bf_v2` | 231 | 270 | **1** | 46 |
+| `tf_ROM` | 241 | 14 | 0 | 0 |
+| `tf_rom_fold` | 214 | 15 | 0 | 23 |
+
+Honest reading (this is why per-FPGA numbers matter):
+
+1. **DSP 3 → 1 holds on real primitives** — the headline. −67% DSP per
+   butterfly, −27% FF on the multiplier. For NTT accelerators, which are
+   almost always **DSP-bound** (many parallel butterflies, DSP is the
+   scarce resource), this is the win that matters, and it scales ×d.
+2. **K-RED trades DSPs for LUT/carry logic** — the multiplier's LUTs go
+   29 → 83, the butterfly's 158 → 231. The shift-add folds are LUT+CARRY4.
+   So on a *LUT-bound* design the trade could be neutral-to-negative; on the
+   usual DSP-bound design it is a clear win. We report both directions
+   rather than only the favourable one.
+3. **The ROM's −79% was generic gates, not FPGA.** Mapped to primitives the
+   ROM stays in distributed LUT-RAM (yosys does not infer BRAM for
+   1023×14 here), so `tf_rom_fold` is only **−11% LUT** (241 → 214), with
+   fold7 adding CARRY4. The real, defensible ROM claim is the **−50% stored
+   bits**, which converts to a BRAM saving only when the table is large
+   enough to be BRAM-mapped (bigger N, or a forced `ram_style="block"`);
+   at Falcon's N=1024 as distributed ROM the LUT win is modest. We correct
+   the paper accordingly.
+
+### Vivado PnR (still TODO for Fmax + BRAM inference)
+
+The open flow gives LUT/FF/DSP/CARRY but not **Fmax** and won't infer BRAM
+the way Vivado does. Vivado numbers on the CFNTT part (Artix-7), v1 vs v2,
+remain the camera-ready item — to (a) confirm fold7 closes timing on the ROM
+path, (b) check the K-RED carry chains don't lengthen the critical path vs
+Barrett, (c) get the BRAM story right for a BRAM-mapped ROM. Setup for
+Vivado-on-NixOS is in `docs/vivado-nixos.md`. Whole-core numbers still need
+the FSM reconstruction (§sim caveat).
 
 ## Reproducibility
 

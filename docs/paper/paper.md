@@ -21,9 +21,9 @@ abstract: |
   mutation-tested non-vacuity — reproducible in CI, which is how the bug
   surfaced. A parameterized generator instantiates all of this for any
   Proth NTT prime; we validate Kyber / ML-KEM (q = 3329) exhaustively as a
-  second instance. Measured on the reference design: multiplier −21% cells
-  / 3→1 DSP, butterfly −10% cells while becoming inverse-correct, twiddle
-  ROM −79% cells / −50% stored bits.
+  second instance. On Artix-7 primitives: 3→1 DSP48 per butterfly and −27%
+  FF on the multiplier (trading DSPs for LUT/carry logic), the butterfly
+  becoming inverse-correct; the twiddle ROM stores −50% bits.
 ---
 
 <!-- Working draft (Phase 7). Numbers and claims trace to docs/*.md and the
@@ -79,10 +79,38 @@ mathematics and proofs stand on their own.
 
 # 2. Background
 
-**NTT and the CFNTT accelerator.** [TODO: 1 paragraph — negacyclic NTT for
-polynomial multiplication in Z_q[x]/(x^N+1); DIT-NR forward / DIF-RN inverse
-butterflies; ψ the 2N-th root; CFNTT's conflict-free 2-bank parity mapping,
-address generators, single shared twiddle ROM. Cite CFNTT.]
+**Negacyclic NTT.** Lattice schemes multiply polynomials in the ring
+`R_q = Z_q[x]/(x^N + 1)`. Naively this is an O(N²) convolution; the NTT
+turns it into O(N log N) by evaluating at the powers of a primitive N-th root
+of unity. The *negacyclic* wrap (the `x^N = −1` quotient) is handled by
+pre/post-weighting with powers of ψ, a primitive **2N-th** root
+(`ψ² = ω`, `ψ^N = −1`), so that a pointwise product in the transform domain
+equals the negacyclic convolution back in `R_q`:
+`a · b = INTT(NTT(a) ⊙ NTT(b))`. A radix-2 transform is a sequence of
+`log₂N` stages of **butterflies**; the forward pass uses decimation-in-time
+in natural-to-bit-reversed order (DIT-NR), the inverse decimation-in-frequency
+in bit-reversed-to-natural order (DIF-RN), which lets both share one
+bit-reversed twiddle table and avoids an explicit reorder. The DIF-RN inverse
+butterfly additionally carries a per-stage ½ scaling (the `N⁻¹` of the
+inverse, distributed one factor of 2⁻¹ per stage), realized by a
+"multiply-by-2⁻¹" operator `op21` — the operator the released radix-2 core
+omits (§3). For Falcon/FN-DSA, `N = 1024`, `q = 12289`, and the reference
+uses `ψ = 7` (a primitive 2048-th root mod q).
+
+**The CFNTT accelerator.** CFNTT [TCHES 2022] is an in-place, memory-based
+radix-2/4 NTT accelerator whose contribution is a **conflict-free memory
+mapping**: coefficients are striped across **two banks** by the parity of
+their address (bank = XOR of address bits, offset = address ≫ 1), and the
+address generator emits, for every radix-2 stage, the pair of operands a
+butterfly consumes. Because the two operands of any stage differ in exactly
+the stage's bit, they always fall in different banks — so both are read (and
+later written) in the same cycle with no bank conflict, keeping the single
+pipelined butterfly fully fed. Twiddles come from **one shared ROM** of
+`N − 1 = 1023` words in the bit-reversed layout `w[i] = ψ^{bitrev(i)}`, read
+via a small twiddle-address generator whose sequence matches the stage/loop
+counters. The released radix-2 RTL is what we retrofit; we leave its memory
+system, address generators and conflict-free mapping untouched, changing only
+the butterfly's arithmetic (§4.1) and the ROM's internals (§4.2).
 
 **Modular reduction.** Barrett and Montgomery are the general-purpose
 choices. For Proth primes q = k·2^m+1, K-RED [Longa–Naehrig 2016] reduces
@@ -183,16 +211,35 @@ construction subsumes the special case.
 
 # 7. Evaluation
 
-**Cost (yosys generic synthesis; PnR is future work — §8).**
+We give both technology-independent (generic gates) and FPGA-primitive
+(`yosys synth_xilinx`, 7-series) counts; the latter is what the claims rest
+on. Fmax and BRAM inference need Vivado and are future work (§8).
 
-| Block | reference | proposed | Δ |
+**FPGA primitives (Artix-7 target).**
+
+| block | LUT | FF | **DSP48** | 
 |---|---|---|---|
-| modular multiplier | 2176 cells, 3 mults | 1724 cells, 1 mult | −21% cells, −67% DSP |
-| butterfly | 2820 cells | 2549 cells (+ inverse-correct) | −10% cells |
-| twiddle ROM | 7828 cells, 14322 bits | 1611 cells, 7168 bits | −79% cells, −50% bits |
+| `modular_mul` (Barrett) → `modular_mul_kred` | 29 → 83 | 101 → **74** | **3 → 1** |
+| `compact_bf` (ref) → `compact_bf_v2` | 158 → 231 | 297 → 270 | **3 → 1** |
+| `tf_ROM` → `tf_rom_fold` | 241 → **214** | 14 → 15 | 0 |
 
-With d parallel butterflies the DSP saving is ×d; the ROM saving is a direct
-BRAM/LUT reduction, ×2 more with the two-level fold.
+Reading the numbers honestly:
+
+- **The headline is DSP: 3 → 1 per butterfly** (−67%), confirmed on real
+  primitives, with −27% FF on the multiplier. NTT accelerators are
+  DSP-bound (the DSP48 count scales with the number of parallel
+  butterflies), so this is the resource that matters, and the saving scales
+  ×d. The butterfly additionally becomes **inverse-correct**, fixing the §3
+  bug at negative area cost in DSPs.
+- **K-RED trades DSP for LUT/carry logic** (multiplier LUTs 29 → 83): a win
+  on the usual DSP-bound design, roughly neutral on a LUT-bound one. We
+  state both.
+- **The twiddle ROM's win on FPGA is the −50% stored bits**, not a −79%
+  logic cut: mapped to distributed LUT-ROM at N=1024 the fold saves only
+  −11% LUT (fold7 adds carry logic); the stored-bit halving converts to a
+  BRAM saving when the table is BRAM-mapped (larger N, or forced). The
+  generic-gate count (7828 → 1611, −79%) is the technology-independent view
+  and overstates the distributed-ROM FPGA benefit.
 
 # 8. Limitations and future work
 
