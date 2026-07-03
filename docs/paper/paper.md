@@ -25,8 +25,10 @@ abstract: |
   FF on the multiplier (trading DSPs for LUT/carry logic), the butterfly
   becoming inverse-correct; the twiddle ROM stores −50% bits. Post-route
   Fmax (openXC7, xc7a100t) shows the K-RED multiplier is Fmax-neutral vs
-  Barrett (~230 MHz), while the corrected butterfly trades ~26% clock for the
-  DSP/memory savings — the right trade on DSP-/memory-bound designs.
+  Barrett (~230 MHz), the corrected butterfly is ~26% slower in isolation, but **at the whole
+  core this dilutes to ~1%** (~137→~136 MHz) since the memory system and
+  control dominate — so the shipped core gets 3→1 DSP, the bug fix and −50%
+  twiddle bits at ≈1% Fmax cost.
 ---
 
 <!-- Working draft (Phase 7). Numbers and claims trace to docs/*.md and the
@@ -374,7 +376,12 @@ critical path vs a single DSP multiply. Net, the design trades DSP and
 twiddle-memory for butterfly Fmax — the right trade on the DSP-/memory-bound
 accelerators these actually are, and a pipelined fold recovers most of it at
 +1 latency. (Vendor Vivado numbers would confirm but are not needed for this
-conclusion.)
+conclusion.) **At the whole core** (`top_poly_mul` vs `top_poly_mul_v2`,
+same elaborating core as the area numbers) the butterfly's −26% dilutes to
+**~−1%**: ~137 vs ~136 MHz, because the conflict-free memory system, address
+generators, networks and FSM — identical in both — dominate the critical
+path. So the shipped core gets 3→1 DSP, −14% FF, the bug fix and −50%
+twiddle bits at ≈1% Fmax cost.
 
 **Positioning vs Falcon-NTT accelerators.** The two closest designs both
 target q = 12289 and *both use Barrett with full twiddle ROMs* — neither of
@@ -438,10 +445,12 @@ design driver.
 
 Whole-core **area** (LUT/FF/DSP/BRAM) and per-module **post-route Fmax** are
 both now measured via the open flow (§7, openXC7 nextpnr-xilinx on
-xc7a100t). The remaining hardware gaps are (a) *whole-core* Fmax, which needs
-the cycle-accurate FSM (the reconstructed one elaborates for area/synthesis
-but is not yet cycle-exact for a timed run), and (b) optional vendor (Vivado)
-confirmation of the open-flow figures. Generic ψ-fold RTL emission and per-prime
+xc7a100t). Whole-core Fmax is also measured (~137 vs ~136 MHz) on the elaborating core
+— static timing needs only the netlist. The remaining hardware gaps are (a) a
+cycle-accurate FSM for a *functional* timed whole-core run (the reconstructed
+FSM elaborates but is not yet cycle-exact — the round-trip does not yet
+return, see fullcore/README), and (b) optional vendor (Vivado) confirmation
+of the open-flow figures. Generic ψ-fold RTL emission and per-prime
 SymbiYosys generation are templated but not yet automatic. The
 visual-discovery provenance is reported, not evaluated (no ablation of the
 agent loop).

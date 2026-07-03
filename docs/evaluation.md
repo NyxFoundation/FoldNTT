@@ -177,6 +177,15 @@ Honest reading — this is the number real PnR was needed for:
    is Fmax-bound, Barrett's DSP path is faster. We report the tradeoff, not
    a one-sided win.
 
+**Whole-core Fmax** (`proposed/pnr/fmax_core.sh`, same elaborating core as
+the area measurement): reference `top_poly_mul` ~137 MHz vs proposed
+`top_poly_mul_v2` ~136 MHz — **essentially unchanged (−1%)**. The butterfly's
+−26% does **not** propagate to the core: the whole-core critical path is
+dominated by the conflict-free memory system, address generators, operand
+networks and FSM (all identical in both), of which the butterfly is only a
+part. So at the level that actually ships, the redesign delivers 3→1 DSP,
+−14% FF, the INTT bug fix and half the twiddle storage at **~1% Fmax cost**.
+
 A pipelined K-RED / fold7 (one extra register each) would recover much of
 the butterfly Fmax at +1–2 cycles latency — a concrete follow-up. Vendor
 (Vivado) numbers would confirm these open-flow figures but are not required

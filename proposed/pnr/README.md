@@ -43,8 +43,17 @@ butterfly trades ~26% clock for the DSP/memory savings (partly the cost of
 *correctness* — the reference omits the §3 halving). A pipelined K-RED/fold
 recovers most of it at +1 latency.
 
+## Whole-core Fmax (`fmax_core.sh`)
+
+The same flow on the whole core (`top_poly_mul` vs `top_poly_mul_v2`, linked
+against `fullcore/fsm_recon.v` to elaborate — static timing needs only the
+netlist) gives ~137 vs ~136 MHz: the butterfly's −26% **dilutes to ~1%** at
+the core, because the memory system / address generators / networks / FSM
+(identical in both) dominate the critical path.
+
 ## Files
 | File | Role |
 |---|---|
-| `fmax.sh` | the reproducible Fmax comparison (median of 3 seeds) |
+| `fmax.sh` | per-module Fmax comparison (best of 3 seeds) |
+| `fmax_core.sh` | whole-core Fmax (reference vs proposed top) |
 | `wrap.py` | register-wrapper generator (reduces a module to clk + 2 pins) |

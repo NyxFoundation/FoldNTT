@@ -58,8 +58,12 @@ repo's CI or scripts.
   proposed/pnr/fmax.sh): multiplier Fmax-NEUTRAL (K-RED ~230 vs Barrett
   ~233 MHz -> 3->1 DSP for free); butterfly ~122 vs ~164 MHz (-26%, partly
   the cost of the #7 correctness fix). Honest DSP/memory-for-Fmax tradeoff
-  now in paper Sec 7/9 + abstract.  Remaining: whole-core Fmax (needs
-  cycle-accurate FSM) + optional Vivado confirmation.
+  now in paper Sec 7/9 + abstract.
+- Whole-core Fmax: DONE (proposed/pnr/fmax_core.sh): ~137 vs ~136 MHz -1%
+  -- the butterfly's -26% DILUTES to ~1% at the core (memory/network/FSM
+  dominate).  So the shipped core gets 3->1 DSP + bug fix + -50% twiddle
+  bits at ~1% Fmax cost.  Remaining: cycle-accurate FSM for a functional
+  timed run + optional Vivado confirmation.
 - KEY INFRA FINDING: Vivado is NOT required for routed Fmax — openXC7
   toolchain-nix (pin tag 0.8.2) gives it fully in nix.
 - Dockerfile + CITATION.cff + docs/artifact.md: DONE; Zenodo DOI = at release.
