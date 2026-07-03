@@ -68,6 +68,12 @@ repo's CI or scripts.
   cols; the 3 rightmost columns were silently clipped off-page), and cleared
   stale "Fmax needs Vivado/future work" lines in Sec 7 that contradicted the
   measured Fmax paragraph.  Full PDF builds clean (9pp, xelatex).
+- IEEE two-column build skeleton (docs/paper/ieee/): pandoc->IEEEtran with
+  a longtable->table* post-process; compiles as a 2-col conference PDF
+  (DATE/ICCAD/DAC/ASP-DAC format), page 1 submission-quality.  Two documented
+  camera-ready tasks remain (Fig.1 vector redraw for the 3.5in column; a few
+  equation-dense prose paragraphs need inline Unicode->LaTeX math).  Both
+  venue-gated; single-column paper.pdf remains the clean reference build.
 - KEY INFRA FINDING: Vivado is NOT required for routed Fmax — openXC7
   toolchain-nix (pin tag 0.8.2) gives it fully in nix.
 - Dockerfile + CITATION.cff + docs/artifact.md: DONE; Zenodo DOI = at release.

@@ -1,0 +1,28 @@
+% IEEEtran two-column tweaks for the single-source paper.md build.
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{amssymb}
+\usepackage{fontspec}
+% Keep IEEE's Times-like main font; use DejaVu Mono for verbatim so Fig.1's
+% box-drawing glyphs render.  Shrink code to fit the 3.5in column.
+\setmonofont{DejaVu Sans Mono}[Scale=0.80]
+\usepackage{fancyvrb}
+\usepackage{fvextra}
+\fvset{fontsize=\scriptsize,breaklines=true,breakanywhere=true}
+\let\oldverbatim\verbatim
+\renewcommand{\verbatim}{\scriptsize\oldverbatim}
+% Map the Unicode symbols used in prose to LaTeX so the Times font renders
+% them (xelatex would otherwise drop missing glyphs silently).
+\usepackage{newunicodechar}
+\newunicodechar{ψ}{$\psi$}\newunicodechar{ω}{$\omega$}
+\newunicodechar{·}{$\cdot$}\newunicodechar{−}{$-$}\newunicodechar{×}{$\times$}
+\newunicodechar{→}{$\rightarrow$}\newunicodechar{§}{\S}\newunicodechar{≡}{$\equiv$}
+\newunicodechar{≈}{$\approx$}\newunicodechar{≥}{$\geq$}\newunicodechar{≫}{$\gg$}
+\newunicodechar{∈}{$\in$}\newunicodechar{⊙}{$\odot$}\newunicodechar{ℓ}{$\ell$}
+\newunicodechar{µ}{$\mu$}\newunicodechar{½}{\textonehalf}\newunicodechar{†}{\dag}
+\newunicodechar{…}{\ldots}\newunicodechar{¹}{\textsuperscript{1}}
+\newunicodechar{²}{\textsuperscript{2}}\newunicodechar{⁰}{\textsuperscript{0}}
+\newunicodechar{⁷}{\textsuperscript{7}}\newunicodechar{⁸}{\textsuperscript{8}}
+\newunicodechar{⁻}{\textsuperscript{-}}\newunicodechar{₀}{\textsubscript{0}}
+\newunicodechar{₁}{\textsubscript{1}}\newunicodechar{₂}{\textsubscript{2}}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}

@@ -3,3 +3,9 @@ __pycache__/
 docs/refs/*.pdf
 docs/paper/paper.pdf
 docs/paper/paper.tex
+ieee/paper_ieee.pdf
+ieee/paper_ieee.tex
+ieee/build.log
+ieee/*.aux
+ieee/*.out
+ieee/*.log
