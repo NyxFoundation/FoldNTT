@@ -71,7 +71,11 @@ source, we make three contributions.
 
 We show all three are instances of a construction that generalizes to any
 Proth NTT prime, with a generator that emits and checks per-prime RTL
-(§6), validated on Kyber (q = 3329) exhaustively. §7 reports costs.
+(§6), validated on Kyber (q = 3329) exhaustively. §7 reports costs measured
+in an open FPGA flow (yosys + openXC7 `nextpnr-xilinx`, Artix-7): at the
+whole core, **3→1 DSP per butterfly and half the twiddle storage at ≈1%
+Fmax cost** (−21% on Compact-FALCON's ENS metric), with the inverse-transform
+bug fixed — no Vivado required.
 
 **Framing.** The through-line is *verify, don't just test*: a single
 end-to-end functional check against the mathematical transform — which the
