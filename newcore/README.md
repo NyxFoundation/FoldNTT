@@ -32,6 +32,10 @@ pulses when finished.
 - **Functional round-trip: PASS** — `tb_ntt_core.v` loads `x`, runs NTT then
   INTT, and checks `INTT(NTT(x)) == x` for all 1024 coefficients under
   iverilog.
+- **NTT cross-validation: PASS** — the post-NTT memory is bit-identical to the
+  golden streaming harness (`../proposed/fullcore/tb_stream.v`) on the same
+  input, so the core computes the *correct* NTT, not merely an invertible one.
+  Both checks: `python3 newcore/run_check.py` (exit 0 iff both pass).
 - **Synthesis (yosys `synth_xilinx`, Artix-7):** **1 DSP48**, **1 RAMB18**,
   ~186 FF, ~600 LUT — fits **Basys 3** (`xc7a35t`: 90 DSP / 50 BRAM / 20.8k
   LUT) with vast headroom.
@@ -50,10 +54,8 @@ iverilog -g2012 -o /tmp/ntt.vvp ntt_core.v tb_ntt_core.v $RTL && vvp /tmp/ntt.vv
 
 ## Next (in progress)
 
-1. Cross-validate the NTT output against the golden streaming result (not just
-   the round-trip identity).
-2. Formal check of the FSM (BMC: `busy`/`done` handshake, address bounds).
-3. openXC7 bitstream + a **Basys 3** self-test wrapper (LFSR stimulus →
+1. Formal check of the FSM (BMC: `busy`/`done` handshake, address bounds).
+2. openXC7 bitstream + a **Basys 3** self-test wrapper (LFSR stimulus →
    round-trip → PASS on an LED / 7-seg), XDC for `xc7a35tcpg236`.
-4. Optional throughput: pipeline within a stage (2-bank conflict-free) for
+3. Optional throughput: pipeline within a stage (2-bank conflict-free) for
    ~1 butterfly/cycle.

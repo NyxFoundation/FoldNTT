@@ -61,8 +61,23 @@ module tb_ntt_core;
 
         repeat (5) @(posedge clk); #1; rst = 0;
 
+        // publish the exact input so the golden streaming harness can run it
+        begin : dumpin
+            integer f, m;
+            f = $fopen("newcore/nc_in.hex", "w");
+            for (m = 0; m < N; m = m + 1) $fdisplay(f, "%h", x[m]);
+            $fclose(f);
+        end
+
         load_mem;
         run(1'b0);      // NTT
+        // dump the post-NTT memory for cross-validation vs tb_stream's golden
+        begin : dumpntt
+            integer f; reg [DW-1:0] vv;
+            f = $fopen("newcore/nc_ntt.hex", "w");
+            for (i = 0; i < N; i = i + 1) begin rd(i[AW-1:0], vv); $fdisplay(f, "%h", vv); end
+            $fclose(f);
+        end
         run(1'b1);      // INTT
         $display("transform done, checking round-trip INTT(NTT(x)) == x (fixed core) ...");
 
