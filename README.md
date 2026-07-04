@@ -1,5 +1,10 @@
 # FoldNTT
 
+<p align="center">
+  <img src="docs/assets/foldntt-arch-3d.png" alt="FoldNTT — 3D floor-plan model of the accelerator" width="440"><br/>
+  <sub><i>The accelerator as a 3D floor-plan — the view in which the ψ-fold ROM idea was first spotted.</i></sub>
+</p>
+
 [![verify](https://github.com/NyxFoundation/FoldNTT/actions/workflows/verify.yml/badge.svg)](https://github.com/NyxFoundation/FoldNTT/actions/workflows/verify.yml)
 
 **A new, formally-verified, DSP-minimal NTT accelerator for Falcon / Proth
