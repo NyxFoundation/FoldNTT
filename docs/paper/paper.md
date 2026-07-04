@@ -548,8 +548,11 @@ number is reproducible from the public repository's CI.
 Everything in this paper is public and CI-checked at
 `github.com/NyxFoundation/ntt-fpga-z3` (the retrofitted RTL, the reference
 CFNTT as a submodule, all proofs, the generator, the FPGA flow, and the
-derivation history). Each class of claim has a one-command reproduction, and
-the GitHub Actions workflow reruns all of them on every push:
+derivation history). A repo `flake.nix` pins the whole toolchain — including
+the exact openXC7 tag — so `nix develop` drops into a shell where every
+script below runs with no further setup. Each class of claim has a
+one-command reproduction, and the GitHub Actions workflow reruns all of them
+on every push:
 
 - **Functional verification** — `proposed/run_all.sh`: the exact-width z3
   proofs (K-RED unit, fold7, generalization), the SymbiYosys proofs
@@ -558,13 +561,16 @@ the GitHub Actions workflow reruns all of them on every push:
 - **Area** (§7) — `proposed/fpga_cost.sh` (per module) and
   `fpga_cost_core.sh` (whole core), via `yosys synth_xilinx`.
 - **Post-route Fmax** (§7) — `proposed/pnr/fmax.sh` and `fmax_core.sh`, via
-  **openXC7** `nextpnr-xilinx` on Artix-7 `xc7a100t` (pin the working tag
-  `github:openXC7/toolchain-nix/0.8.2`); no Vivado, no vendor download.
+  **openXC7** `nextpnr-xilinx` on Artix-7 `xc7a100t`; no Vivado, no vendor
+  download. The `flake.nix` pins the working openXC7 tag
+  (`github:openXC7/toolchain-nix/0.8.2`) and exports `NP`/`CHIPDB`, so under
+  `nix develop` both scripts run argument-free.
 
-A `Dockerfile` pins the whole toolchain for artifact evaluation; a Zenodo DOI
-will be minted from the tagged release. The single source for this paper
-(`docs/paper/paper.md`) builds to both a single-column PDF and a two-column
-IEEE draft (`docs/paper/Makefile`, `docs/paper/ieee/`).
+Both a `flake.nix` (`nix develop`) and a `Dockerfile` pin the whole toolchain
+for artifact evaluation; a Zenodo DOI will be minted from the tagged release.
+The single source for this paper (`docs/paper/paper.md`) builds to both a
+single-column PDF and a two-column IEEE draft (`docs/paper/Makefile`,
+`docs/paper/ieee/`).
 
 # References
 
