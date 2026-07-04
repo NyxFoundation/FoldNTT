@@ -5,12 +5,11 @@ docs/paper/paper.pdf
 docs/paper/paper.tex
 docs/paper/ieee/paper_ieee.*
 docs/paper/ieee/build.log
-newcore/nc_in.hex
-newcore/nc_ntt.hex
+ntt-core/nc_*.hex
 stream_in.hex
 stream_ntt.hex
 stream_rt.hex
-newcore/build/
+ntt-core/build/
 
 # SymbiYosys working dirs (any invention folder) + logs
 **/fv_*/

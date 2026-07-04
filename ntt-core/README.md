@@ -17,12 +17,14 @@ CFNTT control FSM. Owning the FSM removes that gap and turns the weakness
   and already SMT/SbY-verified. Its INTT mode carries the per-stage `1/2`, so
   the transform round-trips to `x` (the released core's bug is absent).
 - **`tf_rom_fold`** — the ψ-fold twiddle ROM (stores half the words).
-- **`ntt_ram`** — one dual-port BRAM (1024×14 → 1×RAMB18) holding the
-  coefficients; host port for load/read while idle.
+- **coefficient RAM** — one inlined dual-port BRAM array (1024×14 → 1×RAMB18);
+  host port for load/read while idle.
 - **own FSM** — nested loops `p`(stage)/`k`(group)/`j`(butterfly), one
   butterfly at a time (sequential → a single dual-port BRAM suffices, and
-  correctness is easy to see and verify). Schedule proven equivalent to the
-  golden streaming harness `../verification/fullcore/tb_stream.v`.
+  correctness is easy to see and verify). The schedule is
+  simulation-validated on every CI run against the golden streaming harness
+  `../verification/fullcore/tb_stream.v` *and* an independent Python golden
+  (the FSM itself is not yet formally verified — see "Next").
 
 `start`+`mode` (0=NTT, 1=INTT) runs a transform on the RAM contents; `done`
 pulses when finished.
@@ -30,12 +32,20 @@ pulses when finished.
 ## Status
 
 - **Functional round-trip: PASS** — `tb_ntt_core.v` loads `x`, runs NTT then
-  INTT, and checks `INTT(NTT(x)) == x` for all 1024 coefficients under
-  iverilog.
+  INTT back-to-back, and checks `INTT(NTT(x)) == x` for all 1024 coefficients
+  under iverilog — on 4 vectors (deterministic ramp + seeded random).
+- **NTT golden: PASS** — every post-NTT memory dump equals an *independent
+  Python golden* built from the reference `tf_ROM.v` table (a common-mode bug
+  in the shared RTL leaves cannot pass this).
+- **INTT golden: PASS** — for INTT-only vectors `y`,
+  `ntt_golden(INTT_rtl(y)) == y`; by bijectivity the core's INTT is the exact
+  inverse of the *golden* NTT, not merely of its own NTT.
 - **NTT cross-validation: PASS** — the post-NTT memory is bit-identical to the
   golden streaming harness (`../verification/fullcore/tb_stream.v`) on the same
-  input, so the core computes the *correct* NTT, not merely an invertible one.
-  Both checks: `python3 ntt-core/run_check.py` (exit 0 iff both pass).
+  input.
+  All checks: `python3 ntt-core/run_check.py` (exit 0 iff all pass; every dump
+  is deleted before and required after each simulation, and simulator exit
+  codes are checked, so stale files can never pass).
 - **Synthesis (yosys `synth_xilinx`, Artix-7):** **1 DSP48**, **1 RAMB18**,
   ~186 FF, ~600 LUT — fits **Basys 3** (`xc7a35t`: 90 DSP / 50 BRAM / 20.8k
   LUT) with vast headroom.
@@ -43,13 +53,8 @@ pulses when finished.
 ## Run
 
 ```sh
-RTL="../kred-butterfly/compact_bf_v2.v ../kred-butterfly/modular_mul_kred.v \
-     ../psi-fold-rom/tf_rom_fold.v \
-     ../cfntt_ref/hardware_code_radix-2/modular_add.v \
-     ../cfntt_ref/hardware_code_radix-2/modular_substraction.v \
-     ../cfntt_ref/hardware_code_radix-2/modular_half.v \
-     ../cfntt_ref/hardware_code_radix-2/common_lib.v"
-iverilog -g2012 -o /tmp/ntt.vvp ntt_core.v tb_ntt_core.v $RTL && vvp /tmp/ntt.vvp
+# from the repo root (the testbench dumps to ntt-core/nc_*.hex)
+python3 ntt-core/run_check.py
 ```
 
 ## On-board demo (Basys 3) — Vivado-free bitstream

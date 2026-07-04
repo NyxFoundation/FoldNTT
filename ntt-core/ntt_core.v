@@ -3,7 +3,7 @@
 // for Falcon (N=1024, q=12289), built around our own verified building blocks:
 //   * compact_bf_v2      — the 1-multiplier K-RED butterfly (latency 6)
 //   * tf_rom_fold        — the psi-fold twiddle ROM (stores half the words)
-//   * ntt_ram            — one dual-port BRAM holding the N coefficients
+//   * an inlined dual-port BRAM array holding the N coefficients
 //   * OUR OWN control FSM — no reverse-engineering of an unreleased FSM, so
 //     the whole core round-trips by construction.
 //
@@ -12,11 +12,13 @@
 // suffices and correctness is easy to see and to verify.  Throughput is
 // ~ (BF_LAT+4) cycles/butterfly; a pipelined 2-bank variant is future work.
 //
-// Schedule (proven equivalent to the streaming harness tb_stream.v):
+// Schedule (simulation-validated on every CI run against the streaming
+// harness tb_stream.v AND an independent Python golden — ntt-core/run_check.py):
 //   NTT  (sel=0): r=1;    for p=9..0: J=2^p; per group w=W[r++];
 //                          per bfly lo=k*2J+j, hi=lo+J
 //   INTT (sel=1): r=1023; for p=0..9: same pairing, w=W[r--]
-// where W[r] = tf_rom_fold(A=r-1).  INTT(NTT(x)) == 2^10 * x.
+// where W[r] = tf_rom_fold(A=r-1).  INTT(NTT(x)) == x EXACTLY — the
+// per-stage halving is fused into compact_bf_v2's INTT mode (no 2^10 residue).
 //
 // Control:  start=1 with mode (0=NTT,1=INTT) begins a transform on the RAM
 // contents; done pulses when finished.  Load/read the RAM through the

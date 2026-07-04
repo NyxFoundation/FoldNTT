@@ -1,10 +1,16 @@
-// Functional round-trip test for ntt_core: load x, run NTT then INTT, and
-// check INTT(NTT(x)) == 2^10 * x (mod q) for every coefficient.  This is the
-// whole-core, banked-memory, own-FSM correctness the reconstructed CFNTT FSM
-// never reached — here it must hold by construction.
+// Functional test for ntt_core: multiple vectors (deterministic ramp + seeded
+// LCG random), each loaded, NTT'd, dumped, INTT'd and checked for the exact
+// round-trip INTT(NTT(x)) == x (compact_bf_v2 fuses the per-stage halving, so
+// there is NO 2^10 residue).  Also runs INTT-only vectors and dumps their
+// outputs so run_check.py can validate the INTT against an independent Python
+// golden (ntt_golden(INTT_rtl(y)) == y).  Every dump goes to ntt-core/ and a
+// failed $fopen is fatal — a silent dump failure must never let stale files
+// pass cross-validation again.
 `timescale 1ns / 1ps
 module tb_ntt_core;
     localparam DW = 14, N = 1024, AW = 10, Q = 12289;
+    localparam NRT = 4;   // round-trip vectors (0 = ramp, 1.. = LCG random)
+    localparam NIV = 2;   // INTT-only vectors (golden-checked in run_check.py)
 
     reg clk = 0, rst;
     always #5 clk = ~clk;
@@ -22,6 +28,41 @@ module tb_ntt_core;
 
     reg [DW-1:0] x [0:N-1];      // reference input
     integer i, errors;
+    reg [31:0] lcg;              // deterministic PRNG (seed fixed below)
+
+    task automatic fill_vector(input integer t);
+        integer m;
+        begin
+            for (m = 0; m < N; m = m + 1)
+                if (t == 0) x[m] = (m*7 + 1) % Q;
+                else begin
+                    lcg  = lcg * 32'd1664525 + 32'd1013904223;
+                    x[m] = lcg % Q;
+                end
+        end
+    endtask
+
+    // open a dump file; a failed open is fatal (never silently drop dumps)
+    function automatic integer fopen_checked(input string name);
+        integer f;
+        begin
+            f = $fopen(name, "w");
+            if (f == 0) begin
+                $display("FATAL: cannot open dump file %0s", name);
+                $fatal(1);
+            end
+            fopen_checked = f;
+        end
+    endfunction
+
+    task automatic dump_x(input string name);
+        integer f, m;
+        begin
+            f = fopen_checked(name);
+            for (m = 0; m < N; m = m + 1) $fdisplay(f, "%h", x[m]);
+            $fclose(f);
+        end
+    endtask
 
     task automatic load_mem;
         integer m;
@@ -52,51 +93,68 @@ module tb_ntt_core;
         end
     endtask
 
-    reg [DW-1:0] got; reg [31:0] want;
+    // dump the current RAM contents through the host port
+    task automatic dump_mem(input string name);
+        integer f; reg [DW-1:0] vv;
+        begin
+            f = fopen_checked(name);
+            for (i = 0; i < N; i = i + 1) begin
+                rd(i[AW-1:0], vv); $fdisplay(f, "%h", vv);
+            end
+            $fclose(f);
+        end
+    endtask
+
+    reg [DW-1:0] got;
+    integer t, vec_errors;
     initial begin : main
         rst = 1; start = 0; mode = 0; h_we = 0; h_addr = 0; h_din = 0;
-        errors = 0;
-        // a simple deterministic, non-trivial input
-        for (i = 0; i < N; i = i + 1) x[i] = (i*7 + 1) % Q;
+        errors = 0; lcg = 32'hF01D_517E;
 
         repeat (5) @(posedge clk); #1; rst = 0;
 
-        // publish the exact input so the golden streaming harness can run it
-        begin : dumpin
-            integer f, m;
-            f = $fopen("newcore/nc_in.hex", "w");
-            for (m = 0; m < N; m = m + 1) $fdisplay(f, "%h", x[m]);
-            $fclose(f);
-        end
-
-        load_mem;
-        run(1'b0);      // NTT
-        // dump the post-NTT memory for cross-validation vs tb_stream's golden
-        begin : dumpntt
-            integer f; reg [DW-1:0] vv;
-            f = $fopen("newcore/nc_ntt.hex", "w");
-            for (i = 0; i < N; i = i + 1) begin rd(i[AW-1:0], vv); $fdisplay(f, "%h", vv); end
-            $fclose(f);
-        end
-        run(1'b1);      // INTT
-        $display("transform done, checking round-trip INTT(NTT(x)) == x (fixed core) ...");
-
-        for (i = 0; i < N; i = i + 1) begin
-            rd(i[AW-1:0], got);
-            want = x[i];  // compact_bf_v2 is the bug-FIXED butterfly: 1/N restored
-            if (got !== want[DW-1:0]) begin
-                if (errors < 12)
-                    $display("  MISMATCH i=%0d got=%0d want=%0d (x=%0d)",
-                             i, got, want, x[i]);
-                errors = errors + 1;
+        // ---- round-trip vectors: NTT then INTT, back-to-back restarts ----
+        for (t = 0; t < NRT; t = t + 1) begin
+            fill_vector(t);
+            dump_x($sformatf("ntt-core/nc_in_%0d.hex", t));
+            load_mem;
+            run(1'b0);      // NTT
+            dump_mem($sformatf("ntt-core/nc_ntt_%0d.hex", t));
+            run(1'b1);      // INTT
+            vec_errors = 0;
+            for (i = 0; i < N; i = i + 1) begin
+                rd(i[AW-1:0], got);
+                if (got !== x[i]) begin
+                    if (vec_errors < 4)
+                        $display("  MISMATCH t=%0d i=%0d got=%0d want=%0d",
+                                 t, i, got, x[i]);
+                    vec_errors = vec_errors + 1;
+                end
             end
+            errors = errors + vec_errors;
+            $display("round-trip vector %0d: %0s", t,
+                     vec_errors == 0 ? "ok" : "FAIL");
         end
-        if (errors == 0) $display("NTT_CORE ROUND-TRIP PASS (N=%0d)", N);
-        else             $display("NTT_CORE ROUND-TRIP FAIL: %0d/%0d mismatches",
-                                  errors, N);
+
+        // ---- INTT-only vectors: dumped for the independent golden check ----
+        for (t = 0; t < NIV; t = t + 1) begin
+            fill_vector(1);  // random (lcg advances each call)
+            dump_x($sformatf("ntt-core/nc_iin_%0d.hex", t));
+            load_mem;
+            run(1'b1);      // INTT only
+            dump_mem($sformatf("ntt-core/nc_intt_%0d.hex", t));
+        end
+
+        if (errors == 0)
+            $display("NTT_CORE ALL PASS (%0d round-trip + %0d INTT-only vectors, N=%0d)",
+                     NRT, NIV, N);
+        else begin
+            $display("NTT_CORE FAIL: %0d mismatches", errors);
+            $fatal(1);
+        end
         $finish;
     end
 
-    // safety timeout
-    initial begin #20000000; $display("TIMEOUT"); $finish; end
+    // safety timeout (10 transforms ~ 7.3 ms simulated; allow ample margin)
+    initial begin #50000000; $display("TIMEOUT"); $fatal(1); end
 endmodule
