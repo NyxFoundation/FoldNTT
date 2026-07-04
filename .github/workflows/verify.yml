@@ -32,6 +32,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y iverilog
       - name: proposed full-transform RTL simulation (iverilog)
         run: uv run proposed/fullcore/run_stream.py
+      - name: newcore — own-FSM whole-core round-trip + NTT cross-validation
+        run: python3 newcore/run_check.py
       - name: generalization — Proth-prime generator (Falcon + Kyber)
         run: uv run proposed/generator/kred_gen.py
       - name: generalization — generated Kyber RTL under iverilog
