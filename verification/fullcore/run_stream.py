@@ -56,9 +56,9 @@ def ntt_golden(x):
 def build():
     out = os.path.join(HERE, "sim_stream")
     srcs = [os.path.join(HERE, "tb_stream.v"),
-            os.path.join(HERE, "..", "kred", "compact_bf_v2.v"),
-            os.path.join(HERE, "..", "kred", "modular_mul_kred.v"),
-            os.path.join(HERE, "..", "rom-fold", "tf_rom_fold.v"),
+            os.path.join(HERE, "..", "..", "kred-butterfly", "compact_bf_v2.v"),
+            os.path.join(HERE, "..", "..", "kred-butterfly", "modular_mul_kred.v"),
+            os.path.join(HERE, "..", "..", "psi-fold-rom", "tf_rom_fold.v"),
             os.path.join(RTL, "modular_add.v"),
             os.path.join(RTL, "modular_substraction.v"),
             os.path.join(RTL, "modular_half.v"),

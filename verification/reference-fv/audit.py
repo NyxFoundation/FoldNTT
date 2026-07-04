@@ -35,7 +35,7 @@ import subprocess
 import sys
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-RTL = os.path.join(HERE, "..", "cfntt_ref", "hardware_code_radix-2")
+RTL = os.path.join(HERE, "..", "..", "cfntt_ref", "hardware_code_radix-2")
 FILES = ["compact_bf.v", "modular_mul.v", "modular_add.v",
          "modular_substraction.v", "address_generator.v",
          "conflict_free_memory_map.v", "tf_address_generator.v",

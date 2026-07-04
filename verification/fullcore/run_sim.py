@@ -108,9 +108,9 @@ def build(variant):
             os.path.join(RTL, "common_lib.v")]
     if variant == "v2":
         srcs += [os.path.join(HERE, "top_poly_mul_v2.v"),
-                 os.path.join(HERE, "..", "kred", "compact_bf_v2.v"),
-                 os.path.join(HERE, "..", "kred", "modular_mul_kred.v"),
-                 os.path.join(HERE, "..", "rom-fold", "tf_rom_fold.v")]
+                 os.path.join(HERE, "..", "..", "kred-butterfly", "compact_bf_v2.v"),
+                 os.path.join(HERE, "..", "..", "kred-butterfly", "modular_mul_kred.v"),
+                 os.path.join(HERE, "..", "..", "psi-fold-rom", "tf_rom_fold.v")]
         defines = ["-DV2"]
     else:
         srcs += [os.path.join(RTL, "top_poly_mul.v"),
