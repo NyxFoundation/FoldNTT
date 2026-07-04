@@ -83,7 +83,7 @@ chains regress the critical path:
 
 ```sh
 nix shell nixpkgs#yosys nixpkgs#nextpnr-xilinx nixpkgs#prjxray --command bash -lc '
-  yosys -p "read_verilog proposed/kred/modular_mul_kred.v; \
+  yosys -p "read_verilog kred-butterfly/modular_mul_kred.v; \
             synth_xilinx -flatten -family xc7 -top modular_mul_kred; \
             write_json mmk.json"
   # nextpnr-xilinx needs a prjxray chipdb for the target part; see its README
@@ -108,7 +108,7 @@ number and tool version in the caption. Keep the yosys generic-cell numbers
 
 1. `synth_xilinx` per module now (Option "pre-check") → first LUT/DSP/BRAM
    table; confirms fold7/K-RED timing direction. **No license, runs today.**
-2. Finish the banked-FSM reconstruction (`proposed/fullcore/fsm_recon.v`) so
+2. Finish the banked-FSM reconstruction (`verification/fullcore/fsm_recon.v`) so
    a whole synthesizable core exists.
 3. Vivado via Option A (or C for CI) on `xc7a200t` → official
    LUT/FF/DSP/BRAM/Fmax, v1 vs v2, for the camera-ready.

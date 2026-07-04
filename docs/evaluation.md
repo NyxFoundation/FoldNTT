@@ -2,7 +2,7 @@
 
 ## §sim — system-level RTL simulation (DONE)
 
-`proposed/fullcore/run_stream.py` drives the **real invented RTL**
+`verification/fullcore/run_stream.py` drives the **real invented RTL**
 (`compact_bf_v2` + `modular_mul_kred` + `tf_rom_fold`) through a full N=1024
 NTT and INTT under iverilog. Result: on every tested vector, the RTL
 `NTT(x)` equals the reference `DIT_NR_NTT` on the real twiddle table, and
@@ -20,12 +20,12 @@ reproduced — the released `fsm.v` is empty (upstream #4). A reconstructed
 FSM (`fsm_recon.v`) driving the banked datapath is included but not yet
 cycle-accurate; it is future work and off the critical path, since the
 inventions are drop-in with identical latency. See
-`proposed/fullcore/README.md`.
+`verification/fullcore/README.md`.
 
 ## §synth — synthesis cost (DONE, generic; PnR pending)
 
 All numbers from `yosys` generic synthesis (`synth -flatten -noabc`),
-reproducible via `proposed/kred/cost_report.ys` and the ROM comparison. Cell
+reproducible via `kred-butterfly/cost_report.ys` and the ROM comparison. Cell
 counts are technology-independent gate counts, not LUTs.
 
 | Block | reference | proposed | Δ |
@@ -43,7 +43,7 @@ relies on; read them, not the generic counts, for the ROM.
 
 The generic gate counts overstate the FPGA story in two honest ways —
 resolved by mapping to real 7-series primitives. Per module, flattened
-(reproduce: `nix shell nixpkgs#yosys --command proposed/fpga_cost.sh`):
+(reproduce: `nix shell nixpkgs#yosys --command fpga/fpga_cost.sh`):
 
 | module | LUT | FF | **DSP48** | CARRY4 |
 |---|---|---|---|---|
@@ -74,7 +74,7 @@ Honest reading (this is why per-FPGA numbers matter):
    at Falcon's N=1024 as distributed ROM the LUT win is real but small. We correct
    the paper accordingly.
 
-### Whole-core area (open flow, `proposed/fpga_cost_core.sh`)
+### Whole-core area (open flow, `fpga/fpga_cost_core.sh`)
 
 Synthesizing the *whole core* (one butterfly + two conflict-free banks + the
 twiddle ROM + address generators + the reconstructed FSM), reference
@@ -143,12 +143,12 @@ depth from the ROM read entirely at +1 latency; we keep the combinational
 version to preserve the drop-in 1-cycle ROM interface, and flag the
 depth/latency trade for PnR.
 
-### Post-route Fmax (open flow, NO Vivado) — `proposed/pnr/fmax.sh`
+### Post-route Fmax (open flow, NO Vivado) — `fpga/fmax.sh`
 
 We DID get routed Fmax without Vivado, via **openXC7's `nextpnr-xilinx`**
 (pin the working tag `github:openXC7/toolchain-nix/0.8.2`; HEAD's flake is
 broken) with the artix7 chipdb, on **xc7a100t**. Each module is
-register-wrapped (`proposed/pnr/wrap.py`: all inputs from an internal shift
+register-wrapped (`fpga/wrap.py`: all inputs from an internal shift
 register, outputs registered + XOR-reduced, so only clk + 2 pins are I/O)
 to time the true register-to-register critical path; best of 3 placer seeds:
 
@@ -177,7 +177,7 @@ Honest reading — this is the number real PnR was needed for:
    is Fmax-bound, Barrett's DSP path is faster. We report the tradeoff, not
    a one-sided win.
 
-**Whole-core Fmax** (`proposed/pnr/fmax_core.sh`, same elaborating core as
+**Whole-core Fmax** (`fpga/fmax_core.sh`, same elaborating core as
 the area measurement): reference `top_poly_mul` ~137 MHz vs proposed
 `top_poly_mul_v2` ~136 MHz — **essentially unchanged (−1%)**. The butterfly's
 −26% does **not** propagate to the core: the whole-core critical path is

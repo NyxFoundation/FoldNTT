@@ -2,7 +2,7 @@
 
 The two Falcon inventions are not one-off tricks: both are instances of a
 construction that applies to **any Proth NTT prime** `q = k·2^m + 1`. The
-generator `proposed/generator/kred_gen.py` derives, verifies and emits them
+generator `generator/kred_gen.py` derives, verifies and emits them
 per prime, demonstrated on **Falcon (q = 12289, FN-DSA)** and **Kyber
 (q = 3329, ML-KEM)** — the two most important lattice PQC moduli.
 
@@ -41,7 +41,7 @@ shift-friendly, store half and derive the rest with a ψ-multiply gate
 - **Kyber K-RED reducer, exhaustive**: `kred_gen.py` checks the fold
   schedule against `169·z mod q` for **all z < q² ≈ 1.1×10⁷**.
 - **Falcon K-RED reducer**: edges + 2M samples (the full 28-bit domain is
-  z3-proven for the hand-written unit in `../proposed/kred/verify_kred.py`).
+  z3-proven for the hand-written unit in `../kred-butterfly/verify_kred.py`).
 - **Generated Kyber RTL** (`modular_mul_kred_kyber.v`, emitted by the
   generator): passes an iverilog sweep of 60k edge+random product pairs
   (`gen_check.py`) computing `169·A·B mod q` at the emitted latency.

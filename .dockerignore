@@ -1,7 +1,7 @@
 proposed/**/sim_*
 proposed/**/fv_*/
-proposed/fullcore/run_ref/
-proposed/fullcore/run_v2/
-proposed/fullcore/run_stream/
-proposed/generator/ky_*.hex
+verification/fullcore/run_ref/
+verification/fullcore/run_v2/
+verification/fullcore/run_stream/
+generator/ky_*.hex
 .git

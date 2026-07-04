@@ -11,3 +11,17 @@ stream_in.hex
 stream_ntt.hex
 stream_rt.hex
 newcore/build/
+
+# SymbiYosys working dirs (any invention folder) + logs
+**/fv_*/
+*_run.log
+run_all.log
+audit_out.json
+audit_bf2_const.v
+verification/fullcore/sim_*
+verification/fullcore/run_*/
+verification/fullcore/*.vcd
+generator/sim_*
+generator/ky_*.hex
+fpga/*.json
+fpga/*.xdc

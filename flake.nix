@@ -1,6 +1,6 @@
 {
   description =
-    "ntt-fpga-z3 — verified NTT hardware retrofit + a Vivado-free FPGA flow";
+    "FoldNTT — a verified, DSP-minimal NTT accelerator + a Vivado-free FPGA flow";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -34,15 +34,15 @@
         ];
         # Wire the env the FPGA scripts read, so they run with no arguments:
         #   nix develop
-        #   proposed/pnr/fmax.sh          # per-module post-route Fmax
-        #   proposed/pnr/fmax_core.sh     # whole-core post-route Fmax
+        #   fpga/fmax.sh          # per-module post-route Fmax
+        #   fpga/fmax_core.sh     # whole-core post-route Fmax
         shellHook = ''
           export NP=${np}
           export CHIPDB=${chipdb}
           export YOSYS=yosys
           echo "openXC7 flow ready:  NP + CHIPDB (xc7a100t) set."
-          echo "  per-module Fmax:  proposed/pnr/fmax.sh"
-          echo "  whole-core Fmax:  proposed/pnr/fmax_core.sh"
+          echo "  per-module Fmax:  fpga/fmax.sh"
+          echo "  whole-core Fmax:  fpga/fmax_core.sh"
         '';
       };
 

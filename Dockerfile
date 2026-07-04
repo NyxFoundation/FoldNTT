@@ -1,6 +1,6 @@
 # Reproducible artifact image for ntt-fpga-z3.
 # Pins the whole open-source verification toolchain (yosys, SymbiYosys,
-# yices, iverilog, z3, uv/python) via Nix so `proposed/run_all.sh` and the
+# yices, iverilog, z3, uv/python) via Nix so `run_all.sh` and the
 # full-transform / generator simulations reproduce every claim in the paper.
 #
 #   docker build -t ntt-fpga-z3 .
@@ -35,4 +35,4 @@ RUN chmod +x /usr/local/bin/entrypoint.sh && \
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
 # Default: run the complete proof/audit/sim suite for both inventions.
-CMD ["bash", "-lc", "proposed/run_all.sh && uv run proposed/fullcore/run_stream.py && uv run proposed/generator/kred_gen.py && uv run proposed/generator/gen_check.py"]
+CMD ["bash", "-lc", "run_all.sh && uv run verification/fullcore/run_stream.py && uv run generator/kred_gen.py && uv run generator/gen_check.py"]

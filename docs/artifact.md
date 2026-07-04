@@ -5,11 +5,11 @@ the scripts that regenerate them:
 
 | Paper claim | Reproduce with |
 |---|---|
-| K-RED reducer == 9·A·B mod q, full domain | `uv run proposed/kred/verify_kred.py` |
-| Butterfly (both modes), ROM ≡ shipped, reset, latency | `proposed/run_all.sh` (SymbiYosys + audits + mutation sweep) |
-| Full transform: NTT == ref, INTT(NTT(x)) == x (and the bug on the ref core) | `uv run proposed/fullcore/run_stream.py` |
-| Generalization: Kyber exhaustive + generated RTL | `uv run proposed/generator/kred_gen.py && uv run proposed/generator/gen_check.py` |
-| Synthesis cost numbers | `yosys proposed/kred/cost_report.ys` (+ the ROM stat in `docs/evaluation.md`) |
+| K-RED reducer == 9·A·B mod q, full domain | `uv run kred-butterfly/verify_kred.py` |
+| Butterfly (both modes), ROM ≡ shipped, reset, latency | `run_all.sh` (SymbiYosys + audits + mutation sweep) |
+| Full transform: NTT == ref, INTT(NTT(x)) == x (and the bug on the ref core) | `uv run verification/fullcore/run_stream.py` |
+| Generalization: Kyber exhaustive + generated RTL | `uv run generator/kred_gen.py && uv run generator/gen_check.py` |
+| Synthesis cost numbers | `yosys kred-butterfly/cost_report.ys` (+ the ROM stat in `docs/evaluation.md`) |
 | Upstream bug (issue #7) reproduced | `uv run bug_intt_halving.py` |
 
 ## One-command reproduction
@@ -20,10 +20,10 @@ Native (Nix):
 git clone --recurse-submodules https://github.com/NyxFoundation/ntt-fpga-z3
 cd ntt-fpga-z3
 nix shell nixpkgs#yosys nixpkgs#sby nixpkgs#yices nixpkgs#iverilog nixpkgs#uv \
-  --command bash -lc 'proposed/run_all.sh \
-    && uv run proposed/fullcore/run_stream.py \
-    && uv run proposed/generator/kred_gen.py \
-    && uv run proposed/generator/gen_check.py'
+  --command bash -lc 'run_all.sh \
+    && uv run verification/fullcore/run_stream.py \
+    && uv run generator/kred_gen.py \
+    && uv run generator/gen_check.py'
 ```
 
 Containerized (no Nix on the host):

@@ -1,6 +1,6 @@
 # docs/ — paper materials
 
-Living write-up of the two verified inventions (`../proposed/`), building
+Living write-up of the two verified inventions (`../verification/`), building
 toward a submission. Produced phase-by-phase by an autonomous loop; every
 claim traces to a CI-reproducible script.
 

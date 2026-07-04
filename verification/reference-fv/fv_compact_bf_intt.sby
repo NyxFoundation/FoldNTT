@@ -1,0 +1,27 @@
+[tasks]
+bmc
+
+[options]
+# BMC only: the assertions are time-local (window <= 6 cycles + guard) and
+# the initial state is unconstrained, so depth-14 BMC covers every window of
+# every execution -- a complete unbounded proof by itself.  Plain k-induction
+# does not converge here without invariant strengthening, and adds nothing.
+bmc: mode bmc
+bmc: depth 14
+
+[engines]
+smtbmc yices
+
+[script]
+read -formal -sv fv_compact_bf.sv
+read -formal compact_bf.v
+read -formal abstract_units.v
+read -formal common_lib.v
+prep -top fv_compact_bf_intt
+
+[files]
+fv_compact_bf.sv
+golden.vh
+abstract_units.v
+../../cfntt_ref/hardware_code_radix-2/compact_bf.v
+../../cfntt_ref/hardware_code_radix-2/common_lib.v

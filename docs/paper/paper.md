@@ -554,13 +554,13 @@ script below runs with no further setup. Each class of claim has a
 one-command reproduction, and the GitHub Actions workflow reruns all of them
 on every push:
 
-- **Functional verification** — `proposed/run_all.sh`: the exact-width z3
+- **Functional verification** — `run_all.sh`: the exact-width z3
   proofs (K-RED unit, fold7, generalization), the SymbiYosys proofs
   (butterfly miter, ROM equivalence, reset/CDC, mutation non-vacuity), and
   the iverilog full-transform round-trip.
-- **Area** (§7) — `proposed/fpga_cost.sh` (per module) and
+- **Area** (§7) — `fpga/fpga_cost.sh` (per module) and
   `fpga_cost_core.sh` (whole core), via `yosys synth_xilinx`.
-- **Post-route Fmax** (§7) — `proposed/pnr/fmax.sh` and `fmax_core.sh`, via
+- **Post-route Fmax** (§7) — `fpga/fmax.sh` and `fmax_core.sh`, via
   **openXC7** `nextpnr-xilinx` on Artix-7 `xc7a100t`; no Vivado, no vendor
   download. The `flake.nix` pins the working openXC7 tag
   (`github:openXC7/toolchain-nix/0.8.2`) and exports `NP`/`CHIPDB`, so under

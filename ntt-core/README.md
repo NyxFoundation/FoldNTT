@@ -1,0 +1,77 @@
+# newcore — our own minimal, verified NTT/INTT accelerator
+
+A **new**, self-contained single-butterfly NTT/INTT core for Falcon
+(N=1024, q=12289), built from our verified blocks but with **our own control
+FSM** — so, unlike the reverse-engineered CFNTT FSM (`../verification/fullcore/`,
+which elaborates but does not round-trip), this whole core **round-trips by
+construction**: `INTT(NTT(x)) == x`.
+
+Why a fresh core: the reproducibility gap in the retrofit was the *unreleased*
+CFNTT control FSM. Owning the FSM removes that gap and turns the weakness
+(a core that only round-trips at the streaming/module level) into a strength
+(a complete accelerator that runs end-to-end and fits a hobbyist board).
+
+## Design (deliberately simple)
+
+- **`compact_bf_v2`** — the 1-multiplier K-RED butterfly (latency 6), reused
+  and already SMT/SbY-verified. Its INTT mode carries the per-stage `1/2`, so
+  the transform round-trips to `x` (the released core's bug is absent).
+- **`tf_rom_fold`** — the ψ-fold twiddle ROM (stores half the words).
+- **`ntt_ram`** — one dual-port BRAM (1024×14 → 1×RAMB18) holding the
+  coefficients; host port for load/read while idle.
+- **own FSM** — nested loops `p`(stage)/`k`(group)/`j`(butterfly), one
+  butterfly at a time (sequential → a single dual-port BRAM suffices, and
+  correctness is easy to see and verify). Schedule proven equivalent to the
+  golden streaming harness `../verification/fullcore/tb_stream.v`.
+
+`start`+`mode` (0=NTT, 1=INTT) runs a transform on the RAM contents; `done`
+pulses when finished.
+
+## Status
+
+- **Functional round-trip: PASS** — `tb_ntt_core.v` loads `x`, runs NTT then
+  INTT, and checks `INTT(NTT(x)) == x` for all 1024 coefficients under
+  iverilog.
+- **NTT cross-validation: PASS** — the post-NTT memory is bit-identical to the
+  golden streaming harness (`../verification/fullcore/tb_stream.v`) on the same
+  input, so the core computes the *correct* NTT, not merely an invertible one.
+  Both checks: `python3 ntt-core/run_check.py` (exit 0 iff both pass).
+- **Synthesis (yosys `synth_xilinx`, Artix-7):** **1 DSP48**, **1 RAMB18**,
+  ~186 FF, ~600 LUT — fits **Basys 3** (`xc7a35t`: 90 DSP / 50 BRAM / 20.8k
+  LUT) with vast headroom.
+
+## Run
+
+```sh
+RTL="../kred-butterfly/compact_bf_v2.v ../kred-butterfly/modular_mul_kred.v \
+     ../psi-fold-rom/tf_rom_fold.v \
+     ../cfntt_ref/hardware_code_radix-2/modular_add.v \
+     ../cfntt_ref/hardware_code_radix-2/modular_substraction.v \
+     ../cfntt_ref/hardware_code_radix-2/modular_half.v \
+     ../cfntt_ref/hardware_code_radix-2/common_lib.v"
+iverilog -g2012 -o /tmp/ntt.vvp ntt_core.v tb_ntt_core.v $RTL && vvp /tmp/ntt.vvp
+```
+
+## On-board demo (Basys 3) — Vivado-free bitstream
+
+`basys3_ntt_selftest.v` self-checks `INTT(NTT(x))==x` on-chip and shows the
+verdict on the LEDs (led0=done, led1=PASS, led2=FAIL, led[15:6]=mismatch
+count).  It runs the core on a **/2 BUFG clock (50 MHz)**; post-route the core
+clock closes at ~102 MHz, so 50 MHz has 2x margin.  Simulated PASS
+(`tb_selftest.v`, with the `sim_prims.v` BUFG stub).
+
+```sh
+bash ntt-core/bit.sh          # yosys -> openXC7 nextpnr -> FASM -> prjxray -> .bit
+# -> ntt-core/build/design.bit  (Xilinx BIT for xc7a35tcpg236-1, NO Vivado)
+openFPGALoader -b basys3 ntt-core/build/design.bit
+```
+
+Verified reproducibly: the full flow (synth, place & route ~102 MHz core,
+FASM, fasm2frames, xc7frames2bit) produces a valid 2.19 MB bitstream.
+
+## Next (optional)
+
+1. Formal check of the FSM (BMC: `busy`/`done` handshake, address bounds).
+2. Throughput: pipeline within a stage (2-bank conflict-free) for ~1
+   butterfly/cycle.
+3. A 7-segment PASS/FAIL display for a nicer demo.

@@ -49,8 +49,8 @@ This is why the released radix-2 core is wrong (upstream issue #7): it omits
 this ½, so its INTT output is scaled by 2^n. The fix costs two op21 gates
 (shift-add), one on the ROM output and one on the add path.
 
-*Machine check:* `../proposed/kred/fv_bf_v2_intt.sby` (RTL butterfly ≡ the
-fused spec), `kred_math.py` and `../proposed/fullcore/run_stream.py`
+*Machine check:* `../kred-butterfly/fv_bf_v2_intt.sby` (RTL butterfly ≡ the
+fused spec), `kred_math.py` and `../verification/fullcore/run_stream.py`
 (full-transform round-trip exact).
 
 ---
@@ -96,7 +96,7 @@ commutative, so the derived word ψ·((k^F)⁻¹·w_rom[j]) = (k^F)⁻¹·(ψ·w
 w_rom[N/2+j]·(operand) as required. ∎
 
 *Machine check:* `rom_fold_math.py` (9⁻¹ composition) and
-`../proposed/fullcore/run_stream.py` (the folded ROM + K-RED butterfly
+`../verification/fullcore/run_stream.py` (the folded ROM + K-RED butterfly
 round-trip exact end-to-end).
 
 ---

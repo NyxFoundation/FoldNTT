@@ -9,9 +9,9 @@ case study). Every phase lands in docs/ as it completes.
 |---|-------|--------|--------|
 | 1 | Related-work sweep (novelty check: K-RED in hardware, twiddle generation/compression, verified NTT hardware, Falcon q=12289 accelerators) | `docs/related-work.md` | DONE (deep-read TODOs listed inside) |
 | 2 | Novelty assessment; adjust claims | claims section in `docs/related-work.md` | DONE (C1-C3 adjusted) |
-| 3 | FSM reconstruction + full-core RTL simulation (verilator) vs golden polymult | `proposed/fullcore/` + `docs/evaluation.md` §sim | DONE (stream sim PASS; banked-FSM recon = future work) |
+| 3 | FSM reconstruction + full-core RTL simulation (verilator) vs golden polymult | `verification/fullcore/` + `docs/evaluation.md` §sim | DONE (stream sim PASS; banked-FSM recon = future work) |
 | 4 | Synthesis numbers (yosys synth_xilinx open flow; PnR if toolchain available) | `docs/evaluation.md` §synth | DONE generic; PnR = TODO |
-| 5 | Generalization: parameterized generator (Proth-prime q → KRED constants + folded ROM + auto-proofs; Kyber q=3329 as second instance) | `proposed/generator/` + `docs/generalization.md` | DONE (Falcon+Kyber, Kyber exhaustive + RTL) |
+| 5 | Generalization: parameterized generator (Proth-prime q → KRED constants + folded ROM + auto-proofs; Kyber q=3329 as second instance) | `generator/` + `docs/generalization.md` | DONE (Falcon+Kyber, Kyber exhaustive + RTL) |
 | 6 | Formal lemma write-ups (psi-fold lemma, K-RED bounds) | `docs/lemmas.md` | DONE (4 lemmas, numerically re-checked) |
 | 7 | Manuscript draft (abstract → intro → background → design → verification → evaluation → related → conclusion) | `docs/paper/paper.md` | DONE (full draft; section TODOs + refs inline) |
 
@@ -52,14 +52,14 @@ repo's CI or scripts.
   twiddle ROMs + Barrett NTT reduction, xc7a100t @134MHz.  Neither of our
   contributions overlaps it; strengthens novelty (latest Falcon-NTT still
   full-ROM + Barrett).
-- Whole-core AREA: DONE (proposed/fpga_cost_core.sh): DSP 3->1, FF -14%,
+- Whole-core AREA: DONE (fpga/fpga_cost_core.sh): DSP 3->1, FF -14%,
   LUT +5%, BRAM unchanged.
 - Post-route Fmax: DONE without Vivado (openXC7 nextpnr-xilinx on xc7a100t,
-  proposed/pnr/fmax.sh): multiplier Fmax-NEUTRAL (K-RED ~230 vs Barrett
+  fpga/fmax.sh): multiplier Fmax-NEUTRAL (K-RED ~230 vs Barrett
   ~233 MHz -> 3->1 DSP for free); butterfly ~122 vs ~164 MHz (-26%, partly
   the cost of the #7 correctness fix). Honest DSP/memory-for-Fmax tradeoff
   now in paper Sec 7/9 + abstract.
-- Whole-core Fmax: DONE (proposed/pnr/fmax_core.sh): ~137 vs ~136 MHz -1%
+- Whole-core Fmax: DONE (fpga/fmax_core.sh): ~137 vs ~136 MHz -1%
   -- the butterfly's -26% DILUTES to ~1% at the core (memory/network/FSM
   dominate).  So the shipped core gets 3->1 DSP + bug fix + -50% twiddle
   bits at ~1% Fmax cost.  Remaining: cycle-accurate FSM for a functional
@@ -85,11 +85,11 @@ repo's CI or scripts.
 - KEY INFRA FINDING: Vivado is NOT required for routed Fmax — openXC7
   toolchain-nix (pin tag 0.8.2) gives it fully in nix.
 - Dockerfile + CITATION.cff + docs/artifact.md: DONE; Zenodo DOI = at release.
-- FPGA-primitive cost table (open flow, proposed/fpga_cost.sh): DONE; corrected
+- FPGA-primitive cost table (open flow, fpga/fpga_cost.sh): DONE; corrected
   the ROM claim (−79% was generic gates; FPGA distributed-ROM is −11% LUT /
   −50% bits) and the DSP-for-LUT tradeoff, honestly, in evaluation.md + paper §7.
 - Vivado-on-NixOS setup guide (docs/vivado-nixos.md): DONE; PnR run still TODO.
-- Open-flow FPGA-primitive + logic-depth (ltp) numbers: DONE (proposed/fpga_cost.sh).
+- Open-flow FPGA-primitive + logic-depth (ltp) numbers: DONE (fpga/fpga_cost.sh).
   Depth analysis DROVE an fold7 redesign (3 chained subs -> parallel compare +
   1 sub; LTP 31->26, area down, DSP-free), fully re-verified.
 - Bibliography + Compact-FALCON diff: DONE (docs/paper/references.bib).

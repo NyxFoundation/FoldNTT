@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 title: >-
-  ntt-fpga-z3: Verified, multiplier-lean NTT hardware for Proth primes
+  FoldNTT: A verified, DSP-minimal NTT accelerator for Proth primes
 message: >-
   If you use this artifact, please cite it using these metadata.
 type: software
@@ -8,13 +8,15 @@ authors:
   - name: NyxFoundation
 repository-code: 'https://github.com/NyxFoundation/ntt-fpga-z3'
 abstract: >-
-  Formally verified (z3 + SymbiYosys) retrofit of the released CFNTT radix-2
-  NTT accelerator (TCHES 2022, q = 12289): a 1-multiplier K-RED butterfly
-  that also fixes an inverse-transform bug found in the released RTL, a
-  psi-fold twiddle ROM storing half the words, and a parameterized generator
-  that instantiates and checks the construction for any Proth NTT prime
-  (validated on Kyber q = 3329). Includes the machine-checked proofs, the
-  full-transform RTL simulation, and the upstream bug report.
+  FoldNTT is a new, formally verified (z3 + SymbiYosys), DSP-minimal NTT
+  accelerator for Falcon / Proth primes (q = 12289). Two folding ideas — a
+  1-multiplier K-RED butterfly and a psi-fold twiddle ROM storing half the
+  words — plus an own-FSM banked core that round-trips end-to-end and runs on
+  a Digilent Basys 3 via a fully Vivado-free open flow (yosys + openXC7). It
+  began as a verification study of the CFNTT reference (TCHES 2022), which
+  found and reported an inverse-transform bug that the redesign fixes. A
+  parameterized generator instantiates the construction for any Proth prime
+  (validated on Kyber q = 3329).
 keywords:
   - number-theoretic-transform
   - post-quantum-cryptography

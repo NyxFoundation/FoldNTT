@@ -11,33 +11,33 @@ jobs:
           submodules: true
       - uses: astral-sh/setup-uv@v5
       - name: formal verification (must print VERIFIED)
-        run: uv run verify_radix2.py
+        run: uv run verification/verify_radix2.py
       - name: INTT halving finding (reproduce + validate fix)
-        run: uv run bug_intt_halving.py
+        run: uv run verification/bug_intt_halving.py
       - name: non-vacuity mutation tests
-        run: uv run mutation_test.py
+        run: uv run verification/mutation_test.py
       - name: deep full-basis N=1024 round-trip
-        run: DEEP_VERIFY=1 uv run verify_radix2.py
+        run: DEEP_VERIFY=1 uv run verification/verify_radix2.py
       - name: proposed CFNTT-KRED — bit-exact math + e2e polymult
-        run: uv run proposed/kred/kred_math.py
+        run: uv run kred-butterfly/kred_math.py
       - name: proposed CFNTT-KRED — z3 full-domain reduction proof
-        run: uv run proposed/kred/verify_kred.py
+        run: uv run kred-butterfly/verify_kred.py
       - name: proposed psi-fold ROM — math + e2e
-        run: uv run proposed/rom-fold/rom_fold_math.py
+        run: uv run psi-fold-rom/rom_fold_math.py
       - name: proposed psi-fold ROM — z3 fold proof
-        run: uv run proposed/rom-fold/verify_rom_fold.py
+        run: uv run psi-fold-rom/verify_rom_fold.py
       - name: proposed psi-fold ROM — generated RTL in sync
-        run: uv run proposed/rom-fold/gen_rom_fold.py && git diff --exit-code proposed/rom-fold/tf_rom_fold.v
+        run: uv run psi-fold-rom/gen_rom_fold.py && git diff --exit-code psi-fold-rom/tf_rom_fold.v
       - name: install iverilog for full-core sim
         run: sudo apt-get update && sudo apt-get install -y iverilog
       - name: proposed full-transform RTL simulation (iverilog)
-        run: uv run proposed/fullcore/run_stream.py
+        run: uv run verification/fullcore/run_stream.py
       - name: newcore — own-FSM whole-core round-trip + NTT cross-validation
-        run: python3 newcore/run_check.py
+        run: python3 ntt-core/run_check.py
       - name: generalization — Proth-prime generator (Falcon + Kyber)
-        run: uv run proposed/generator/kred_gen.py
+        run: uv run generator/kred_gen.py
       - name: generalization — generated Kyber RTL under iverilog
-        run: uv run proposed/generator/gen_check.py
+        run: uv run generator/gen_check.py
       - name: paper builds (pandoc -> LaTeX skeleton)
         run: |
           sudo apt-get update && sudo apt-get install -y pandoc
@@ -67,10 +67,10 @@ jobs:
           done
           tar xf oss.tgz
           echo "$PWD/oss-cad-suite/bin" >> "$GITHUB_PATH"
-      - name: SymbiYosys + LEC + audits (BMC tasks; see yosys/README.md)
-        run: MODE=bmc yosys/run_all.sh
+      - name: SymbiYosys + LEC + audits (BMC tasks; see verification/reference-fv/README.md)
+        run: MODE=bmc verification/reference-fv/run_all.sh
       - name: FPGA-primitive cost (per-module + whole-core, synth_xilinx)
-        run: proposed/fpga_cost.sh && proposed/fpga_cost_core.sh
+        run: fpga/fpga_cost.sh && fpga/fpga_cost_core.sh
       - uses: astral-sh/setup-uv@v5
       - name: proposed suite — RTL proofs, audits, mutation sweep
-        run: proposed/run_all.sh
+        run: run_all.sh
