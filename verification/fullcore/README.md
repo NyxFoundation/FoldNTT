@@ -1,6 +1,6 @@
 # Full-core / system-level RTL evidence
 
-The module-level proofs (`../kred/`, `../rom-fold/`) establish each invented
+The module-level proofs (`../../kred-butterfly/`, `../../psi-fold-rom/`) establish each invented
 block correct for all inputs. This folder raises that to the transform level
 under a real Verilog simulator.
 

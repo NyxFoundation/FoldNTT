@@ -1,6 +1,6 @@
 // Compositional proof of the proposed butterfly compact_bf_v2 (leaf units
 // abstracted per abstract_units_v2.v; justifications: fv_kred.sby and
-// ../yosys/fv_units.sby).  Inputs stream every cycle through the real
+// ../verification/reference-fv/fv_units.sby).  Inputs stream every cycle through the real
 // DFF/shift_4 fabric; latency 6, both modes.  With the ROM storing
 // W = 9^-1 * w these RTL-level identities are exactly the true butterflies:
 //

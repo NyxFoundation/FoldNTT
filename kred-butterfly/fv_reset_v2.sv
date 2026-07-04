@@ -1,7 +1,7 @@
 // Reset behaviour of the PROPOSED butterfly, with the REAL leaf units
 // (modular_mul_kred included): while rst is asserted, both outputs are 0
 // in either mode, from ANY (symbolic) register state — the async-reset
-// analogue of ../../yosys/fv_reset.sv for compact_bf_v2.
+// analogue of ../verification/reference-fv/fv_reset.sv for compact_bf_v2.
 // (Power-up X robustness is the per-mode feed-forward audit in audit_v2.py.)
 module fv_reset_v2 (
     input clk,

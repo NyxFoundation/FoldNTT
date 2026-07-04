@@ -3,7 +3,7 @@ bmc
 
 [options]
 # BMC only — complete for time-local assertions from unconstrained initial
-# state (see ../yosys/README.md).
+# state (see ../verification/reference-fv/README.md).
 bmc: mode bmc
 bmc: depth 14
 

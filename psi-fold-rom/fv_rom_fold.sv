@@ -14,7 +14,7 @@
 // Legal addresses are A < 1023 (assumed below): the shipped tf_ROM has no
 // case entry for A == 1023 (it holds its previous word) while the fold ROM
 // wraps its internal index to 0 — a divergence only on an address the
-// hardware NEVER emits: ../../yosys/fv_agu.sby proves tf_address_generator
+// hardware NEVER emits: ../verification/reference-fv/fv_agu.sby proves tf_address_generator
 // keeps its address inside [0, 1023) in both modes.
 module fv_rom_fold (
     input clk,

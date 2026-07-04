@@ -61,6 +61,6 @@ technique for the Proth-prime NTT family, plus a tool that instantiates it."
 ## Remaining (TODO)
 
 - Emit the ψ-fold ROM RTL generically (currently emitted by hand for Falcon
-  in `../rom-fold/gen_rom_fold.py`; the plan is computed for any prime).
+  in `../psi-fold-rom/gen_rom_fold.py`; the plan is computed for any prime).
 - A generated SymbiYosys harness per prime (the Falcon harnesses are the
   template; the z3 congruence-identity encoding generalizes directly).

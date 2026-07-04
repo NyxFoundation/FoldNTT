@@ -64,7 +64,7 @@ architecturally, with **zero correction hardware** on the hot path:
 | PWM (both operands are data) | double-pass through the same unit with the stored constant 81⁻¹ = 11227 | `9·(9xy)·81⁻¹ = xy` — exact |
 
 The ROM keeps the exact CFNTT layout and size; only its *contents* are
-scaled. (The companion invention in [`../rom-fold/`](../rom-fold/) then
+scaled. (The companion invention in [`../psi-fold-rom/`](../psi-fold-rom/) then
 halves the ROM itself.)
 
 ## Files
@@ -76,7 +76,7 @@ halves the ROM itself.)
 | `kred_math.py` | bit-exact model; e2e `INTT(NTT(x))==x` and full negacyclic polymult vs golden, on the real (9⁻¹-scaled) `tf_ROM.v` contents |
 | `verify_kred.py` | z3, FULL 28-bit domain, divider-free: width bounds + the linear congruence identities `3c+6q = d+c₁q`, `3d+q = e+d₁q` + reduced output |
 | `fv_kred.sv/.sby` | SymbiYosys: RTL pipeline == the fold spec at latency 4 (BMC + k-induction) + reset; with the z3 proof this gives `P_out == 9AB mod q` |
-| `fv_bf_v2.sv`, `fv_bf_v2_{ntt,intt}.sby` | compositional butterfly proofs (leaf units abstracted per `abstract_units_v2.v`, justified by `fv_kred` + `../../yosys/fv_units`) |
+| `fv_bf_v2.sv`, `fv_bf_v2_{ntt,intt}.sby` | compositional butterfly proofs (leaf units abstracted per `abstract_units_v2.v`, justified by `fv_kred` + `../verification/reference-fv/fv_units`) |
 | `fv_reset_v2.sv/.sby` | async reset forces both outputs to 0 from ANY state, real leaf units (BMC + k-induction) |
 | `golden_v2.vh`, `abstract_units_v2.v` | golden operators / behavioural abstractions |
 | `cost_report.ys/.txt` | yosys generic-synth cost comparison |

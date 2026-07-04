@@ -2,7 +2,7 @@
 // every cycle, P_out at time t == (9 * A * B) mod q sampled 4 cycles
 // earlier, and the output stays < q.  Also: rst forces P_out to 0.
 //
-// (Same complete-BMC structure as ../yosys/fv_modular_mul.sv: time-local
+// (Same complete-BMC structure as ../verification/reference-fv/fv_modular_mul.sv: time-local
 // assertions + unconstrained initial state => depth guard+4+1 covers every
 // window of every execution.)
 module fv_kred (

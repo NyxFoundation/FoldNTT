@@ -7,7 +7,7 @@ bmc
 # execution — a complete unbounded proof by itself.  Plain k-induction
 # does not converge here (frozen REN=0 windows admit spurious states)
 # and adds nothing — same situation as the butterfly harnesses, see
-# ../../yosys/README.md.
+# ../verification/reference-fv/README.md.
 bmc: mode bmc
 bmc: depth 6
 

@@ -85,7 +85,7 @@ validated end-to-end in `rom_fold_math.py`.
 **Corner cases.** `A = 1023` is the one input where the two ROMs differ
 (the shipped ROM's case statement holds its previous word; the fold ROM
 wraps its internal index) — it is excluded by assumption, and that
-assumption is itself PROVEN elsewhere: `../../yosys/fv_agu.sby` shows
+assumption is itself PROVEN elsewhere: `../verification/reference-fv/fv_agu.sby` shows
 `tf_address_generator` keeps its address inside `[0, 1023)` in both modes.
 `REN = 0` (idle) behaviour is proven identical, so equivalence survives
 arbitrary stall patterns.
