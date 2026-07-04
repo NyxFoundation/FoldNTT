@@ -1,11 +1,11 @@
-# Reproducible artifact image for ntt-fpga-z3.
+# Reproducible artifact image for foldntt.
 # Pins the whole open-source verification toolchain (yosys, SymbiYosys,
 # yices, iverilog, z3, uv/python) via Nix so `run_all.sh` and the
 # full-transform / generator simulations reproduce every claim in the paper.
 #
-#   docker build -t ntt-fpga-z3 .
-#   docker run --rm ntt-fpga-z3            # runs the whole suite
-#   docker run --rm -it ntt-fpga-z3 bash   # interactive
+#   docker build -t foldntt .
+#   docker run --rm foldntt            # runs the whole suite
+#   docker run --rm -it foldntt bash   # interactive
 #
 # The image bakes a Nix profile so no network is needed at run time.
 FROM nixos/nix:2.24.9

@@ -18,7 +18,7 @@ Native (Nix):
 
 ```sh
 git clone --recurse-submodules https://github.com/NyxFoundation/FoldNTT
-cd ntt-fpga-z3
+cd FoldNTT
 nix shell nixpkgs#yosys nixpkgs#sby nixpkgs#yices nixpkgs#iverilog nixpkgs#uv \
   --command bash -lc 'run_all.sh \
     && uv run verification/fullcore/run_stream.py \
@@ -29,8 +29,8 @@ nix shell nixpkgs#yosys nixpkgs#sby nixpkgs#yices nixpkgs#iverilog nixpkgs#uv \
 Containerized (no Nix on the host):
 
 ```sh
-docker build -t ntt-fpga-z3 .
-docker run --rm ntt-fpga-z3
+docker build -t foldntt .
+docker run --rm foldntt
 ```
 
 ## Pinned versions (for the camera-ready / Zenodo deposit)
