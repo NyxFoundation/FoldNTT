@@ -68,9 +68,9 @@ jobs:
           tar xf oss.tgz
           echo "$PWD/oss-cad-suite/bin" >> "$GITHUB_PATH"
       - name: SymbiYosys + LEC + audits (BMC tasks; see verification/reference-fv/README.md)
-        run: MODE=bmc verification/reference-fv/run_all.sh
+        run: MODE=bmc ./verification/reference-fv/run_all.sh
       - name: FPGA-primitive cost (per-module + whole-core, synth_xilinx)
         run: fpga/fpga_cost.sh && fpga/fpga_cost_core.sh
       - uses: astral-sh/setup-uv@v5
       - name: proposed suite — RTL proofs, audits, mutation sweep
-        run: run_all.sh
+        run: ./run_all.sh
