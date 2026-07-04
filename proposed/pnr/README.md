@@ -4,21 +4,27 @@ Real routed Fmax for the reference vs proposed multiplier and butterfly on
 **Artix-7 xc7a100t**, using **openXC7's `nextpnr-xilinx`** — no Vivado, no
 multi-GB AMD download.
 
-## Tools (pin the working openXC7 tag — HEAD's flake is broken)
+## Tools — one command via the repo flake
+
+```sh
+nix develop        # from the repo root; sets NP + CHIPDB (xc7a100t) + yosys
+proposed/pnr/fmax.sh          # then the scripts run with no arguments
+proposed/pnr/fmax_core.sh
+```
+
+The repo `flake.nix` pins **openXC7 tag `0.8.2`** (HEAD's flake currently
+fails to evaluate — `nextpnr-xilinx` missing from its nixpkgs binding; `0.8.2`
+has a self-consistent `flake.lock`) and wires `NP`/`CHIPDB`/`YOSYS` into the
+devShell. First entry builds the Artix-7 chipdb from prjxray-db (~10-20 min,
+heavy pypy pass); it is then cached in the nix store.
+
+Manual (no flake) equivalent:
 
 ```sh
 nix build github:openXC7/toolchain-nix/0.8.2#packages.x86_64-linux.nextpnr-xilinx
 nix build github:openXC7/toolchain-nix/0.8.2#packages.x86_64-linux.nextpnr-xilinx-chipdb.artix7
-export NP=<result-nextpnr>/bin/nextpnr-xilinx
-export CHIPDB=<result-chipdb>/xc7a100tcsg324.bin
-export YOSYS="nix shell nixpkgs#yosys --command yosys"
-proposed/pnr/fmax.sh
+export NP=<result-nextpnr>/bin/nextpnr-xilinx CHIPDB=<result-chipdb>/xc7a100tcsg324.bin YOSYS=yosys
 ```
-
-(HEAD of openXC7 currently fails to evaluate — `nextpnr-xilinx` missing from
-its nixpkgs binding; the tag `0.8.2` has a self-consistent `flake.lock` and
-builds. The chipdb builds all 7-series parts from prjxray-db (~10-20 min,
-heavy pypy pass) — worth caching.)
 
 ## Method
 
