@@ -10,3 +10,4 @@ newcore/nc_ntt.hex
 stream_in.hex
 stream_ntt.hex
 stream_rt.hex
+newcore/build/

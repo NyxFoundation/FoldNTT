@@ -25,10 +25,19 @@ module basys3_ntt_selftest #(
     input             btn_start,    // optional: re-run on a button (btnC)
     output reg [15:0] led
 );
+    // ---- /2 clock: the core's Fmax (open flow) is ~95 MHz, so run the whole
+    // design on a 50 MHz BUFG-buffered clock to meet timing with margin.  The
+    // self-test is not throughput-critical (it finishes in ~1.7 ms), so the
+    // divided clock is invisible; only the verdict LEDs matter.
+    reg clk_div = 1'b0;
+    always @(posedge clk) clk_div <= ~clk_div;
+    wire clk_core;
+    BUFG bufg_core (.I(clk_div), .O(clk_core));
+
     // ---- reset synchronizer + initial auto-start ---------------------------
     reg [3:0] rstcnt = 0;
     reg       rst = 1'b1;
-    always @(posedge clk) begin
+    always @(posedge clk_core) begin
         if (rstcnt != 4'hF) begin rstcnt <= rstcnt + 1'b1; rst <= 1'b1; end
         else rst <= 1'b0;
     end
@@ -40,7 +49,7 @@ module basys3_ntt_selftest #(
     wire [DW-1:0] h_dout;
     wire          busy, done;
     ntt_core #(.BF_LAT(8)) core (
-        .clk(clk), .rst(rst), .start(start), .mode(mode),
+        .clk(clk_core), .rst(rst), .start(start), .mode(mode),
         .busy(busy), .done(done),
         .h_we(h_we), .h_addr(h_addr), .h_din(h_din), .h_dout(h_dout));
 
@@ -57,7 +66,7 @@ module basys3_ntt_selftest #(
     wire [DW:0] xg_p7 = xg + 14'd7;
     wire [DW-1:0] xg_next = (xg_p7 >= Q) ? (xg_p7 - Q) : xg_p7[DW-1:0];
 
-    always @(posedge clk) begin
+    always @(posedge clk_core) begin
         if (rst) begin
             ts <= T_IDLE; led <= 16'h0000;
             start <= 0; mode <= 0; h_we <= 0; h_addr <= 0; h_din <= 0;

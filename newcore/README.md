@@ -52,10 +52,26 @@ RTL="../proposed/kred/compact_bf_v2.v ../proposed/kred/modular_mul_kred.v \
 iverilog -g2012 -o /tmp/ntt.vvp ntt_core.v tb_ntt_core.v $RTL && vvp /tmp/ntt.vvp
 ```
 
-## Next (in progress)
+## On-board demo (Basys 3) — Vivado-free bitstream
+
+`basys3_ntt_selftest.v` self-checks `INTT(NTT(x))==x` on-chip and shows the
+verdict on the LEDs (led0=done, led1=PASS, led2=FAIL, led[15:6]=mismatch
+count).  It runs the core on a **/2 BUFG clock (50 MHz)**; post-route the core
+clock closes at ~102 MHz, so 50 MHz has 2x margin.  Simulated PASS
+(`tb_selftest.v`, with the `sim_prims.v` BUFG stub).
+
+```sh
+bash newcore/bit.sh          # yosys -> openXC7 nextpnr -> FASM -> prjxray -> .bit
+# -> newcore/build/design.bit  (Xilinx BIT for xc7a35tcpg236-1, NO Vivado)
+openFPGALoader -b basys3 newcore/build/design.bit
+```
+
+Verified reproducibly: the full flow (synth, place & route ~102 MHz core,
+FASM, fasm2frames, xc7frames2bit) produces a valid 2.19 MB bitstream.
+
+## Next (optional)
 
 1. Formal check of the FSM (BMC: `busy`/`done` handshake, address bounds).
-2. openXC7 bitstream + a **Basys 3** self-test wrapper (LFSR stimulus →
-   round-trip → PASS on an LED / 7-seg), XDC for `xc7a35tcpg236`.
-3. Optional throughput: pipeline within a stage (2-bank conflict-free) for
-   ~1 butterfly/cycle.
+2. Throughput: pipeline within a stage (2-bank conflict-free) for ~1
+   butterfly/cycle.
+3. A 7-segment PASS/FAIL display for a nicer demo.
