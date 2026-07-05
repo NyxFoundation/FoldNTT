@@ -32,7 +32,9 @@ module ntt_core #(
     parameter N     = 1024,
     parameter LOGN  = 10,
     parameter AW    = 10,          // log2(N)
-    parameter BF_LAT = 6           // compact_bf_v2 input->output latency
+    parameter BF_LAT = 8           // compute-wait cycles per butterfly:
+                                   // >= compact_bf_v2's latency 6; 8 is the
+                                   // margin every shipped instantiation uses
 )(
     input               clk,
     input               rst,

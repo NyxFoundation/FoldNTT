@@ -110,6 +110,17 @@ def main():
     require_fresh(DUMPS)
     print(f"round-trip: PASS ({NRT} vectors, INTT(NTT(x)) == x exactly)")
 
+    # transform latency, measured (the paper's ~74k-cycle claim traces here)
+    import re
+    cycles = [int(c) for c in re.findall(r"TRANSFORM mode=\d cycles=(\d+)",
+                                         r.stdout)]
+    if len(cycles) != 2 * NRT + NIV:
+        fail(f"expected {2*NRT+NIV} transform cycle reports, got {len(cycles)}")
+    if not all(70_000 <= c <= 80_000 for c in cycles):
+        fail(f"transform cycle count out of budget: {sorted(set(cycles))}")
+    print(f"latency:     PASS (measured {min(cycles)}..{max(cycles)} "
+          f"cycles per 1024-pt transform)")
+
     # 2. NTT golden (independent Python model on the real twiddle table)
     for t in range(NRT):
         x = load_hex(f"ntt-core/nc_in_{t}.hex")

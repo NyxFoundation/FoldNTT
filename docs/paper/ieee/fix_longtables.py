@@ -8,13 +8,25 @@ s = open(f).read()
 def conv(m):
     body = m.group(0)
     colspec = re.search(r'\\begin\{longtable\}\[\]\{([^}]*)\}', body).group(1)
-    # strip longtable-only machinery
     inner = body
     inner = re.sub(r'\\begin\{longtable\}\[\]\{[^}]*\}', '', inner)
     inner = inner.replace(r'\end{longtable}', '')
-    for tok in [r'\endhead', r'\endfirsthead', r'\endlastfoot', r'\endfoot']:
-        inner = inner.replace(tok, '')
-    inner = inner.strip()
+
+    # pandoc longtable anatomy, in file order:
+    #   firsthead \endfirsthead  head \endhead  [foot \endfoot]
+    #   lastfoot (\bottomrule) \endlastfoot  BODY
+    # Rebuild as head + BODY + lastfoot, so the bottom rule lands at the
+    # bottom instead of between the header and the body.
+    def take(tok, s):
+        mm = re.search(r'(.*?)\\' + tok, s, re.S)
+        return (mm.group(1).strip(), s[mm.end():]) if mm else ('', s)
+
+    firsthead, rest = take('endfirsthead', inner)
+    head, rest = take('endhead', rest)
+    foot, rest = take('endfoot', rest)
+    lastfoot, rest = take('endlastfoot', rest)
+    parts = [head or firsthead, rest.strip(), lastfoot or foot]
+    inner = '\n'.join(p for p in parts if p)
     return ("\\begin{table*}[t]\n\\centering\\footnotesize\n"
             "\\begin{tabular}{%s}\n%s\n\\end{tabular}\n\\end{table*}" % (colspec, inner))
 

@@ -78,10 +78,14 @@ module tb_ntt_core;
     endtask
 
     task automatic run(input md);
+        integer c;
         begin
             @(posedge clk); #1; mode = md; start = 1'b1;
             @(posedge clk); #1; start = 1'b0;
-            wait (done == 1'b1);
+            c = 1;
+            while (done !== 1'b1) begin @(posedge clk); c = c + 1; end
+            // start->done latency; run_check.py asserts the ~74k budget
+            $display("TRANSFORM mode=%0d cycles=%0d", md, c);
             @(posedge clk); #1;
         end
     endtask

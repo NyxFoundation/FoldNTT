@@ -18,5 +18,5 @@ render `references.bib`. The section structure maps 1:1 to a two-column
 article.
 
 Status: complete draft. Open items tracked in `../paper-plan.md` →
-"Remaining before submission" (whole-core PnR/Fmax, Zenodo DOI at release,
-venue choice, a couple of `[verify]` page numbers).
+"Remaining before submission" (Zenodo DOI at release, venue choice, a
+couple of `[verify]` page numbers).
