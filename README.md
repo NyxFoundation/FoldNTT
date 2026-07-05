@@ -147,13 +147,17 @@ openFPGALoader -b basys3 ntt-core/build/design.bit   # LED1 = self-test PASS
 
 ## Results (measured, CI-reproducible)
 
-- **DSP** 3→1 per butterfly; the whole shipped core uses 1 DSP and 1 BRAM at
-  ~136 MHz (open flow, Artix-7 xc7a100t). The K-RED multiplier is Fmax-neutral.
-- **Twiddle ROM** −50% stored bits (ψ-fold), proven equal to the shipped table.
-- **Correctness** the own-FSM core round-trips `INTT(NTT(x))==x` and its NTT
+<p align="center">
+  <img src="docs/assets/results-summary.png" alt="FoldNTT vs the reference core, normalized to the reference (100%)" width="88%"><br/>
+  <sub><i>Open flow (yosys + openXC7 nextpnr-xilinx), Artix-7 xc7a100t. The whole
+  shipped core uses 1 DSP and 1 BRAM; the ψ-fold ROM is proven equal to the
+  shipped table at every address.</i></sub>
+</p>
+
+- **Correctness**: the own-FSM core round-trips `INTT(NTT(x))==x` and its NTT
   matches the golden reference bit-for-bit; the reference's inverse-transform
   bug (missing per-stage halving) was found by verification, reported upstream.
-- **Open toolchain** synthesis → place-and-route → bitstream with no Vivado
+- **Open toolchain**: synthesis → place-and-route → bitstream with no Vivado
   (yosys + openXC7 nextpnr-xilinx + prjxray).
 - MIT-licensed throughout (the upstream `cfntt_ref` submodule is also MIT).
 
