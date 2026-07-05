@@ -9,11 +9,11 @@ nix shell nixpkgs#pandoc nixpkgs#texliveSmall --command make        # paper.pdf
 nix shell nixpkgs#pandoc --command make paper.tex                   # LaTeX only
 ```
 
-The citekeys in the prose (`[cfntt]`, `[longa2016kred]`, …) are **readable
-markers** that map 1:1 to entries in `references.bib`. This build produces a
+The citekeys in the prose (`[cfntt]`, `[longa2016kred]`, …) are readable
+markers that map 1:1 to entries in `references.bib`. This build produces a
 plain PDF/LaTeX skeleton with the markers left as text. At submission,
 convert to the venue's citation macros (TCHES has its own LaTeX class; FMCAD
-uses IEEEtran) — replace each `[key]` with `\cite{key}` and let BibTeX/biber
+uses IEEEtran): replace each `[key]` with `\cite{key}` and let BibTeX/biber
 render `references.bib`. The section structure maps 1:1 to a two-column
 article.
 

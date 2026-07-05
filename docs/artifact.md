@@ -1,7 +1,7 @@
 # Artifact appendix
 
-Everything in the paper is reproducible from this repository. The claims and
-the scripts that regenerate them:
+Everything in the paper is reproducible from this repository. Each claim
+maps to the script that regenerates it:
 
 | Paper claim | Reproduce with |
 |---|---|

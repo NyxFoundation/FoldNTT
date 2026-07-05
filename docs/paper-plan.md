@@ -1,4 +1,4 @@
-# Paper plan — status tracker
+# Paper plan: status tracker
 
 Goal: a submission-ready manuscript on the verified CFNTT improvements
 (CFNTT-KRED butterfly + psi-fold twiddle ROM), the verification methodology,
@@ -15,18 +15,18 @@ case study). Every phase lands in docs/ as it completes.
 | 6 | Formal lemma write-ups (psi-fold lemma, K-RED bounds) | `docs/lemmas.md` | DONE (4 lemmas, numerically re-checked) |
 | 7 | Manuscript draft (abstract → intro → background → design → verification → evaluation → related → conclusion) | `docs/paper/paper.md` | DONE (full draft; section TODOs + refs inline) |
 
-Ground rules: honest novelty framing (K-RED is Longa–Naehrig 2016 known art;
-the verified hardware fusion + psi-fold + bug-find + methodology are the
-claims to defend); every number in the paper must be reproducible from this
-repo's CI or scripts.
+Ground rules: keep the novelty framing accurate (K-RED is Longa–Naehrig 2016
+known art; the verified hardware fusion + psi-fold + bug-find + methodology
+are the claims to defend); every number in the paper must be reproducible
+from this repo's CI or scripts.
 
 
 ## Remaining before submission (post-draft)
-- Paper polish: DONE this pass — Fig.1 butterfly datapath (ASCII), fold7
+- Paper polish: DONE this pass. Fig.1 butterfly datapath (ASCII), fold7
   parallel-reduction pseudocode in Sec 4.2, and a positioning table vs
   CFNTT / Compact-FALCON in Sec 7 (both Barrett + full ROM; neither of our
   optimizations present).
-- Paper builds: DONE — docs/paper/Makefile (pandoc -> PDF via xelatex, clean,
+- Paper builds: DONE. docs/paper/Makefile (pandoc -> PDF via xelatex, clean,
   no missing glyphs) + build README; CI generates the LaTeX skeleton on every
   push.  Citekeys are readable markers -> \cite{} at venue conversion.
 - Sec 5 verification-summary table (Table 1) added.
@@ -35,32 +35,32 @@ repo's CI or scripts.
   table after the parallel-reduction fold7); fixed 3 stale section refs
   (future-work was §8 pre-Related-Work-insertion, now §9); FF %s re-checked
   (mult -27%, core -14%, ROM -20% all consistent with the scripts).
-- FSM reconstruction: partial progress — traced the datapath, fixed the
+- FSM reconstruction: partial progress. Traced the datapath, fixed the
   write latency (8->10, pipe[9]) to remove X-corruption; result now
   well-defined but not yet cycle-accurate (twiddle/network alignment).
-  Whole-core AREA unaffected (elaborates); streaming sim still passes.
+  Whole-core area unaffected (elaborates); streaming sim still passes.
   Full cycle-accuracy remains future work (needed only for timed run/Fmax).
 - Dedicated Related Work section (Sec 8) added to the paper body,
   consolidating docs/related-work.md: NTT accelerators / conflict-free
-  memory, modular reduction, twiddle storage, verified PQC hardware — with
-  the honest positioning of each contribution.
+  memory, modular reduction, twiddle storage, verified PQC hardware, with
+  each contribution positioned plainly against the prior art.
 - §2 Background prose (NTT/CFNTT paragraph): DONE.
 - Bibliography: DONE (docs/paper/references.bib; paper References section
   uses citekeys). A few paywalled page-numbers marked [verify at camera-ready].
-- Compact-FALCON diff: DONE — FULL TEXT read (PDF at docs/refs/, gitignored):
-  it has NO twiddle compression (search-summary error), stores full FP64
-  twiddle ROMs + Barrett NTT reduction, xc7a100t @134MHz.  Neither of our
-  contributions overlaps it; strengthens novelty (latest Falcon-NTT still
-  full-ROM + Barrett).
-- Whole-core AREA: DONE (fpga/fpga_cost_core.sh): DSP 3->1, FF -14%,
+- Compact-FALCON diff: DONE; full text read (PDF at docs/refs/, gitignored).
+  It has no twiddle compression (the earlier attribution was a
+  search-summary error), stores full FP64 twiddle ROMs + Barrett NTT
+  reduction, xc7a100t @134MHz.  Neither of our contributions overlaps it;
+  strengthens novelty (the latest Falcon-NTT is still full-ROM + Barrett).
+- Whole-core area: DONE (fpga/fpga_cost_core.sh): DSP 3->1, FF -14%,
   LUT +5%, BRAM unchanged.
 - Post-route Fmax: DONE without Vivado (openXC7 nextpnr-xilinx on xc7a100t,
-  fpga/fmax.sh): multiplier Fmax-NEUTRAL (K-RED ~230 vs Barrett
+  fpga/fmax.sh): multiplier Fmax-neutral (K-RED ~230 vs Barrett
   ~233 MHz -> 3->1 DSP for free); butterfly ~122 vs ~164 MHz (-26%, partly
-  the cost of the #7 correctness fix). Honest DSP/memory-for-Fmax tradeoff
-  now in paper Sec 7/9 + abstract.
-- Whole-core Fmax: DONE (fpga/fmax_core.sh): ~137 vs ~136 MHz -1%
-  -- the butterfly's -26% DILUTES to ~1% at the core (memory/network/FSM
+  the cost of the #7 correctness fix). The DSP/memory-for-Fmax tradeoff is
+  now stated in paper Sec 7/9 + abstract.
+- Whole-core Fmax: DONE (fpga/fmax_core.sh): ~137 vs ~136 MHz -1%;
+  the butterfly's -26% dilutes to ~1% at the core (memory/network/FSM
   dominate).  So the shipped core gets 3->1 DSP + bug fix + -50% twiddle
   bits at ~1% Fmax cost.  Remaining: cycle-accurate FSM for a functional
   timed run + optional Vivado confirmation.
@@ -71,29 +71,29 @@ repo's CI or scripts.
 - IEEE two-column build skeleton (docs/paper/ieee/): pandoc->IEEEtran with
   a longtable->table* post-process; compiles as a 2-col conference PDF
   (DATE/ICCAD/DAC/ASP-DAC format), page 1 submission-quality.  Two documented
-  Fig.1 is now a TikZ VECTOR figure (both-column-spanning figure* via
-  gfm+raw_attribute), rendering cleanly in BOTH single- and two-column
-  builds -- a major look upgrade over the old ASCII art.
+  Fig.1 is now a TikZ vector figure (both-column-spanning figure* via
+  gfm+raw_attribute), rendering cleanly in both single- and two-column
+  builds; a major look upgrade over the old ASCII art.
 - Equation-dense prose (Sec 2/3) converted from inline Unicode to proper
-  LaTeX math -> the IEEE 2-col build now compiles with ZERO errors and ZERO
+  LaTeX math -> the IEEE 2-col build now compiles with zero errors and zero
   overfull boxes (and both builds read better).  IEEE build is submission-
   clean; only \cite{} wiring + venue class remain (mechanical).
 - Reproducibility section upgraded from a 2-line stub to a concrete artifact
   statement: per-claim one-command reproduction (run_all.sh / fpga_cost*.sh /
   pnr/fmax*.sh), all CI-checked, all referenced scripts verified to exist,
   Docker + Zenodo-on-release noted.  Leverages the paper core strength.
-- KEY INFRA FINDING: Vivado is NOT required for routed Fmax — openXC7
+- Key infra finding: Vivado is not required for routed Fmax; openXC7
   toolchain-nix (pin tag 0.8.2) gives it fully in nix.
 - Dockerfile + CITATION.cff + docs/artifact.md: DONE; Zenodo DOI = at release.
 - FPGA-primitive cost table (open flow, fpga/fpga_cost.sh): DONE; corrected
   the ROM claim (−79% was generic gates; FPGA distributed-ROM is −11% LUT /
-  −50% bits) and the DSP-for-LUT tradeoff, honestly, in evaluation.md + paper §7.
+  −50% bits) and the DSP-for-LUT tradeoff in evaluation.md + paper §7.
 - Vivado-on-NixOS setup guide (docs/vivado-nixos.md): DONE; PnR run still TODO.
 - Open-flow FPGA-primitive + logic-depth (ltp) numbers: DONE (fpga/fpga_cost.sh).
-  Depth analysis DROVE an fold7 redesign (3 chained subs -> parallel compare +
+  Depth analysis drove a fold7 redesign (3 chained subs -> parallel compare +
   1 sub; LTP 31->26, area down, DSP-free), fully re-verified.
 - Bibliography + Compact-FALCON diff: DONE (docs/paper/references.bib).
-- Venue: see docs/venue-assessment.md. Honest current level = workshop/
+- Venue: see docs/venue-assessment.md. Current level = workshop/
   preprint; best-fit submittable-now target = FMCAD Applications / DATE
   verification (lead with the verify->bug->redesign story). TCHES needs the
   Vivado-PnR upgrade + SOTA comparison first.

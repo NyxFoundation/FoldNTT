@@ -1,6 +1,6 @@
-# Proposed improvements — two verified inventions
+# Proposed improvements: two verified inventions
 
-The output of the recursive **view → implement → verify** loop over the
+The output of the recursive view → implement → verify loop over the
 reference design, one folder per invention:
 
 | Folder | Invention | Trigger | Headline |

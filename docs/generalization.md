@@ -1,10 +1,10 @@
 # Generalization (Phase 5)
 
-The two Falcon inventions are not one-off tricks: both are instances of a
-construction that applies to **any Proth NTT prime** `q = k·2^m + 1`. The
+The two Falcon inventions are not one-off tricks. Both are instances of a
+construction that applies to any Proth NTT prime `q = k·2^m + 1`. The
 generator `generator/kred_gen.py` derives, verifies and emits them
-per prime, demonstrated on **Falcon (q = 12289, FN-DSA)** and **Kyber
-(q = 3329, ML-KEM)** — the two most important lattice PQC moduli.
+per prime, demonstrated on Falcon (q = 12289, FN-DSA) and Kyber
+(q = 3329, ML-KEM), the two most important lattice PQC moduli.
 
 ## The two constructions, parameterized
 
@@ -39,24 +39,26 @@ shift-friendly, store half and derive the rest with a ψ-multiply gate
 ## Evidence
 
 - **Kyber K-RED reducer, exhaustive**: `kred_gen.py` checks the fold
-  schedule against `169·z mod q` for **all z < q² ≈ 1.1×10⁷**.
+  schedule against `169·z mod q` for all z < q² ≈ 1.1×10⁷.
 - **Falcon K-RED reducer**: edges + 2M samples (the full 28-bit domain is
   z3-proven for the hand-written unit in `../kred-butterfly/verify_kred.py`).
 - **Generated Kyber RTL** (`modular_mul_kred_kyber.v`, emitted by the
   generator): passes an iverilog sweep of 60k edge+random product pairs
   (`gen_check.py`) computing `169·A·B mod q` at the emitted latency.
-- The generator finds a **tighter** Falcon schedule than the hand-written
-  RTL (4q vs 6q first-fold offset) — both valid; the hand-written unit is
-  one conservative instance, confirming the general construction subsumes it.
+- The generator finds a tighter Falcon schedule than the hand-written
+  RTL (4q vs 6q first-fold offset). Both are valid; the hand-written unit
+  is one conservative instance, confirming that the general construction
+  subsumes it.
 
 ## Why this matters for the paper
 
-It converts three separable contributions —
-(a) verified K-RED retrofit + bug fix, (b) ψ-fold ROM, (c) the FV
-methodology — from *Falcon-specific* to *a method with a working generator*,
-with Kyber as an independent, exhaustively-checked second instance. That is
-the difference between "we improved one accelerator" and "here is a verified
-technique for the Proth-prime NTT family, plus a tool that instantiates it."
+It converts three separable contributions, (a) the verified K-RED retrofit
++ bug fix, (b) the ψ-fold ROM, and (c) the FV methodology, from
+Falcon-specific results into a method with a working generator, with Kyber
+as an independent, exhaustively checked second instance. That is the
+difference between "we improved one accelerator" and "here is a verified
+technique for the Proth-prime NTT family, plus a tool that instantiates
+it."
 
 ## Remaining (TODO)
 

@@ -3,7 +3,7 @@
 Status: first sweep complete (2026-07-03). Verdicts below drive the paper's
 claims; deep-reads marked TODO must be finished before submission.
 
-## 1. K-RED / Proth-prime reduction in hardware — **KNOWN ART, claim narrowed**
+## 1. K-RED / Proth-prime reduction in hardware: known art, claim narrowed
 
 Shift-add K-RED-style reduction units are established in Kyber (q = 3329,
 also Proth) NTT accelerators:
@@ -14,97 +14,98 @@ also Proth) NTT accelerators:
   [preprint](https://www.preprints.org/manuscript/202504.2368)).
 - "Optimized FPGA Architecture for Modular Reduction in NTT"
   ([eprint 2024/1890](https://eprint.iacr.org/2024/1890.pdf)) defines
-  *Proth-l* primes and multiplication-free **K-RED-Shift** variants.
+  *Proth-l* primes and multiplication-free K-RED-Shift variants.
 - Kyber modular polynomial multipliers with K-RED
   ([IEEE](https://ieeexplore.ieee.org/document/9996868/)).
 - EMINEM (mixed-radix NTT for Falcon/Dilithium/HAWK,
   [ACM TRETS](https://dl.acm.org/doi/10.1145/3771287)) uses
   shift-and-add-based Barrett.
 
-**Adjusted claim C1**: not "K-RED in hardware" but — the first *formally
-verified*, *drop-in* K-RED retrofit of a published conflict-free NTT
-accelerator (CFNTT, the Falcon prime q = 12289), in which the 9⁻¹ twiddle
-scaling and the op21-on-ROM derivation additionally **fix a real bug in the
-released artifact** (upstream issue #7: missing per-stage INTT halving),
-with machine-checked equivalence down to the shipped ROM contents.
-Cost result (3→1 DSP per butterfly, −21%/−10% cells) is a *retrofit*
-result, positioned against CFNTT itself rather than against the Kyber SOTA.
+**Adjusted claim C1.** We do not claim K-RED in hardware. The claim is the
+first formally verified, drop-in K-RED retrofit of a published
+conflict-free NTT accelerator (CFNTT, the Falcon prime q = 12289), in which
+the 9⁻¹ twiddle scaling and the op21-on-ROM derivation also fix a real bug
+in the released artifact (upstream issue #7: missing per-stage INTT
+halving), with machine-checked equivalence down to the shipped ROM
+contents. The cost result (3→1 DSP per butterfly, −21%/−10% cells) is a
+retrofit result, positioned against CFNTT itself rather than against the
+Kyber SOTA.
 
-## 2. Twiddle-factor storage reduction — **KNOWN GENRE, mechanism distinct**
+## 2. Twiddle-factor storage reduction: known genre, mechanism distinct
 
 - **Half-Memory TFG** ([Electronics 13(16):3128, 2024](https://www.mdpi.com/2079-9292/13/16/3128)):
-  stores half the table and derives the rest via the **negation symmetry**
-  `W^(n/2) ≡ −1 (mod q)` — i.e. `W^(k+n/2) = −W^k`, a subtraction.
+  stores half the table and derives the rest via the negation symmetry
+  `W^(n/2) ≡ −1 (mod q)`, i.e. `W^(k+n/2) = −W^k`, a subtraction.
 - On-the-fly serial/parallel TFGs (same paper; also
-  [FALCON-based TFG](https://www.researchgate.net/publication/379486985)
-  — per-butterfly generation units built around a **modular multiplier** +
+  [FALCON-based TFG](https://www.researchgate.net/publication/379486985),
+  per-butterfly generation units built around a modular multiplier plus
   BRAM for base constants; and
-  [eprint 2025/1407](https://eprint.iacr.org/2025/1407) — a design tool
+  [eprint 2025/1407](https://eprint.iacr.org/2025/1407), a design tool
   with generic on-the-fly generation).
 - "Compact FALCON FFT/NTT Accelerator" (IEEE 2025,
   [Xplore 11043460](https://ieeexplore.ieee.org/document/11043460);
-  full text read). **On close reading there is NO twiddle-compression
-  mechanism** — the earlier "twiddle factor compression" attribution was a
-  search-summary error. The paper *precomputes and stores the twiddles in
-  full* in two ROMs (real/imag, FP64 for the complex FFT; the shared NTT
-  path reuses them); its only twiddle *reduction* is skipping the FFT/IFFT
-  first/last stage because those factors are trivial (ζ=1) — a
+  full text read). On close reading it has no twiddle-compression
+  mechanism; the earlier "twiddle factor compression" attribution was a
+  search-summary error. The paper precomputes and stores the twiddles in
+  full in two ROMs (real/imag, FP64 for the complex FFT; the shared NTT
+  path reuses them). Its only twiddle reduction is skipping the FFT/IFFT
+  first/last stage because those factors are trivial (ζ=1): a
   stage-skip, not a stored-table reduction. Its NTT modular reduction is
-  **Barrett** (K-RED is cited only in background). It targets xc7a100t at
-  134 MHz (Vivado 2022.2). **Diff:** so even the most recent (2025) Falcon
-  NTT accelerator uses full twiddle ROMs + Barrett — our ψ-fold
+  Barrett (K-RED is cited only in background). It targets xc7a100t at
+  134 MHz (Vivado 2022.2). Diff: even the most recent (2025) Falcon
+  NTT accelerator uses full twiddle ROMs + Barrett, so our ψ-fold
   (store-half, multiplier-free ψ-derive, verified equal to the shipped ROM)
-  and our K-RED retrofit are both *unmatched* by it. This is the closest
+  and our K-RED retrofit are both unmatched by it. This is the closest
   Falcon-NTT prior work and it does not overlap either contribution.
 
-**Why the ψ-fold is not the Half-Memory TFG**: CFNTT-class in-place
+**Why the ψ-fold is not the Half-Memory TFG.** CFNTT-class in-place
 accelerators store the *negacyclic* table in *bit-reversed* order,
 `w_rom[i] = ψ^bitrev(i)` with ψ the 2N-th root. Its exponents range over
-[0, N) — **no two entries differ by N in the exponent, so the negation
-symmetry `ψ^(k+N) = −ψ^k` never applies inside the table.** The
+[0, N): no two entries differ by N in the exponent, so the negation
+symmetry `ψ^(k+N) = −ψ^k` never applies inside the table. The
 bit-reversed layout instead maps *address*-halving to multiplication by ψ
 (`w_rom[N/2+j] = ψ·w_rom[j]`), and for shift-friendly ψ (Falcon's ψ = 7:
-`7x = (x<<3) − x`) the derivation is **multiplier-free** — unlike the
+`7x = (x<<3) − x`) the derivation is multiplier-free, unlike the
 on-the-fly TFGs above. It recurses (ψ² = 49, fold7²), and the RTL is proven
 pointwise-equivalent to the *shipped* ROM rather than re-derived from the
 spec.
 
-**Adjusted claim C2**: a storage-halving (recursively -75%) twiddle
-derivation for **bit-reversed negacyclic tables where negation symmetry is
-structurally unavailable**, multiplier-free for shift-friendly ψ, verified
+**Adjusted claim C2.** A storage-halving (recursively -75%) twiddle
+derivation for bit-reversed negacyclic tables, where negation symmetry is
+structurally unavailable; multiplier-free for shift-friendly ψ; verified
 equivalent to the shipped ROM at every address; −79% cells measured on the
 CFNTT ROM.
 
-## 3. Formal verification of PQC/NTT hardware — **active, but different axis**
+## 3. Formal verification of PQC/NTT hardware: active, but a different axis
 
 The 2026 wave of machine-checked PQC-hardware verification targets
-**masking / side-channel composition**, not functional correctness of the
+masking and side-channel composition, not functional correctness of the
 arithmetic against a mathematical specification:
 
 - Structural dependency analysis for masked NTT hardware (Adams Bridge
-  ML-DSA/ML-KEM, 1.17M cells) — [arXiv:2604.15249](https://arxiv.org/abs/2604.15249)
-- Machine-checked arithmetic-masking composition — [arXiv:2604.20793](https://arxiv.org/pdf/2604.20793),
+  ML-DSA/ML-KEM, 1.17M cells): [arXiv:2604.15249](https://arxiv.org/abs/2604.15249)
+- Machine-checked arithmetic-masking composition: [arXiv:2604.20793](https://arxiv.org/pdf/2604.20793),
   [arXiv:2604.25878](https://arxiv.org/pdf/2604.25878), [arXiv:2604.18717](https://arxiv.org/pdf/2604.18717)
-- Masked Barrett reduction leakage bounds — [arXiv:2604.24670](https://arxiv.org/pdf/2604.24670)
+- Masked Barrett reduction leakage bounds: [arXiv:2604.24670](https://arxiv.org/pdf/2604.24670)
 
-**Claim C3** (methodology, complements rather than competes): end-to-end
-*functional* verification of a published accelerator artifact — exact-width
-gate models, divider-free congruence encodings (URem goldens diverge in
-SMT; restate as nonnegative linear identities), compositional
+**Claim C3** (methodology; complements rather than competes): end-to-end
+*functional* verification of a published accelerator artifact, using
+exact-width gate models, divider-free congruence encodings (URem goldens
+diverge in SMT; restate as nonnegative linear identities), compositional
 assume-guarantee via leaf-unit equivalences, BMC-completeness for
 time-local properties from unconstrained initial state, and
-mutation-tested non-vacuity — which **found a real bug** (upstream #4/#7
-artifacts) in a peer-reviewed accelerator's released RTL. All checks are
-CI-reproducible from the public repo.
+mutation-tested non-vacuity. This methodology found a real bug
+(upstream #4/#7 artifacts) in a peer-reviewed accelerator's released RTL.
+All checks are CI-reproducible from the public repo.
 
 ## 4. Provenance angle (discussion section only)
 
-The ψ-fold was found by an LLM agent *visually reviewing a 3D model* of the
-architecture inside a view → implement → verify loop. No prior art found
-combining agentic RSI + visual floorplan review + machine-checked hardware
-invention; however this claim belongs to a different venue (MLCAD/agents),
-and in the TCHES/FMCAD paper it is one honest paragraph of "how this was
-found", with the full derivation history public on the gallery timeline.
+The ψ-fold was found by an LLM agent visually reviewing a 3D model of the
+architecture inside a view → implement → verify loop. We found no prior art
+combining agentic RSI, visual floorplan review, and machine-checked
+hardware invention. This claim belongs to a different venue (MLCAD/agents);
+in the TCHES/FMCAD paper it is a single paragraph on how the result was
+found, with the full derivation history public on the gallery timeline.
 
 ## Verdict for the paper
 

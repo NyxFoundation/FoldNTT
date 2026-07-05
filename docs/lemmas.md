@@ -1,9 +1,9 @@
 # Formal lemmas (Phase 6)
 
-The paper's claims rest on four lemmas. Each is stated here as a paper-ready
-proposition with a paper proof, and cross-referenced to its machine-checked
-counterpart in the repo (the machine check is the *certificate*, the paper
-proof is for the reader).
+The paper's claims rest on four lemmas. Each is stated below with a short
+proof and cross-referenced to its machine-checked counterpart in the repo.
+The machine check serves as the certificate; the written proof gives the
+argument.
 
 Throughout: `q = k·2^m + 1` is a Proth prime, `N = 2^n`, ψ a primitive
 2N-th root of unity mod q, and `bitrev_n` the n-bit reversal.
@@ -68,10 +68,10 @@ w_rom[N/2+j] = ψ^{bitrev_n(j)+1} = ψ·w_rom[j]. ∎
 
 **Corollary (recursion).** Iterating on the sub-halves,
 w_rom[N/4+j] = ψ²·w_rom[j], etc.; storing N/2^ℓ words and deriving with ℓ
-chained ψ-multiplies. **Crucially**, the negation symmetry
-`ψ^{k+N} = −ψ^k` used by prior Half-Memory TFGs does *not* apply here,
+chained ψ-multiplies. Note that the negation symmetry
+`ψ^{k+N} = −ψ^k` used by prior Half-Memory TFGs does not apply here,
 because the bit-reversed exponents range over [0, N) with no two differing
-by N; Lemma 3 is the structurally-available replacement.
+by N; Lemma 3 is the structurally available replacement.
 
 **Corollary (multiplier-free for shift-friendly ψ).** If ψ has few set bits,
 ψ·x is a shift-add sum; for Falcon ψ=7, 7x = (x<<3)−x. Then the derived half
@@ -101,20 +101,20 @@ round-trip exact end-to-end).
 
 ---
 
-## Note on the verification methodology (for the methods section)
+## Note on the verification methodology
 
-Two techniques made the SMT proofs tractable and are worth stating:
+Two techniques made the SMT proofs tractable:
 
 1. **Divider-free congruence encoding.** Proving `r == z mod q` directly
    forces the solver to bit-blast a divider (`URem`), which diverges for
    28-bit operands. Instead we prove the *nonnegative linear identity*
    `k^i·z + C = r + q·(fold terms)` plus `r < q`; these are constant
-   multiplications only and close in seconds. (This is the single change
-   that turned a 2-hour non-converging run into an 11-second proof.)
+   multiplications only and close in seconds. This single change turned a
+   2-hour non-converging run into an 11-second proof.
 
 2. **BMC-completeness for time-local pipeline properties.** Every assertion
    relates outputs to inputs at most `latency` cycles back, guarded by a
    saturating counter, with the initial register state unconstrained. A BMC
    of depth `guard + latency + 1` therefore covers every window of every
-   execution — an unbounded proof without needing invariant discovery for
+   execution: an unbounded proof without needing invariant discovery for
    k-induction. Non-vacuity is established separately by RTL mutation.
