@@ -58,7 +58,8 @@ openXC7 nextpnr-xilinx, xc7a100t, one seed, 2.0 ns target:
 | kred | 32 | 13% | 22% | 69.2 MHz |
 | ref | 32 | 40% | 22% | 74.1 MHz |
 | kred | 64 | 27% | 43% | 67.8 MHz |
-| kred | 128 | 53% | 83% | (routing at the time of writing; appended below when done) |
+| kred | 96 | 40% | 63% | 55.9 MHz |
+| kred | 128 | 53% | 83% | **did not converge**: placer made no progress in 4 h |
 | ref | 64 | 80% | 44% | **did not converge**: 15 h of placement without a result |
 
 Three observations:
@@ -69,15 +70,20 @@ Three observations:
   ~1%. So the clock price of K-RED depends on how much else surrounds
   the butterfly, and at farm scale it is small against the 3× DSP
   saving.
-- **kred's congestion behaviour is graceful so far**: 69.2 → 67.8 MHz
-  (−2%) from d=32 to d=64 despite the CARRY4 density.
-- **Dense DSP placement is the open flow's weak spot**: ref at d=64
-  (192 of 240 DSPs, 80%) never finished placement in 15 hours. That is
-  a statement about nextpnr-xilinx's placer, not about the Barrett
-  design, but it is operationally real if the open flow is your
-  toolchain: with K-RED the same 64 lanes are a routine 27%-DSP build.
+- **Congestion has a knee.** kred barely degrades to d=64 (69.2 →
+  67.8 MHz, −2% at 43% LUT), then drops to 55.9 MHz at d=96 (−18%, 63%
+  LUT), and at d=128 (83% LUT) the placer stops converging. In this
+  flow the practical operating region is below roughly 60% LUT
+  utilization.
+- **Dense placement is the open flow's weak spot, and it binds the
+  reference three times earlier.** ref at d=64 is only 44% LUT but 80%
+  DSP, and never finished placement in 15 hours; kred reaches the same
+  64 lanes as a routine 27%-DSP build. That is a statement about
+  nextpnr-xilinx's placer, not about the Barrett design, but it is
+  operationally real if the open flow is your toolchain: the DSP wall
+  arrives at one third the lane count.
 
-Absolute farm frequencies (~68–74 MHz) sit below the isolated-module
+Absolute farm frequencies (~56–74 MHz) sit below the isolated-module
 Fmax (~122–164 MHz) because the harness loads every lane from one giant
 shift register with a shared select; use the *relative* numbers.
 
@@ -104,9 +110,15 @@ lane ratio is what a dedicated-chip benchmark would see.
 
 Putting lanes and clocks together for xc7a100t (5,120 butterflies per
 1024-point NTT, 1 butterfly/lane/cycle; farm clocks, so shapes not
-absolutes): ref at 80 lanes and ~74 MHz gives 64 cycles ≈ 0.86 µs/NTT;
-kred at 120 lanes and ~68 MHz gives ~43 cycles ≈ 0.63 µs/NTT — about
-**1.4× the transforms per second per chip, with 120 DSPs still free**.
+absolutes). *Within the open flow*, the best point each variant
+actually reached: kred at 96 lanes and 55.9 MHz gives ~53 cycles ≈
+0.95 µs/NTT; ref's largest placeable array was 32 lanes at 74.1 MHz,
+160 cycles ≈ 2.2 µs/NTT — roughly **2.3× the transforms per second,
+driven by placeability** (the DSP wall stops ref first). With a vendor
+placer both variants would push further and the flow-agnostic budget
+estimate above (1.0–1.5× lanes plus the freed DSPs) is the fairer
+number; the open-flow measurement and the budget estimate bracket the
+answer.
 
 ## The ceiling
 

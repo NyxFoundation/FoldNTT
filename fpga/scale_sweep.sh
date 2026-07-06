@@ -79,9 +79,11 @@ synth_stat() { # kind d srcs...
   ' "$tmp"
 }
 
-echo "== area sweep (yosys synth_xilinx, Artix-7 primitives) =="
-for d in 16 64 128 240; do synth_stat kred $d $KRED_SRC; done
-for d in 16 64 80;      do synth_stat ref  $d $REF_SRC;  done
+if [ "${SKIP_AREA:-0}" != 1 ]; then
+  echo "== area sweep (yosys synth_xilinx, Artix-7 primitives) =="
+  for d in 16 64 128 240; do synth_stat kred $d $KRED_SRC; done
+  for d in 16 64 80;      do synth_stat ref  $d $REF_SRC;  done
+fi
 
 if [ "${DO_PNR:-0}" = 1 ]; then
   : "${NP:?}" "${CHIPDB:?}"
