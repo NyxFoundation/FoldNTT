@@ -12,6 +12,7 @@ claim traces to a CI-reproducible script.
 | `evaluation.md` | system-sim results + synthesis cost table (PnR TODO) |
 | `generalization.md` | Proth-prime generator; Falcon + Kyber instances |
 | `algorithm-level.md` | where the ideas apply outside hardware; prime-selection guidance (with `generator/prime_scout.py`) |
+| `scaling.md` | measured lane-array scaling: iso-chip parallelism, clock cost, the ceiling (with `fpga/scale_sweep.sh`) |
 | `paper/paper.md` | full manuscript draft (section TODOs + refs inline) |
 | `venue-assessment.md` | where-to-submit / what-level analysis |
 
