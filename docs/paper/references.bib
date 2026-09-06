@@ -2,45 +2,72 @@
 % Author lists confirmed against the publisher / ePrint / arXiv pages
 % (2026-09); DOIs given where they exist.
 
+% IEEEtran.bst control entry: print full author lists even when consecutive
+% entries share the same authors (IEEEtran's default replaces them by "——").
+% Activated by \bstctlcite{IEEEexample:BSTcontrol}, which ieee/build.sh
+% inserts right after \begin{document}.
+@IEEEtranBSTCTL{IEEEexample:BSTcontrol,
+  CTLdash_repeated_names = "no"
+}
+
 @article{cfntt,
-  author  = {Xiangren Chen and Bohan Yang and Shouyi Yin and Shaojun Wei and Leibo Liu},
-  title   = {{CFNTT}: Scalable Radix-2/4 {NTT} Multiplication Architecture with an Efficient Conflict-free Memory Mapping Scheme},
-  journal = {IACR Transactions on Cryptographic Hardware and Embedded Systems},
-  volume  = {2022},
-  number  = {1},
-  pages   = {94--126},
-  year    = {2022},
-  doi     = {10.46586/tches.v2022.i1.94-126},
-  note    = {Reference artifact (RTL): \url{https://github.com/xiang-rc/cfntt_ref}}
+  title={CFNTT: Scalable Radix-2/4 NTT Multiplication Architecture with an Efficient Conflict-free Memory Mapping Scheme}, 
+  volume={2022}, 
+  url={https://tches.iacr.org/index.php/TCHES/article/view/9291}, 
+  DOI={10.46586/tches.v2022.i1.94-126}, 
+  abstractNote={Number theoretic transform (NTT) is widely utilized to speed up polynomial multiplication, which is the critical computation bottleneck in a lot of cryptographic algorithms like lattice-based post-quantum cryptography (PQC) and homomorphic encryption (HE). One of the tendency for NTT hardware architecture is to support diverse security parameters and meet resource constraints on different computing platforms. Thus flexibility and Area-Time Product (ATP) become two crucial metrics in NTT hardware design. The flexibility of NTT in terms of different vector sizes and moduli can be obtained directly. Whereas the varying strides in memory access of in-place NTT render the design for different radix and number of parallel butterfly units a tough problem. This paper proposes an efficient conflict-free memory mapping scheme that supports the configuration for both multiple parallel butterfly units and arbitrary radix of NTT. Compared to other approaches, this scheme owns broader applicability and facilitates the parallelization of non-radix-2 NTT hardware design. Based on this scheme, we propose a scalable radix-2 and radix-4 NTT multiplication architecture by algorithm-hardware co-design. A dedicated schedule method is leveraged to reduce the number of modular additions/subtractions and modular multiplications in radix-4 butterfly unit by 20% and 33%, respectively. To avoid the bit-reversed cost and save memory footprint in arbitrary radix NTT/INTT, we put forward a general method by rearranging the loop structure and reusing the twiddle factors. The hardware-level optimization is achieved by excavating the symmetric operators in radix-4 butterfly unit, which saves almost 50% hardware resources compared to a straightforward implementation. Through experimental results and theoretical analysis, we point out that the radix-4 NTT with the same number of parallel butterfly units outperforms the radix-2 NTT in terms of area-time performance in the interleaved memory system. This advantage is enlarged when increasing the number of parallel butterfly units. For example, when processing 1024 14-bit points NTT with 8 parallel butterfly units, the ATP of LUT/FF/DSP/BRAM n radix-4 NTT core is approximately 2.2 × /1.2 × /1.1 × /1.9 × less than that of the radix-2 NTT core on a similar FPGA platform.}, 
+  number={1}, 
+  journal={IACR Transactions on Cryptographic Hardware and Embedded Systems}, 
+  author={Chen, Xiangren and Yang, Bohan and Yin, Shouyi and Wei, Shaojun and Liu, Leibo}, 
+  year={2021}, 
+  month={Nov.}, 
+  pages={94–126} 
 }
 
 @inproceedings{longa2016kred,
-  author    = {Patrick Longa and Michael Naehrig},
-  title     = {Speeding up the Number Theoretic Transform for Faster Ideal Lattice-Based Cryptography},
-  booktitle = {Cryptology and Network Security (CANS 2016)},
-  series    = {LNCS},
-  volume    = {10052},
-  pages     = {124--139},
-  year      = {2016},
-  doi       = {10.1007/978-3-319-48965-0_8}
+  author = {Longa, Patrick and Naehrig, Michael},
+  title = {Speeding up the Number Theoretic Transform for Faster Ideal Lattice-Based Cryptography},
+  year = {2016},
+  isbn = {978-3-319-48964-3},
+  publisher = {Springer-Verlag},
+  address = {Berlin, Heidelberg},
+  url = {https://doi.org/10.1007/978-3-319-48965-0_8},
+  doi = {10.1007/978-3-319-48965-0_8},
+  abstract = {The Number Theoretic Transform (NTT) provides efficient algorithms for cyclic and nega-cyclic convolutions, which have many applications in computer arithmetic, e.g., for multiplying large integers and large degree polynomials. It is commonly used in cryptographic schemes that are based on the hardness of the Ring Learning With Errors (R-LWE) problem to efficiently implement modular polynomial multiplication.We present a new modular reduction technique that is tailored for the special moduli required by the NTT. Based on this reduction, we speed up the NTT and propose faster, multi-purpose algorithms. We present two implementations of these algorithms: a portable C implementation and a high-speed implementation using assembly with AVX2 instructions. To demonstrate the improved efficiency in an application example, we benchmarked the algorithms in the context of the R-LWE key exchange protocol that has recently been proposed by Alkim, Ducas, P{\"o}ppelmann and Schwabe. In this case, our C and assembly implementations compute the full key exchange 1.44 and 1.21 times faster, respectively. These results are achieved with full protection against timing attacks.},
+  booktitle = {Cryptology and Network Security: 15th International Conference, CANS 2016, Milan, Italy, November 14-16, 2016, Proceedings },
+  pages = {124–139},
+  numpages = {16},
+  keywords = {Post-quantum cryptography, Number Theoretic Transform (NTT), Ring Learning With Errors (R-LWE), Fast modular reduction, Efficient implementation},
+  location = {Milan, Italy}
 }
 
 @inproceedings{bisheh2021k2red,
-  author    = {Mojtaba Bisheh-Niasar and Reza Azarderakhsh and Mehran Mozaffari-Kermani},
-  title     = {High-Speed {NTT}-based Polynomial Multiplication Accelerator for Post-Quantum Cryptography},
-  booktitle = {2021 IEEE 28th Symposium on Computer Arithmetic (ARITH)},
-  pages     = {94--101},
-  year      = {2021},
-  doi       = {10.1109/ARITH51176.2021.00028},
-  note      = {K$^2$-RED: K-RED in Kyber hardware}
+  author={Bisheh-Niasar, Mojtaba and Azarderakhsh, Reza and Mozaffari-Kermani, Mehran},
+  booktitle={2021 IEEE 28th Symposium on Computer Arithmetic (ARITH)}, 
+  title={High-Speed NTT-based Polynomial Multiplication Accelerator for Post-Quantum Cryptography}, 
+  year={2021},
+  volume={},
+  number={},
+  pages={94-101},
+  keywords={Memory management;Transforms;Standardization;NIST;Public key cryptography;Table lookup;Cryptography;FPGA;hardware architecture;Kyber;lattice-based cryptography;NTT;post-quantum cryptography},
+  doi={10.1109/ARITH51176.2021.00028}
 }
 
 @misc{tosun2024modred,
-  author       = {Tolun Tosun and Selim K{\i}rb{\i}y{\i}k and Emre Ko{\c{c}}er and Ersin Alaybeyo{\u{g}}lu},
-  title        = {Optimized {FPGA} Architecture for Modular Reduction in {NTT}},
-  howpublished = {Cryptology ePrint Archive, Paper 2024/1890},
-  year         = {2024},
-  note         = {\url{https://eprint.iacr.org/2024/1890}}
+  author = {Tosun, Tolun and K{\i}rb{\i}y{\i}k, Selim and Ko{\c c}er, Emre and Alaybeyo{\u g}lu, Ersin},
+  title = {Optimized FPGA Architecture for Modular Reduction in NTT},
+  year = {2025},
+  isbn = {978-3-032-15540-5},
+  publisher = {Springer-Verlag},
+  address = {Berlin, Heidelberg},
+  url = {https://doi.org/10.1007/978-3-032-15541-2_7},
+  doi = {10.1007/978-3-032-15541-2_7},
+  abstract = {In this paper, we present a comprehensive analysis of various modular multiplication methods for Number Theoretic Transform (NTT) on FPGA. NTT is a critical and time-intensive component of Fully Homomorphic Encryption (FHE) applications while modular multiplication consumes a significant portion of the design resources in an NTT implementation. We study the existing modular reduction approaches from the literature, and implement particular methods on FPGA. Specifically Word-Level Montgomery (WLM) for NTT friendly primes&nbsp;[20] and K2RED&nbsp;[4]. For improvements, we explore the trade-offs between the number of available primes in special forms and hardware cost of the reduction methods. We develop a DSP multiplication-optimized version of WLM, which we call WLM-Mixed. We also introduce a subclass of Proth primes, referred to as Proth-l primes, characterized by a low and fixed signed Hamming Weight. This special class of primes allows us to design multiplication-free shift-add versions of K2RED and naive Montgomery reduction&nbsp;[21], referred to as K2RED-Shift and Montgomery-Shift. We provide in-depth evaluations of these five reduction methods in an NTT architecture on FPGA. Our results indicate that WLM-Mixed is highly resource-efficient, utilizing only 3 DSP multiplications for 64-bit coefficient moduli. On the other hand, K2RED-Shift and Montgomery-Shift offer DSP-free alternatives, which can be beneficial in specific scenarios.},
+  booktitle = {Lightweight Cryptography for Security and Privacy: 6th International Workshop, LightSec 2025, Istanbul, T{\"u}rkiye, September 1–2, 2025, Revised Selected Papers},
+  pages = {117–137},
+  numpages = {21},
+  keywords = {Modular Reduction, FPGA, Montgomery, K2RED, DSP, FHE, NTT},
+  location = {Istanbul, T{\"u}rkiye}
 }
 
 @article{im2024tfg,
@@ -55,28 +82,39 @@
 }
 
 @inproceedings{dam2025compactfalcon,
-  author    = {Duc-Thuan Dam and Thai-Ha Tran and Trong-Hung Nguyen and Trong-Thuc Hoang and Cong-Kha Pham},
-  title     = {Compact {FALCON} {FFT}/{NTT} Accelerator for Post-Quantum Cryptography},
-  booktitle = {2025 IEEE International Symposium on Circuits and Systems (ISCAS)},
-  year      = {2025},
-  doi       = {10.1109/ISCAS56072.2025.11043460}
+  author={Dam, Duc-Thuan and Tran, Thai-Ha and Nguyen, Trong-Hung and Hoang, Trong-Thuc and Pham, Cong-Kha},
+  booktitle={2025 IEEE International Symposium on Circuits and Systems (ISCAS)}, 
+  title={Compact FALCON FFT/NTT Accelerator for Post-Quantum Cryptography}, 
+  year={2025},
+  volume={},
+  number={},
+  pages={1-5},
+  keywords={Lattices;Parallel processing;NIST;Vectors;Hardware;Parallel architectures;Cryptography;Standards;Field programmable gate arrays;Digital signatures;FFT;NTT;FALCON;accelerator;Post-Quantum Cryptography},
+  doi={10.1109/ISCAS56072.2025.11043460}
 }
 
 @article{krieger2025tool,
-  author  = {Florian Krieger and Florian Hirner and Ahmet Can Mert and Sujoy Sinha Roy},
-  title   = {A Flexible Hardware Design Tool for Fast Fourier and Number-Theoretic Transformation Architectures},
-  journal = {IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems},
-  year    = {2025},
-  doi     = {10.1109/TCAD.2025.3595834},
-  note    = {Also Cryptology ePrint Archive, Paper 2025/1407}
+  author={Krieger, Florian and Hirner, Florian and Can Mert, Ahmet and Sinha Roy, Sujoy},
+  journal={IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems}, 
+  title={A Flexible Hardware Design Tool for Fast Fourier and Number-Theoretic Transformation Architectures}, 
+  year={2026},
+  volume={45},
+  number={5},
+  pages={2531-2543},
+  keywords={Polynomials;Hardware;Fast Fourier transforms;Memory management;Cryptography;Read only memory;Optimization;Design tools;System-on-chip;Arithmetic;Fast Fourier transformation (FFT);fully homomorphic encryption (FHE);hardware design tool;number-theoretic transformation (NTT);twiddle factor generation (TFG)},
+  doi={10.1109/TCAD.2025.3595834}
 }
 
 @inproceedings{casas2023fhe,
-  author    = {Jeremy Casas and Zhenkun Yang and Wen Wang and Jin Yang and Adwait Godbole},
-  title     = {Towards A Formally Verified Fully Homomorphic Encryption Compute Engine},
-  booktitle = {2023 60th ACM/IEEE Design Automation Conference (DAC)},
-  year      = {2023},
-  doi       = {10.1109/DAC56929.2023.10247783}
+  author={Casas, Jeremy and Yang, Zhenkun and Wang, Wen and Yang, Jin and Godbole, Adwait},
+  booktitle={2023 60th ACM/IEEE Design Automation Conference (DAC)}, 
+  title={Towards A Formally Verified Fully Homomorphic Encryption Compute Engine*}, 
+  year={2023},
+  volume={},
+  number={},
+  pages={1-6},
+  keywords={Design automation;Instruction sets;Computer architecture;Hardware;Safety;Behavioral sciences;Security},
+  doi={10.1109/DAC56929.2023.10247836}
 }
 
 @misc{iskander2026a,

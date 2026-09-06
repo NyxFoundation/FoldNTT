@@ -25,6 +25,7 @@ import re,sys
 f=sys.argv[1]; s=open(f).read()
 s=re.sub(r'\\section\{References\}\\label\{references\}\s*', '', s)
 s=s.replace('\\bibliographystyle{plainnat}\n', '')
+s=s.replace('\\begin{document}\n', '\\begin{document}\n\\bstctlcite{IEEEexample:BSTcontrol}\n', 1)
 s=s.replace('\\end{document}', '\\bibliographystyle{IEEEtran}\n\\bibliography{../references}\n\\end{document}')
 open(f,'w').write(s)
 PY
