@@ -11,16 +11,28 @@
 //   t+8:         butterfly out (latency 6) + network_bf_out (sel via
 //                shift_7) + write address (shift_7 of read address)
 //   edge t+8->t+9: write commits (WEN sampled during t+8)
-// Hence: ren covers [t0, t0+ISSUES], wen = issue delayed 8 cycles.
-// Butterfly pairs within a stage are disjoint (in-place radix-2), so the
-// only hazard is the stage boundary — DRAIN waits the pipeline out before
-// the next stage starts.
+// Hence: ren covers [t0, t0+ISSUES], wen = issue delayed 8 cycles
+// (pipe[7]): at cycle t+8 the write address (shift_7 of the t+1 bank
+// address), the write-side bank select (shift_7 of sel_a_*) and the
+// butterfly output all belong to the issue at t.  Butterfly pairs within a
+// stage are disjoint (in-place radix-2), so the only hazard is the stage
+// boundary — DRAIN waits the pipeline out before the next stage starts.
+// After the last issue of a stage k,i return to 0 while ren is still high
+// for one cycle (pipe[0]); that phantom read of the (0, 2^p) pair is never
+// written back (wen follows issue, not ren), so it has no effect.
+// Verified: verification/fullcore/run_sim.py (reference datapath NTT exact
+// and INTT 2^10-scaled = upstream issue #7; v2 exact round trip; 5290
+// cycles per 1024-point transform, data-independent).
 //
 // Modes (conf, chosen to match tf_address_generator's decode, which treats
 // conf==3'b001/3'b100 as forward-NTT twiddle order):
 //   conf = 3'b001 : forward NTT  (sel=0, stages p = 9 down to 0)
 //   conf = 3'b010 : inverse NTT  (sel=1, stages p = 0 up to 9)
 // done_flag[0] / done_flag[1] latch on completion; drop conf to 0 to clear.
+// Contract: the host must hold conf stable until done_flag rises. The FSM
+// latches the direction, but the shipped tf_address_generator decodes the
+// LIVE conf for the twiddle order, so changing conf mid-transform would
+// corrupt the twiddle sequence.
 module fsm (
     input clk,
     input rst,
@@ -51,7 +63,7 @@ module fsm (
 
     assign en  = 1'b1;
     assign ren = issue | pipe[0];
-    assign wen = pipe[9];          // write latency 10 (read 4 + butterfly 6)
+    assign wen = pipe[7];          // write latency 8 (read 2 + butterfly 6)
 
     always @(posedge clk or posedge rst) begin
       if (rst) begin

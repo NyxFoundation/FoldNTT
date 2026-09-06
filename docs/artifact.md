@@ -7,7 +7,8 @@ maps to the script that regenerates it:
 |---|---|
 | K-RED reducer == 9·A·B mod q, full domain | `uv run kred-butterfly/verify_kred.py` |
 | Butterfly (both modes), ROM ≡ shipped, reset, latency | `run_all.sh` (SymbiYosys + audits + mutation sweep) |
-| Full transform: NTT == ref, INTT(NTT(x)) == x (and the bug on the ref core) | `uv run verification/fullcore/run_stream.py` |
+| Full transform: NTT == ref, INTT(NTT(x)) == x (streamed datapath) | `uv run verification/fullcore/run_stream.py` |
+| Whole banked core (reconstructed FSM): ref reproduces #7 (2¹⁰·x), v2 exact, 5290 cycles | `uv run verification/fullcore/run_sim.py` |
 | Generalization: Kyber exhaustive + generated RTL | `uv run generator/kred_gen.py && uv run generator/gen_check.py` |
 | Synthesis cost numbers | `yosys kred-butterfly/cost_report.ys` (+ the ROM stat in `docs/evaluation.md`) |
 | Upstream bug (issue #7) reproduced | `uv run bug_intt_halving.py` |
@@ -22,6 +23,7 @@ cd FoldNTT
 nix shell nixpkgs#yosys nixpkgs#sby nixpkgs#yices nixpkgs#iverilog nixpkgs#uv \
   --command bash -lc 'run_all.sh \
     && uv run verification/fullcore/run_stream.py \
+    && uv run verification/fullcore/run_sim.py \
     && uv run generator/kred_gen.py \
     && uv run generator/gen_check.py'
 ```

@@ -1,6 +1,6 @@
-% Bibliography for the CFNTT-KRED / psi-fold paper.
-% Fields confirmed via dblp / DOI / eprint where noted; a few page numbers
-% for paywalled venues are marked % [verify at camera-ready].
+% Bibliography for the FoldNTT paper (docs/paper/paper.md).
+% Author lists confirmed against the publisher / ePrint / arXiv pages
+% (2026-09); DOIs given where they exist.
 
 @article{cfntt,
   author  = {Xiangren Chen and Bohan Yang and Shouyi Yin and Shaojun Wei and Leibo Liu},
@@ -11,7 +11,7 @@
   pages   = {94--126},
   year    = {2022},
   doi     = {10.46586/tches.v2022.i1.94-126},
-  note    = {Reference artifact (RTL) at \url{https://github.com/xiang-rc/cfntt_ref}}
+  note    = {Reference artifact (RTL): \url{https://github.com/xiang-rc/cfntt_ref}}
 }
 
 @inproceedings{longa2016kred,
@@ -22,88 +22,122 @@
   volume    = {10052},
   pages     = {124--139},
   year      = {2016},
-  doi       = {10.1007/978-3-319-48965-0_8},
-  note      = {Cryptology ePrint Archive 2016/504; origin of the K-RED reduction}
+  doi       = {10.1007/978-3-319-48965-0_8}
 }
 
-@misc{kredshift2024,
-  author = {{Authors, see eprint}},
-  title  = {Optimized {FPGA} Architecture for Modular Reduction in {NTT} (K-RED-Shift, Proth-$\ell$ primes)},
-  year   = {2024},
-  note   = {Cryptology ePrint Archive 2024/1890, \url{https://eprint.iacr.org/2024/1890}}
-  % [verify author list + final venue at camera-ready]
+@inproceedings{bisheh2021k2red,
+  author    = {Mojtaba Bisheh-Niasar and Reza Azarderakhsh and Mehran Mozaffari-Kermani},
+  title     = {High-Speed {NTT}-based Polynomial Multiplication Accelerator for Post-Quantum Cryptography},
+  booktitle = {2021 IEEE 28th Symposium on Computer Arithmetic (ARITH)},
+  pages     = {94--101},
+  year      = {2021},
+  doi       = {10.1109/ARITH51176.2021.00028},
+  note      = {K$^2$-RED: K-RED in Kyber hardware}
 }
 
-@article{tfg2024halfmem,
+@misc{tosun2024modred,
+  author       = {Tolun Tosun and Selim K{\i}rb{\i}y{\i}k and Emre Ko{\c{c}}er and Ersin Alaybeyo{\u{g}}lu},
+  title        = {Optimized {FPGA} Architecture for Modular Reduction in {NTT}},
+  howpublished = {Cryptology ePrint Archive, Paper 2024/1890},
+  year         = {2024},
+  note         = {\url{https://eprint.iacr.org/2024/1890}}
+}
+
+@article{im2024tfg,
+  author  = {Nari Im and Heehun Yang and Yujin Eom and Seong-Cheon Park and Hoyoung Yoo},
   title   = {Efficient Twiddle Factor Generators for {NTT}},
   journal = {Electronics},
   volume  = {13},
   number  = {16},
   pages   = {3128},
   year    = {2024},
-  doi     = {10.3390/electronics13163128},
-  note    = {Half-Memory TFG uses the negation symmetry $W^{N/2}=-1$}
+  doi     = {10.3390/electronics13163128}
 }
 
-@inproceedings{compactfalcon2025,
+@inproceedings{dam2025compactfalcon,
+  author    = {Duc-Thuan Dam and Thai-Ha Tran and Trong-Hung Nguyen and Trong-Thuc Hoang and Cong-Kha Pham},
   title     = {Compact {FALCON} {FFT}/{NTT} Accelerator for Post-Quantum Cryptography},
-  booktitle = {IEEE (conference; see IEEE Xplore doc 11043460)},
+  booktitle = {2025 IEEE International Symposium on Circuits and Systems (ISCAS)},
   year      = {2025},
-  note      = {FPGA (xc7a100t, 134\,MHz, Vivado 2022.2) FALCON FFT/NTT accelerator; full FP64 twiddle ROMs (no table compression) + Barrett NTT reduction; \url{https://ieeexplore.ieee.org/document/11043460}}
-  % [verify authors + exact venue name at camera-ready]
+  doi       = {10.1109/ISCAS56072.2025.11043460}
 }
 
-@misc{ntttool2025,
-  title  = {A Flexible Hardware Design Tool for Fast Fourier and Number-Theoretic Transformation Architectures},
-  year   = {2025},
-  note   = {Cryptology ePrint Archive 2025/1407, \url{https://eprint.iacr.org/2025/1407}}
+@article{krieger2025tool,
+  author  = {Florian Krieger and Florian Hirner and Ahmet Can Mert and Sujoy Sinha Roy},
+  title   = {A Flexible Hardware Design Tool for Fast Fourier and Number-Theoretic Transformation Architectures},
+  journal = {IEEE Transactions on Computer-Aided Design of Integrated Circuits and Systems},
+  year    = {2025},
+  doi     = {10.1109/TCAD.2025.3595834},
+  note    = {Also Cryptology ePrint Archive, Paper 2025/1407}
 }
 
-@misc{maskedntt2026a,
-  title  = {Structural Dependency Analysis for Masked {NTT} Hardware: Scalable Pre-Silicon Verification of Post-Quantum Cryptographic Accelerators},
-  year   = {2026},
-  note   = {arXiv:2604.15249}
+@inproceedings{casas2023fhe,
+  author    = {Jeremy Casas and Zhenkun Yang and Wen Wang and Jin Yang and Adwait Godbole},
+  title     = {Towards A Formally Verified Fully Homomorphic Encryption Compute Engine},
+  booktitle = {2023 60th ACM/IEEE Design Automation Conference (DAC)},
+  year      = {2023},
+  doi       = {10.1109/DAC56929.2023.10247783}
 }
 
-@misc{maskedntt2026b,
-  title  = {Fresh Masking Makes {NTT} Pipelines Composable: Machine-Checked Proofs for Arithmetic Masking in {PQC} Hardware},
-  year   = {2026},
-  note   = {arXiv:2604.20793}
+@misc{iskander2026a,
+  author        = {Ray Iskander and Khaled Kirah},
+  title         = {Structural Dependency Analysis for Masked {NTT} Hardware: Scalable Pre-Silicon Verification of Post-Quantum Cryptographic Accelerators},
+  howpublished  = {arXiv:2604.15249},
+  year          = {2026}
+}
+
+@misc{iskander2026b,
+  author        = {Ray Iskander and Khaled Kirah},
+  title         = {Fresh Masking Makes {NTT} Pipelines Composable: Machine-Checked Proofs for Arithmetic Masking in {PQC} Hardware},
+  howpublished  = {arXiv:2604.20793},
+  year          = {2026}
 }
 
 @misc{fips203,
   author       = {{National Institute of Standards and Technology}},
-  title        = {{Module-Lattice-Based Key-Encapsulation Mechanism Standard (ML-KEM)}},
+  title        = {Module-Lattice-Based Key-Encapsulation Mechanism Standard ({ML-KEM})},
   howpublished = {FIPS 203},
   year         = {2024},
   doi          = {10.6028/NIST.FIPS.203}
 }
 
+@misc{fips204,
+  author       = {{National Institute of Standards and Technology}},
+  title        = {Module-Lattice-Based Digital Signature Standard ({ML-DSA})},
+  howpublished = {FIPS 204},
+  year         = {2024},
+  doi          = {10.6028/NIST.FIPS.204}
+}
+
 @misc{falcon,
-  author       = {Thomas Prest and Pierre-Alain Fouque and Jeffrey Hoffstein and others},
+  author       = {Pierre-Alain Fouque and Jeffrey Hoffstein and Paul Kirchner and Vadim Lyubashevsky and Thomas Pornin and Thomas Prest and Thomas Ricosset and Gregor Seiler and William Whyte and Zhenfei Zhang},
   title        = {{Falcon}: Fast-Fourier Lattice-based Compact Signatures over {NTRU}},
-  howpublished = {NIST PQC standardization (selected; standardized as FN-DSA, draft FIPS 206)},
+  howpublished = {Specification v1.2, NIST Post-Quantum Cryptography Standardization, Round 3},
   year         = {2020},
   note         = {\url{https://falcon-sign.info/}}
 }
 
 @misc{yosys,
   author       = {Claire Wolf},
-  title        = {{Yosys} Open SYnthesis Suite},
-  howpublished = {\url{https://github.com/YosysHQ/yosys}},
-  note         = {SymbiYosys (sby) for formal flows}
+  title        = {{Yosys} Open {SYnthesis} Suite and {SymbiYosys}},
+  howpublished = {\url{https://github.com/YosysHQ/yosys}, \url{https://github.com/YosysHQ/sby}},
+  year         = {2024}
 }
 
 @misc{iverilog,
   author       = {Stephen Williams},
   title        = {{Icarus Verilog}},
-  howpublished = {\url{https://github.com/steveicarus/iverilog}}
+  howpublished = {\url{https://github.com/steveicarus/iverilog}},
+  year         = {2024}
 }
 
-@misc{z3,
+@inproceedings{z3,
   author    = {Leonardo de Moura and Nikolaj Bj{\o}rner},
   title     = {{Z3}: An Efficient {SMT} Solver},
-  booktitle = {TACAS 2008},
+  booktitle = {Tools and Algorithms for the Construction and Analysis of Systems (TACAS 2008)},
+  series    = {LNCS},
+  volume    = {4963},
+  pages     = {337--340},
   year      = {2008},
   doi       = {10.1007/978-3-540-78800-6_24}
 }

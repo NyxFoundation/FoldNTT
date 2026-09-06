@@ -11,10 +11,23 @@
 set -euo pipefail
 here=$(cd "$(dirname "$0")" && pwd)
 
-pandoc --from gfm+raw_attribute --to latex -s \
-  -V documentclass=IEEEtran -V classoption=conference \
+pandoc --from markdown-superscript-subscript --natbib --to latex -s \
+  -V documentclass=IEEEtran -V classoption=conference -V natbiboptions=numbers \
   -H "$here/preamble.tex" \
   "$here/../paper.md" -o "$here/paper_ieee.tex"
+
+# citations: pandoc --natbib emits \citep{}; IEEEtran wants plain \cite{}.
+# The empty "References" section from paper.md is replaced by the BibTeX
+# bibliography (IEEEtran.bst over ../references.bib).
+sed -i 's|\\citep{|\\cite{|g; s|\\citet{|\\cite{|g' "$here/paper_ieee.tex"
+python3 - "$here/paper_ieee.tex" <<'PY'
+import re,sys
+f=sys.argv[1]; s=open(f).read()
+s=re.sub(r'\\section\{References\}\\label\{references\}\s*', '', s)
+s=s.replace('\\bibliographystyle{plainnat}\n', '')
+s=s.replace('\\end{document}', '\\bibliographystyle{IEEEtran}\n\\bibliography{../references}\n\\end{document}')
+open(f,'w').write(s)
+PY
 
 python3 "$here/fix_longtables.py" "$here/paper_ieee.tex"
 
@@ -27,7 +40,13 @@ sed -i 's|\\author{Masato Kamba (Nyx Foundation)}|\\author{\\IEEEauthorblockN{Ma
 
 cd "$here"
 xelatex -interaction=nonstopmode paper_ieee.tex >build.log 2>&1 || true
+bibtex paper_ieee >bibtex.log 2>&1 || true
 xelatex -interaction=nonstopmode paper_ieee.tex >build.log 2>&1 || true
+xelatex -interaction=nonstopmode paper_ieee.tex >build.log 2>&1 || true
+echo "=== bibtex ==="; grep -iE "warning|error" bibtex.log | head -5 || echo none
 echo "=== errors ==="; grep -E "^! " build.log | head -6 || echo none
+if grep -qE "^! |Citation .* undefined|Reference .* undefined" build.log; then
+  echo "BUILD FAILED: LaTeX errors or unresolved references (see build.log)"; exit 1
+fi
 echo "=== overfull >30pt ==="; grep -oE "Overfull \\\\hbox \([0-9]+" build.log | sort -rn | head -5 || echo none
 grep -oE "Output written.*\([0-9]+ pages?" build.log | head -1

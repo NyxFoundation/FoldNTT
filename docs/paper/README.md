@@ -10,14 +10,12 @@ nix shell nixpkgs#pandoc nixpkgs#texliveSmall --command make draft.pdf  # single
 nix shell nixpkgs#pandoc --command make paper.tex                    # LaTeX only
 ```
 
-The citekeys in the prose (`[cfntt]`, `[longa2016kred]`, …) are readable
-markers that map 1:1 to entries in `references.bib`. This build produces a
-plain PDF/LaTeX skeleton with the markers left as text. At submission,
-convert to the venue's citation macros (TCHES has its own LaTeX class; FMCAD
-uses IEEEtran): replace each `[key]` with `\cite{key}` and let BibTeX/biber
-render `references.bib`. The section structure maps 1:1 to a two-column
-article.
+Citations in the prose are pandoc markers (`[@cfntt]`, `[@longa2016kred]`,
+…) resolving to `references.bib`. The IEEE build emits `\cite{}` and runs
+BibTeX with `IEEEtran.bst`; the single-column draft uses pandoc's citeproc.
+TCHES has its own LaTeX class; the section structure maps 1:1 to a
+two-column article either way.
 
-Status: complete draft. Open items tracked in `../paper-plan.md` →
-"Remaining before submission" (Zenodo DOI at release, venue choice, a
-couple of `[verify]` page numbers).
+Status: complete draft, revised after an arXiv pre-submission review pass
+(2026-09-06; see `../paper-plan.md`). Open items before submission: Zenodo
+DOI at release, venue choice, and the limitations listed in paper §8.

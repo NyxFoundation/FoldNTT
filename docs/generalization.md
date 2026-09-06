@@ -14,7 +14,7 @@ per prime, demonstrated on Falcon (q = 12289, FN-DSA) and Kyber
 `k·lo − hi` (with a q-multiple offset for non-negativity) multiplies the
 represented residue by k while shrinking the magnitude. `F` folds reduce a
 full product (< q²) to < 2q; the spurious factor `k^F` is folded into the
-twiddle ROM as `(k^F)^{-1}`. `k·x` is shift-add (k's set bits).
+twiddle ROM as `(k^F)^{-1}`. `k·x` is shift-add (signed-digit form of k; the planner prints the add/sub count).
 
 | | Falcon | Kyber |
 |---|---|---|

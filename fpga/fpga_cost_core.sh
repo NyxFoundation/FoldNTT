@@ -7,8 +7,8 @@
 #
 # Notes:
 #  * The released fsm.v is empty (upstream #4), so we link the reconstructed
-#    fullcore/fsm_recon.v to let the core ELABORATE.  This affects synthesis
-#    (area) only; it is not the cycle-accurate schedule (see fullcore/README).
+#    fullcore/fsm_recon.v, the controller verification/fullcore/run_sim.py
+#    validates end-to-end (ref reproduces issue #7, v2 exact, 5290 cycles).
 #  * top_poly_mul's only output is done_flag, so synthesis dead-code-eliminates
 #    the entire datapath (banks/mult/ROM never reach a port).  We set `keep`
 #    on the datapath leaf modules so the area is measured, matching the

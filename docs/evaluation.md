@@ -17,12 +17,15 @@ matches the spec for every input; `run_stream.py` shows that the specced
 modules, sequenced by a controller and fed by the folded ROM, realize the
 whole transform on real gates (iverilog).
 
-Caveat: cfntt_ref's exact banked-memory schedule is not reproduced, because
-the released `fsm.v` is empty (upstream #4). A reconstructed FSM
-(control state machine, `fsm_recon.v`) driving the banked datapath is included but not yet
-cycle-accurate. It is future work and off the critical path, since the
-inventions are drop-in with identical latency. See
-`verification/fullcore/README.md`.
+The banked memory system is covered too: the released `fsm.v` is empty
+(upstream #4), so `verification/fullcore/fsm_recon.v` reconstructs a
+controller from the shipped datapath's timing, and `run_sim.py` drives the
+whole `top_poly_mul` (reference and v2) through NTT then INTT on five
+vectors. The reference core returns `NTT(x)` exactly and `INTT(NTT(x)) =
+2¹⁰·x` (issue #7 at full-core RTL); the v2 core round-trips exactly; both
+take 5290 cycles per 1024-point transform, data-independent. The controller
+is consistent with the released datapath but is not the authors' original.
+See `verification/fullcore/README.md`.
 
 ## §synth: synthesis cost (DONE, generic; PnR pending)
 
@@ -86,12 +89,12 @@ twiddle ROM + address generators + the reconstructed FSM), reference
 
 | core | LUT | FF | **DSP48** | RAMB18 | CARRY4 |
 |---|---|---|---|---|---|
-| reference | 784 | 582 | **3** | 2 | 106 |
-| proposed | 824 | 502 | **1** | 2 | 138 |
+| reference | 784 | 580 | **3** | 2 | 106 |
+| proposed | 819 | 500 | **1** | 2 | 138 |
 
 The released `fsm.v` is empty, so the core is linked against
-`fullcore/fsm_recon.v` to elaborate. This covers synthesis and area only,
-not the cycle-accurate schedule; datapath leaf modules carry `keep` so DCE
+`fullcore/fsm_recon.v`, the reconstructed controller that `run_sim.py`
+validates end-to-end (§sim); datapath leaf modules carry `keep` so DCE
 doesn't strip the un-observed banks/mult/ROM, matching the RTL's
 `DONT_TOUCH`.
 
@@ -161,43 +164,46 @@ register, outputs are registered and XOR-reduced, so only clk + 2 pins are
 I/O) to time the true register-to-register critical path; best of 3 placer
 seeds:
 
-| module | Fmax (xc7a100t) |
+| module | Fmax (xc7a100t, best of 3 seeds) |
 |---|---|
-| `modular_mul` (Barrett, 3 DSP) | ~233 MHz |
-| `modular_mul_kred` (K-RED, 1 DSP) | ~230 MHz |
-| `compact_bf` (reference — INTT-buggy) | ~164 MHz |
-| `compact_bf_v2` (K-RED, INTT-correct) | ~122 MHz |
+| `modular_mul` (Barrett, 3 DSP) | 243 MHz |
+| `modular_mul_kred` (K-RED, 1 DSP) | 232 MHz |
+| `compact_bf` (reference — INTT-buggy) | 169 MHz |
+| `compact_bf_v2` (K-RED, INTT-correct) | 123 MHz |
+
+(Pinned toolchain: yosys 0.62 + openXC7 nextpnr-xilinx 0.8.2 via `nix
+develop`; each seed's nextpnr log is archived under `fpga/reports/`.)
 
 Reading; this is the number real PnR was needed for:
 
-1. At the multiplier, K-RED is Fmax-neutral vs Barrett (~230 vs ~233
-   MHz, within seed noise). Dropping 3→1 DSP therefore costs no clock
-   speed: a clean win at the unit that matters for the DSP budget.
-2. At the butterfly, the proposed core is slower (~122 vs ~164 MHz,
-   −26%). Two causes: (a) the reference butterfly is partly faster
-   because it is the buggy one; it omits the per-stage `op21` halving (§3),
-   so a correct reference would also pay for those gates. (b) The K-RED
+1. At the multiplier, K-RED costs about 4% Fmax vs Barrett (232 vs 243
+   MHz, comparable to the seed spread). Dropping 3→1 DSP therefore costs
+   little clock speed at the unit that matters for the DSP budget.
+2. At the butterfly, the proposed core is slower (123 vs 169 MHz,
+   −27%). Two plausible causes, not isolated by measurement: (a) the
+   reference butterfly omits the per-stage `op21` halving (§3), so a
+   correct reference would also pay for those gates. (b) The K-RED
    fold + fused-op21 logic lengthens the butterfly critical path vs a
    single DSP multiply.
 3. Net: the ψ-fold/K-RED design trades DSP and twiddle storage for clock
-   frequency at the butterfly. On the usual DSP- or memory-bound NTT
-   accelerator (many parallel butterflies exhausting DSP48/BRAM), that is
-   the right trade: you fit more butterflies and free DSPs. If the design
-   is Fmax-bound, Barrett's DSP path is faster. We report the tradeoff,
-   not a one-sided win.
+   frequency at the butterfly. On a DSP- or memory-bound NTT accelerator
+   that is the right trade; if the design is Fmax-bound, Barrett's DSP
+   path is faster. We report the tradeoff, not a one-sided win.
 
-**Whole-core Fmax** (`fpga/fmax_core.sh`, same elaborating core as
-the area measurement): reference `top_poly_mul` ~137 MHz vs proposed
-`top_poly_mul_v2` ~136 MHz, essentially unchanged (−1%). The butterfly's
-−26% does not propagate to the core. The whole-core critical path is
-dominated by the conflict-free memory system, address generators, operand
-networks and FSM, all identical in both cores, of which the butterfly is
-only a part. At the level that actually ships, the redesign delivers 3→1
-DSP, −14% FF, the INTT bug fix and half the twiddle storage at ~1% Fmax
-cost.
+**Whole-core Fmax** (`fpga/fmax_core.sh`, same RTL configuration as the
+area measurement, with the validated reconstructed controller): reference
+`top_poly_mul` 143.1 MHz vs proposed `top_poly_mul_v2` 137.5 MHz, best of
+3 seeds (−4%). The seeds span 127–143 MHz (reference) and 130–138 MHz
+(proposed), medians 136 vs 134 MHz, so the difference is inside the
+seed-to-seed spread: read it as "a few percent at most". The butterfly's
+−27% does not propagate to the core, consistent with the conflict-free
+memory system, address generators, operand networks and FSM, all identical
+in both cores, setting the critical path. At the level that actually
+ships, the redesign delivers 3→1 DSP, −14% FF, the INTT bug fix and half
+the twiddle storage at a few percent of Fmax.
 
 A pipelined K-RED / fold7 (one extra register each) would recover much of
 the butterfly Fmax at +1–2 cycles latency; a concrete follow-up. Vendor
 (Vivado) numbers would confirm these open-flow figures but are not required
-for the conclusion. Whole-core Fmax additionally needs the cycle-accurate
-FSM (see fullcore/README).
+for the conclusion. Whole-core area and Fmax are measured on the
+reconstructed controller that `run_sim.py` validates (see fullcore/README).

@@ -105,7 +105,7 @@ mathematically redundant.
 
 <p align="center">
   <img src="docs/assets/discovery-timeline.png" alt="3D model at five points of the discovery loop" width="100%"><br/>
-  <sub><i>The model across the loop's 37 revisions: first draft (v1); matured CFNTT floor plan, Barrett with 3 DSP (v31); the K-RED butterfly lands (v32); the ψ-fold is spotted (v36); FoldNTT final (v37). The full revision history, with the verification verdicts between steps, is published with the gallery.</i></sub>
+  <sub><i>The model across the loop's 37 revisions: first draft (v1); matured CFNTT floor plan, Barrett with 3 DSP (v31); the K-RED butterfly lands (v32); the ψ-fold is spotted (v36); FoldNTT final (v37). The full revision history, with the verification verdicts between steps, is published in the <a href="https://visually-3d.kingmasatojames.workers.dev/#/s/ntt-fpga">visually-3d gallery</a>.</i></sub>
 </p>
 
 ## Inventions
@@ -116,7 +116,7 @@ mathematically redundant.
 | [`psi-fold-rom/`](psi-fold-rom/) | **ψ-fold** twiddle ROM: stores half the words, shift-add derives the rest | z3 + SbY miter vs shipped ROM | **−50%** stored bits |
 | [`ntt-core/`](ntt-core/) | the **architecture**: own-FSM banked core + Basys 3 self-test | iverilog round-trip + golden cross-check | `INTT(NTT(x))==x`; 1 DSP, 1 BRAM |
 | [`generator/`](generator/) | generalization to **any Proth prime** (Falcon + Kyber) | exhaustive on Kyber q=3329 | one core, many primes |
-| [`fpga/`](fpga/) | open FPGA flow: area, post-route Fmax, bitstream (openXC7) | CI | ~136 MHz core, no Vivado |
+| [`fpga/`](fpga/) | open FPGA flow: area, post-route Fmax, bitstream (openXC7) | CI | 138 MHz core (ref 143), no Vivado |
 | [`verification/`](verification/) | the CFNTT reference proofs, the bug finding, mutation non-vacuity | z3 + SbY, CI | bug reported upstream |
 | [`docs/`](docs/) | the paper (single-column + IEEE two-column builds) | | |
 | `cfntt_ref/` | the upstream CFNTT reference (git submodule) | | ground truth |

@@ -17,8 +17,8 @@ Two independent artifacts per prime:
      stay non-negative).  We compute the number of folds F needed to reduce
      a full product (< q²) to < 2q, the per-fold offsets and wire widths,
      and the spurious factor k^F to fold into the twiddle ROM ((k^F)^{-1}).
-     `k·x` is itself shift-add (k's set bits): Falcon k=3 = 1 adder,
-     Kyber k=13 = 2 adders.
+     `k·x` is itself shift-add (signed-digit form): Falcon k=3 = 1 add/sub,
+     Kyber k=13 = 2 add/sub (Table 2 of the paper is printed at the end).
 
   2. psi-fold ROM  — if psi is "shift-friendly" (psi·x = a few shift-adds),
      the bit-reversed table's upper half is psi·(lower half), so store half
@@ -44,8 +44,30 @@ def proth(q):
 
 
 def shift_add_terms(k):
-    """k·x as sum of shifted x: list of shift amounts (set bits of k)."""
+    """k·x as sum of shifted x: list of shift amounts (set bits of k).
+    Used for RTL emission (additions only)."""
     return [i for i in range(k.bit_length()) if (k >> i) & 1]
+
+
+def csd_terms(k):
+    """k·x in canonical signed-digit form: list of (shift, ±1).  The
+    signed-digit weight minus one is the adder/subtractor count of k·x
+    (e.g. k = 2^t − 1 costs one subtraction, not t − 1 additions); this
+    is the cost the paper's Table 2 reports."""
+    out, i = [], 0
+    while k:
+        if k & 1:
+            d = 2 - (k & 3)                # +1 if k ≡ 1, −1 if k ≡ 3 (mod 4)
+            out.append((i, d))
+            k -= d
+        k >>= 1
+        i += 1
+    return out
+
+
+def csd_cost(k):
+    """Adders/subtractors for k·x as shift-add (signed-digit weight − 1)."""
+    return max(0, len(csd_terms(k)) - 1)
 
 
 def plan_kred(q):
@@ -192,7 +214,11 @@ def bitexact_ok(plan, exhaustive_limit=None):
 def main():
     primes = [
         ("Falcon", 12289, 7, 1024, False),   # psi = 7, sample (z3 covers full)
-        ("Kyber", 3329, 17, 256, True),      # psi = 17 (a 2N-th root), exhaustive
+        # psi = 17 is a primitive 256-th root: ML-KEM's NTT is incomplete (no
+        # primitive 2N-th root exists for N = 256), so the psi-fold plan below
+        # only exercises the shift-add form; the K-RED reducer is the validated
+        # part (exhaustive over z < q^2).
+        ("Kyber", 3329, 17, 256, True),
     ]
     ok = True
     for name, q, psi, N, exhaustive in primes:
@@ -202,9 +228,10 @@ def main():
         print("== %s: q = %d = %d·2^%d + 1 ==" % (name, q, plan["k"], plan["m"]))
         print("   K-RED: %d fold(s), spurious factor k^F = %d -> fold (k^F)^-1 = %d"
               % (len(plan["folds"]), plan["factor"], plan["inv_factor"]))
-        print("          k·x = sum of x<<%s (%d adder(s)); final cond-subs = %d"
+        print("          k·x = sum of x<<%s (%d adder(s) as emitted; "
+              "signed-digit form %s -> %d add/sub); final cond-subs = %d"
               % (plan["k_terms"], max(0, len(plan["k_terms"]) - 1),
-                 plan["cond_subs"]))
+                 csd_terms(plan["k"]), csd_cost(plan["k"]), plan["cond_subs"]))
         print("   K-RED reducer correct: %s [%s]"
               % ("YES" if good else "NO — " + how, how))
         print("   psi-fold: psi=%d, psi·x = x<<%s, shift-friendly=%s "
@@ -219,6 +246,21 @@ def main():
         if not fp["shift_friendly"]:
             print("   NOTE psi not shift-friendly for %s: psi-fold ROM would "
                   "need a small constant-mult, still cheaper than storage" % name)
+    # Table 2 of the paper: fold economics for deployed NTT primes (plan +
+    # sampled validation only; no RTL emitted for the wide moduli).
+    print("== K-RED fold economics (paper Table 2) ==")
+    for name, q in [("Falcon", 12289), ("Kyber", 3329),
+                    ("Dilithium", 1023 * 2**13 + 1),
+                    ("BabyBear", 15 * 2**27 + 1),
+                    ("Goldilocks", (2**32 - 1) * 2**32 + 1)]:
+        plan = plan_kred(q)
+        good, how = validate_kred(plan, False)
+        print("   %-10s k=%d m=%d  F=%d  k^F mod q=%s  k·x: %d add/sub "
+              "(signed-digit %s)  cond-subs=%d  sampled-ok=%s"
+              % (name, plan["k"], plan["m"], len(plan["folds"]),
+                 "1" if plan["factor"] == 1 else "≠1", csd_cost(plan["k"]),
+                 csd_terms(plan["k"]), plan["cond_subs"], good))
+        ok &= good
     print("KRED-GEN VALIDATED" if ok else "KRED-GEN FAILED")
     sys.exit(0 if ok else 1)
 

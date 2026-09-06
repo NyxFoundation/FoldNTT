@@ -34,17 +34,25 @@ def conv(m):
     cap = ''
     if caption:
         cap = "\\caption{%s}\n" % ' '.join(caption.split())
+    # table notes (paragraphs starting with * / dagger / ddagger right after the
+    # table in paper.md) travel inside the float, under the tabular
+    notes = (m.group('notes') or '').strip()
+    notes_tex = ''
+    if notes:
+        paras = [' '.join(x.split()) for x in re.split(r'\n\s*\n', notes) if x.strip()]
+        notes_tex = ("\n\\par\\vspace{3pt}\\begin{minipage}{\\linewidth}\\scriptsize\n"
+                     + "\\par ".join(paras) + "\n\\end{minipage}")
     global tblno
     tblno += 1
     if tblno in SINGLE_COL:
         # narrow enough for one 3.5in column: a single-column float can sit
         # on the same page as (or right after) its reference
         return ("\\begin{table}[!t]\n\\centering\\scriptsize\n%s"
-                "\\begin{tabular}{%s}\n%s\n\\end{tabular}\n\\end{table}"
-                % (cap, colspec, inner))
+                "\\begin{tabular}{%s}\n%s\n\\end{tabular}%s\n\\end{table}"
+                % (cap, colspec, inner, notes_tex))
     return ("\\begin{table*}[!t]\n\\centering\\footnotesize\n%s"
-            "\\begin{tabular}{%s}\n%s\n\\end{tabular}\n\\end{table*}"
-            % (cap, colspec, inner))
+            "\\begin{tabular}{%s}\n%s\n\\end{tabular}%s\n\\end{table*}"
+            % (cap, colspec, inner, notes_tex))
 
 # tables (in order of appearance) whose natural width fits one column;
 # the rest must span both columns
@@ -53,7 +61,8 @@ tblno = 0
 
 pat = re.compile(
     r'(?:\\textbf\{Table\s+[0-9]+\.\s+(?P<cap>(?:[^{}]|\{[^{}]*\})*?)\}\s*\n\s*\n)?'
-    r'(?P<tbl>\\begin\{longtable\}.*?\\end\{longtable\})', re.S)
+    r'(?P<tbl>\\begin\{longtable\}.*?\\end\{longtable\})'
+    r'(?P<notes>(?:\s*\n\s*\n(?:\*|\\dag|\\ddag|†|‡)[^\n]*(?:\n(?!\s*\n)[^\n]*)*)*)', re.S)
 s2 = pat.sub(conv, s)
 open(f, 'w').write(s2)
 ncap = len(re.findall(r'\\caption\{', s2)) - s.count('\\caption{')

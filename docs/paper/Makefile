@@ -5,9 +5,10 @@
 # A quick single-column serif draft is also available:
 #   nix shell nixpkgs#pandoc nixpkgs#texliveSmall --command make draft.pdf
 PANDOC ?= pandoc
-FLAGS  = --from gfm+raw_attribute --pdf-engine=xelatex -V geometry:margin=1in -V linkcolor:blue -V mainfont="DejaVu Serif" -V monofont="DejaVu Sans Mono" -H tikz-header.tex
-# citekeys in the prose are readable markers ([cfntt], ...) resolving to
-# references.bib; convert to \cite{} in the venue LaTeX class at submission.
+FLAGS  = --from markdown-superscript-subscript --citeproc --bibliography=references.bib --pdf-engine=xelatex -V geometry:margin=1in -V linkcolor:blue -V mainfont="DejaVu Serif" -V monofont="DejaVu Sans Mono" -H tikz-header.tex
+# citations in the prose are pandoc [@key] markers resolving to
+# references.bib: citeproc for the draft, \cite{} + BibTeX (IEEEtran.bst)
+# for the IEEE build.
 
 paper.pdf: paper.md references.bib ieee/preamble.tex ieee/build.sh ieee/fix_longtables.py
 	bash ieee/build.sh

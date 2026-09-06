@@ -30,7 +30,7 @@ This is orthogonal to cfntt_ref's banked-memory schedule: the inventions are
 drop-in (same ports, same latency), so a correct controller sequences them
 into a correct transform regardless of the conflict-free memory mapping.
 
-## Reconstructed banked FSM (`fsm_recon.v`, `tb_fullcore.v`): future work
+## Reconstructed banked FSM (`fsm_recon.v`, `tb_fullcore.v`): working
 
 The released `fsm.v` is empty (upstream issue #4), so the shipped
 `top_poly_mul` cannot elaborate as-is. `fsm_recon.v` is a reconstructed
@@ -39,35 +39,40 @@ controller with the exact port list `top_poly_mul` instantiates, and
 banked datapath (two conflict-free banks, address generators,
 `network_bf_in/out`), which additionally exercises the memory system.
 
-Status: partially reconstructed. Progress so far, from cycle-accurate
-tracing (`tb_debug` in git history):
+Status: cycle-exact against the shipped datapath. `run_sim.py` runs the
+reference core (shipped `compact_bf` + `tf_ROM`) and the v2 core through a
+full NTT then INTT on five vectors (three seeded random, all-(q−1), impulse):
 
-- The datapath write latency is 10 cycles (read path 4 + butterfly 6),
-  not 8. With `wen` fixed to `pipe[9]` the earlier X-corruption is gone
-  (writes no longer fire before the pipeline fills); `fsm_recon.v` carries
-  this fix.
-- The result is now well-defined but still numerically wrong
-  (`INTT(NTT(x))` does not return `2¹⁰·x`), so the schedule is not yet
-  cycle-accurate: the remaining gap is the precise alignment of the twiddle
-  (precomputed multiplier constant) address/ROM read and the two operand/output networks (`network_bf_in`,
-  `network_bf_out`, whose `sel` is `shift_7`-delayed) relative to the bank
-  read/write, across the per-`k`-group twiddle changes.
+- reference: `NTT(x)` equals the golden DIT_NR_NTT exactly, and
+  `INTT(NTT(x)) = 2¹⁰·x` — upstream issue #7 reproduced at full-core RTL;
+- v2: `NTT(x)` exact and `INTT(NTT(x)) = x` exact;
+- 5290 cycles per 1024-point transform, launch to `done` (10 stages ×
+  (512 issues at one butterfly per cycle + 17 cycles of drain and
+  turnaround)), identical for every vector and for both cores
+  (asserted: the controller has no data in its input cone, and the
+  retrofit is latency-identical). The host must hold `conf` until
+  `done_flag` rises: the shipped `tf_address_generator` decodes it live.
 
-A faithful cycle-accurate reconstruction of the unreleased FSM (the
-control state machine) is a
-research task in its own right and remains future work. It is not on the
-critical path for the inventions' correctness: the streaming harness above
-establishes the full transform at the RTL level, the SymbiYosys proofs
-establish each module, and the whole-core area synthesizes from this
-elaborating (not-yet-timed) core (`../fpga_cost_core.sh`). What the finished
-FSM would add is a timed whole-core run and, with Vivado, routed Fmax
-(the highest clock frequency the routed design sustains).
+Schedule (derived from the shipped datapath's own timing, see the header of
+`fsm_recon.v`): issue at t → registered bank/tf addresses at t+1 → bank Q,
+`network_bf_in` and ROM Q aligned at t+2 → butterfly latency 6 → output,
+write-side select (`shift_7`) and write address (`shift_7`) at t+8, so
+`wen = pipe[7]`. Two earlier defects hid behind each other: `wen` sat at
+`pipe[9]` (which skipped each stage's first two writes and wrote back a
+phantom butterfly on the (0, 2^p) pair at the end of each stage), and the
+testbench preloaded the banks with `$readmemh` in a posedge time step,
+racing `data_bank`'s per-cycle `bank[A1] <= bank[A1]` refresh and leaving
+address 0 of both banks X. The preload now happens on a negedge.
+
+This is a controller consistent with the released datapath, not the
+authors' original: the unreleased FSM's timed behaviour stays unknowable,
+and the reference paper's cycle counts are not reproduced here.
 
 ## Files
 
 | File | Role |
 |---|---|
 | `tb_stream.v`, `run_stream.py` | pipelined full-transform harness over the invented RTL (the working, CI-run evidence) |
-| `fsm_recon.v` | reconstructed control FSM (port-compatible with `top_poly_mul`; schedule not yet cycle-exact) |
+| `fsm_recon.v` | reconstructed control FSM (port-compatible with `top_poly_mul`; cycle-exact against the shipped datapath) |
 | `top_poly_mul_v2.v` | shipped top with `compact_bf_v2` + `tf_rom_fold` swapped in |
-| `tb_fullcore.v` | banked-core testbench (NTT then INTT, bank dumps; pending the FSM reconstruction) |
+| `tb_fullcore.v`, `run_sim.py` | banked-core testbench + driver (ref reproduces #7, v2 exact, five vectors, cycle counts asserted; CI-run) |

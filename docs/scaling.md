@@ -65,9 +65,10 @@ openXC7 nextpnr-xilinx, xc7a100t, one seed, 2.0 ns target:
 Three observations:
 
 - **At equal lane count, Barrett clocks ~7% faster** (74.1 vs
-  69.2 MHz at d=32). The module-level gap was −26% in isolation; in a
-  lane array it shrinks to ~7%, and in the full single-BFU core it was
-  ~1%. So the clock price of K-RED depends on how much else surrounds
+  69.2 MHz at d=32). The module-level gap was −27% in isolation; in a
+  lane array it shrinks to ~7%, and in the full single-BFU core it is a
+  few percent (143 vs 138 MHz best of 3 seeds, inside the seed spread;
+  see evaluation.md). So the clock price of K-RED depends on how much else surrounds
   the butterfly, and at farm scale it is small against the 3× DSP
   saving.
 - **Congestion has a knee.** kred barely degrades to d=64 (69.2 →

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# The complete verification suite for BOTH inventions.  Needs yosys, sby,
-# yices-smt2, python3 and uv in PATH — e.g.:
-#   nix shell nixpkgs#yosys nixpkgs#sby nixpkgs#yices --command ./run_all.sh
+# The complete verification suite for both techniques.  Needs yosys, sby,
+# yices-smt2, iverilog, python3 and uv in PATH — `nix develop` provides all
+# of them, or:
+#   nix shell nixpkgs#yosys nixpkgs#sby nixpkgs#yices nixpkgs#iverilog --command ./run_all.sh
 # MODE=quick skips the ~15-min fv_kred bmc+prove (the one hard SMT task) and
 # the mutation sweep; everything else runs.
 set -euo pipefail
@@ -41,6 +42,13 @@ run_sby ntt-core fv_core.sby bmc prove
 
 echo "==== structural audits (lint, feed-forward/latency, single clock)"
 python3 verification/audit_v2.py
+
+echo "==== iverilog: streaming datapath round-trip, own-FSM core, generator"
+uv run verification/fullcore/run_stream.py | tail -1
+uv run verification/fullcore/run_sim.py | tail -1
+python3 ntt-core/run_check.py | tail -1
+uv run generator/kred_gen.py | tail -1
+uv run generator/gen_check.py | tail -1
 
 if [ "$MODE" != quick ]; then
   echo "==== RTL mutation sweep (proofs must FAIL on broken RTL)"

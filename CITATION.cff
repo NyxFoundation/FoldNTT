@@ -1,22 +1,31 @@
 cff-version: 1.2.0
 title: >-
-  FoldNTT: A verified, DSP-minimal NTT accelerator for Proth primes
+  FoldNTT: A Multiplier- and Twiddle-Lean NTT Core with Formally Verified
+  Arithmetic for Proth Primes
 message: >-
   If you use this artifact, please cite it using these metadata.
 type: software
 authors:
-  - name: NyxFoundation
+  - family-names: Kamba
+    given-names: Masato
+    affiliation: Nyx Foundation
 repository-code: 'https://github.com/NyxFoundation/FoldNTT'
 abstract: >-
-  FoldNTT is a new, formally verified (z3 + SymbiYosys), DSP-minimal NTT
-  accelerator for Falcon / Proth primes (q = 12289). Two folding ideas — a
-  1-multiplier K-RED butterfly and a psi-fold twiddle ROM storing half the
-  words — plus an own-FSM banked core that round-trips end-to-end and runs on
-  a Digilent Basys 3 via a fully Vivado-free open flow (yosys + openXC7). It
-  began as a verification study of the CFNTT reference (TCHES 2022), which
-  found and reported an inverse-transform bug that the redesign fixes. A
-  parameterized generator instantiates the construction for any Proth prime
-  (validated on Kyber q = 3329).
+  FoldNTT is a redesign of the released radix-2 CFNTT accelerator (TCHES
+  2022) for the Falcon / FN-DSA prime q = 12289 with one hardware multiplier
+  per butterfly instead of three (shift-add K-RED reduction) and about half
+  the stored twiddle constants (a psi-fold of the bit-reversed table). Every
+  arithmetic and pipeline block is proven with exact-width SMT (z3) and
+  compositional SymbiYosys proofs, control-safety invariants by k-induction,
+  the proofs are mutation-tested, and the composed transform is validated by
+  simulation, all rerun by CI. Checking the released RTL against the
+  mathematics exposed an inverse-transform bug (a missing per-stage halving,
+  reported upstream) that the retrofit corrects. The repository also carries a
+  reconstructed controller for the reference core (its FSM was never
+  released), a sequential core with its own controller that builds to a
+  Basys-3 bitstream through a fully open flow (yosys + openXC7), and a
+  generator that instantiates the reducer for other Proth primes (validated
+  exhaustively on ML-KEM q = 3329).
 keywords:
   - number-theoretic-transform
   - post-quantum-cryptography

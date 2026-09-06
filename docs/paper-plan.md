@@ -22,6 +22,52 @@ from this repo's CI or scripts.
 
 
 ## Remaining before submission (post-draft)
+- arXiv pre-submission review pass (2026-09-06): DONE. Fixed the K-RED
+  hardware-precedent attribution (ePrint 2024/1890 is FHE-sized moduli,
+  K2-RED-Shift; the Kyber precedent is Bisheh-Niasar et al. ARITH 2021, now
+  cited), completed every bib author list (Tosun et al., Im et al., Dam et
+  al. ISCAS 2025, Krieger et al., Iskander & Kirah), wired real citations
+  (pandoc [@key] -> \cite{} + IEEEtran.bst; citeproc in the draft build),
+  unified the "bug fix is free" claim to "two op21 gates, no added
+  multiplier/latency", added the "bug vs unnormalized inverse" paragraph in
+  Sec 3, restated data-independent latency as structural (not a theorem of
+  the k-induction proof), split Table 4's "verified" column, disclosed the
+  PWM double-pass cost (~6% on a full poly-mul), made Table 2 the planner's
+  own output (signed-digit costs in kred_gen.py), and removed the
+  glossary parentheticals / self-evaluative phrasing / "invention" /
+  "Visioned Vibe Coding" naming. Two Codex CLI review rounds applied on
+  top: proof scope narrowed everywhere (blocks + control-safety proven,
+  composition simulated), whole-core area/Fmax labelled a synthesis-and-
+  timing study on the non-cycle-exact reconstructed FSM (run_sim.py does
+  not yet pass), §3 evidence corrected (bug_intt_halving.py models, not
+  run_stream), Kyber limited to the reducer (incomplete NTT), PWM marked
+  not-in-RTL, fixed the SMT identity (3z+6q = d+z1 q), added the inverse-
+  twiddle identity, cited Casas et al. DAC 2023, fmax.sh/fmax_core.sh
+  root-path bug fixed + per-seed logs archived + fail on tool failure,
+  run_all.sh now covers run_stream/run_check/generator, flake pins sby +
+  yices, table notes ride inside the IEEE floats.
+  Author decisions taken: title changed to "... NTT Core with Formally
+  Verified Arithmetic ..."; design-loop gallery URL added
+  (visually-3d.kingmasatojames.workers.dev/#/s/ntt-fpga); abstract
+  compressed to ~190 words.
+- fsm_recon cycle-accuracy: DONE (2026-09-06). Root causes were (1) wen at
+  pipe[9] instead of pipe[7] (write address/select/data all align at
+  issue+8 in the shipped datapath) and (2) a testbench race: $readmemh in a
+  posedge time step vs data_bank's per-cycle bank[A1] <= bank[A1] refresh
+  left address 0 of both banks X (which the pipe[9] shift had masked).
+  run_sim.py now passes on 5 vectors: ref NTT exact + INTT 2^10-scaled
+  (issue #7 at full-core RTL), v2 exact, 5290 cycles launch-to-done,
+  data-independent, ref == v2. Codex review: wen/pipe[7], phantom issue,
+  drain (min 7, 16 kept), intra-stage disjointness all PASS; applied its
+  asks (all tb actions on negedges, launch-to-done cycle markers, dump
+  freshness + 512-word checks, conf-hold contract documented). CI + run_all
+  now run run_sim.py. Re-measured under the flake's pinned yosys 0.62 +
+  openXC7 0.8.2: per-module area/Fmax unchanged (243/232, 169/123 MHz);
+  whole core 784/580 vs 819/500 LUT/FF (DSP 3->1), ENS 969->767 (-21%),
+  Fmax 143.1 vs 137.5 MHz best-of-3 (-4%; seeds 127-143 / 130-138, medians
+  136/134), NTT-1024 = 5290 cycles (launch-to-done, race-free negedge sampling; = 10 x (512+17)) = 37.0 / 38.5 us. Paper, evaluation.md,
+  README refreshed; "~1% Fmax" claims replaced by "a few percent, within
+  seed spread".
 - Paper polish: DONE this pass. Fig.1 butterfly datapath (ASCII), fold7
   parallel-reduction pseudocode in Sec 4.2, and a positioning table vs
   CFNTT / Compact-FALCON in Sec 7 (both Barrett + full ROM; neither of our

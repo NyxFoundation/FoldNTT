@@ -32,6 +32,8 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y iverilog
       - name: proposed full-transform RTL simulation (iverilog)
         run: uv run verification/fullcore/run_stream.py
+      - name: full-core RTL simulation (reconstructed FSM; ref reproduces #7, v2 exact)
+        run: uv run verification/fullcore/run_sim.py
       - name: newcore — own-FSM whole-core round-trip + NTT cross-validation
         run: python3 ntt-core/run_check.py
       - name: generalization — Proth-prime generator (Falcon + Kyber)

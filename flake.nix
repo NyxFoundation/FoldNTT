@@ -30,6 +30,8 @@
           pkgs.yosys # synthesis (synth_xilinx)
           pkgs.python3 # wrap.py, run_*.py
           pkgs.iverilog # functional sims
+          pkgs.sby # SymbiYosys (fv_*.sby)
+          pkgs.yices # yices-smt2, the sby engine used by the harnesses
           pkgs.uv # PEP-723 z3 / math scripts
         ];
         # Wire the env the FPGA scripts read, so they run with no arguments:
