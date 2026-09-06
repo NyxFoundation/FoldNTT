@@ -27,3 +27,7 @@ fpga/*.json
 fpga/*.xdc
 docs/paper/ieee/bibtex.log
 fpga/reports/
+docs/paper/arxiv/
+docs/paper/foldntt-arxiv.zip
+docs/paper/arxiv-preview.pdf
+docs/paper/arxiv-metadata.txt

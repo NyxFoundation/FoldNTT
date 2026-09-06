@@ -9,8 +9,12 @@
 % IEEE's look is Times: TeX Gyre Termes as the main font.  DejaVu Mono for
 % verbatim so Fig.1's box-drawing glyphs render; shrink code to fit the
 % 3.5in column.
-\setmainfont{TeX Gyre Termes}
-\setmonofont{DejaVu Sans Mono}[Scale=0.80]
+% Fonts by FILE name (not family name): arXiv's XeLaTeX has no fontconfig
+% database, so name lookups fail there; file lookups work in any TeX Live.
+\setmainfont{texgyretermes}[Extension=.otf,UprightFont=*-regular,
+  BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
+\setmonofont{DejaVuSansMono}[Extension=.ttf,UprightFont=*,BoldFont=*-Bold,
+  ItalicFont=*-Oblique,BoldItalicFont=*-BoldOblique,Scale=0.80]
 \usepackage{fancyvrb}
 \usepackage{fvextra}
 \fvset{fontsize=\scriptsize,breaklines=true,breakanywhere=true}
