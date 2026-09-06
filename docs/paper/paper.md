@@ -993,7 +993,7 @@ Table 5 lists the deliverables.
 A `Dockerfile` provides a separate verification-only image (proofs and
 simulations, pinned to a nixpkgs revision rather than the flake lock,
 without the openXC7 flow). The numbers in this paper were taken from the
-repository at commit `b0cf8da` (reference submodule `8373a66`); a Zenodo
+repository at commit `2571d66` (reference submodule `8373a66`); a Zenodo
 DOI will be minted from the tagged release.
 The single source for this paper (`docs/paper/paper.md`) builds to the
 canonical two-column IEEEtran PDF (`make` in `docs/paper/`) and to a
