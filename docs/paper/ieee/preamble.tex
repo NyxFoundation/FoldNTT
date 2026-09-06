@@ -11,10 +11,13 @@
 % 3.5in column.
 % Fonts by FILE name (not family name): arXiv's XeLaTeX has no fontconfig
 % database, so name lookups fail there; file lookups work in any TeX Live.
-\setmainfont{texgyretermes}[Extension=.otf,UprightFont=*-regular,
-  BoldFont=*-bold,ItalicFont=*-italic,BoldItalicFont=*-bolditalic]
-\setmonofont{DejaVuSansMono}[Extension=.ttf,UprightFont=*,BoldFont=*-Bold,
-  ItalicFont=*-Oblique,BoldItalicFont=*-BoldOblique,Scale=0.80]
+% Full file names (with extension) so arXiv's source scanner recognises them;
+% the arXiv package also ships these files next to main.tex.
+\setmainfont{texgyretermes-regular.otf}[BoldFont=texgyretermes-bold.otf,
+  ItalicFont=texgyretermes-italic.otf,BoldItalicFont=texgyretermes-bolditalic.otf]
+\setmonofont{DejaVuSansMono.ttf}[BoldFont=DejaVuSansMono-Bold.ttf,
+  ItalicFont=DejaVuSansMono-Oblique.ttf,BoldItalicFont=DejaVuSansMono-BoldOblique.ttf,
+  Scale=0.80]
 \usepackage{fancyvrb}
 \usepackage{fvextra}
 \fvset{fontsize=\scriptsize,breaklines=true,breakanywhere=true}

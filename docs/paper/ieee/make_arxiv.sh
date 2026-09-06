@@ -17,6 +17,26 @@ grep -q "discovery-timeline.png}" "$out/main.tex"
 cp "$here/paper_ieee.bbl" "$out/main.bbl"
 cp "$paper/references.bib" "$out/references.bib"
 cp "$root/docs/assets/discovery-timeline.png" "$out/discovery-timeline.png"
+# Ship the fonts themselves (TeX Gyre: GUST Font License; DejaVu: Bitstream
+# Vera / Arev licence, both redistributable) so arXiv's source scanner finds
+# every file the preamble names; fontspec's file lookup checks the current
+# directory before TeX Live.
+FONTS="texgyretermes-regular.otf texgyretermes-bold.otf texgyretermes-italic.otf texgyretermes-bolditalic.otf
+       DejaVuSansMono.ttf DejaVuSansMono-Bold.ttf DejaVuSansMono-Oblique.ttf DejaVuSansMono-BoldOblique.ttf"
+for f in $FONTS; do
+  src=$(kpsewhich "$f"); [ -n "$src" ] || { echo "font $f not in TeX Live"; exit 1; }
+  cp "$src" "$out/$f"
+done
+cat > "$out/FONTS-README.txt" <<'TXT'
+Fonts shipped with this source (both redistributable):
+  texgyretermes-*.otf   TeX Gyre Termes, (c) GUST e-foundry, GUST Font License
+                        (https://www.gust.org.pl/projects/e-foundry/tex-gyre)
+  DejaVuSansMono*.ttf   DejaVu Sans Mono, Bitstream Vera Fonts Copyright (c) 2003
+                        Bitstream, Inc.; DejaVu changes are in the public domain
+                        (https://dejavu-fonts.github.io/License.html)
+They are the copies from TeX Live 2025 and are included only so that the
+XeLaTeX build resolves every font by file name without fontconfig.
+TXT
 cat > "$out/00README.json" <<'JSON'
 {
   "process": { "compiler": "xelatex" },
@@ -33,8 +53,11 @@ if grep -qE "^! |Citation .* undefined|Reference .* undefined|Missing character|
   echo "ARXIV TEST BUILD FAILED:"; grep -nE "^! |Citation .* undefined|Reference .* undefined|Missing character|cannot be found|font .* not found" "$tmp/main.log" | head; exit 1
 fi
 grep -q "texgyretermes-regular" "$tmp/main.log" || { echo "main font not loaded by file name"; exit 1; }
+# (kpathsea searches "." before the TeX Live font trees, so the shipped
+# copies are what fontspec's file-name lookup resolves; the Latin Modern
+# fonts pandoc's template loads first still come from TeX Live, as at arXiv)
 pages=$(grep -oE "Output written on main.pdf \([0-9]+ pages" "$tmp/main.log" | grep -oE "[0-9]+ pages")
 cp "$tmp/main.pdf" "$paper/arxiv-preview.pdf"; rm -rf "$tmp"
-( cd "$out" && rm -f "$paper/foldntt-arxiv.zip" && zip -q -X "$paper/foldntt-arxiv.zip" 00README.json main.tex main.bbl references.bib discovery-timeline.png )
+( cd "$out" && rm -f "$paper/foldntt-arxiv.zip" && zip -q -X "$paper/foldntt-arxiv.zip" 00README.json main.tex main.bbl references.bib discovery-timeline.png $FONTS FONTS-README.txt )
 echo "arXiv package: $paper/foldntt-arxiv.zip ($pages; preview: $paper/arxiv-preview.pdf)"
 unzip -l "$paper/foldntt-arxiv.zip"
