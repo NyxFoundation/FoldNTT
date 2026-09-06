@@ -882,7 +882,7 @@ is rendered by visually-3d from the RTL-grounded scene at that step.}
 
 The full model history (every revision, its renders, and the
 verification verdicts between them) is published in the visually-3d
-gallery at `visually-3d.kingmasatojames.workers.dev/#/s/ntt-fpga`, and the
+gallery at <https://visually-3d.kingmasatojames.workers.dev/#/s/ntt-fpga>, and the
 rendered montage is in the repository (Figure 4), so the process is
 inspectable end to end. We claim no generality for it: this is one design, found once, with no ablation of the loop's
 components; the mathematics and the proofs stand on their own.
@@ -936,7 +936,7 @@ Everything in this paper is public at `github.com/NyxFoundation/FoldNTT`
 (the retrofitted RTL, the reference CFNTT as a submodule, all proofs, the
 generator, the FPGA flow, and the rendered design-loop montage; the
 design-loop revision history is at
-`visually-3d.kingmasatojames.workers.dev/#/s/ntt-fpga`); the proof,
+<https://visually-3d.kingmasatojames.workers.dev/#/s/ntt-fpga>); the proof,
 simulation and area classes are re-run by CI. All RTL, proofs, generator and flow scripts are
 MIT-licensed; the upstream `cfntt_ref` submodule is itself MIT
 (© xiang-rc). A repo `flake.nix` pins the toolchain (yosys, SymbiYosys,
